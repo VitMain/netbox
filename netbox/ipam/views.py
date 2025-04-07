@@ -1444,7 +1444,7 @@ class ServiceBulkImportView(generic.BulkImportView):
 
 @register_model_view(Service, 'bulk_edit', path='edit', detail=False)
 class ServiceBulkEditView(generic.BulkEditView):
-    queryset = Service.objects.prefetch_related('device', 'virtual_machine')
+    queryset = Service.objects.prefetch_related('parent')
     filterset = filtersets.ServiceFilterSet
     table = tables.ServiceTable
     form = forms.ServiceBulkEditForm
@@ -1452,6 +1452,6 @@ class ServiceBulkEditView(generic.BulkEditView):
 
 @register_model_view(Service, 'bulk_delete', path='delete', detail=False)
 class ServiceBulkDeleteView(generic.BulkDeleteView):
-    queryset = Service.objects.prefetch_related('device', 'virtual_machine')
+    queryset = Service.objects.prefetch_related('parent')
     filterset = filtersets.ServiceFilterSet
     table = tables.ServiceTable

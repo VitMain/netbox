@@ -1035,6 +1035,8 @@ class ServiceTemplateTestCase(ViewTestCases.PrimaryObjectViewTestCase):
 
 class ServiceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
     model = Service
+    # TODO, related to #9816, cannot validate GFK
+    validation_excluded_fields = ('device',)
 
     @classmethod
     def setUpTestData(cls):
@@ -1063,7 +1065,6 @@ class ServiceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
 
         cls.form_data = {
             'device': device.pk,
-            'virtual_machine': None,
             'name': 'Service X',
             'protocol': ServiceProtocolChoices.PROTOCOL_TCP,
             'ports': '104,105',
@@ -1107,7 +1108,7 @@ class ServiceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         request = {
             'path': self._get_url('add'),
             'data': {
-                'parent': device.pk,
+                'device': device.pk,
                 'service_template': service_template.pk,
             },
         }
