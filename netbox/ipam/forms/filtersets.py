@@ -596,7 +596,7 @@ class ServiceFilterForm(ServiceTemplateFilterForm):
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
         FieldSet('protocol', 'port', name=_('Attributes')),
-        FieldSet('device_id', 'virtual_machine_id', name=_('Assignment')),
+        FieldSet('device_id', 'virtual_machine_id', 'fhrpgroup_id', name=_('Assignment')),
     )
     device_id = DynamicModelMultipleChoiceField(
         queryset=Device.objects.all(),
@@ -607,5 +607,10 @@ class ServiceFilterForm(ServiceTemplateFilterForm):
         queryset=VirtualMachine.objects.all(),
         required=False,
         label=_('Virtual Machine'),
+    )
+    fhrpgroup_id = DynamicModelMultipleChoiceField(
+        queryset=FHRPGroup.objects.all(),
+        required=False,
+        label=_('FHRP Group'),
     )
     tag = TagFilterField(model)
