@@ -15,7 +15,6 @@ from utilities.forms.fields import (
     ContentTypeChoiceField, ContentTypeMultipleChoiceField, DynamicModelChoiceField, DynamicModelMultipleChoiceField,
     TagFilterField,
 )
-from utilities.forms.mixins import FilterModifierMixin
 from utilities.forms.rendering import FieldSet
 from utilities.forms.widgets import DateTimePicker
 from virtualization.models import Cluster, ClusterGroup, ClusterType
@@ -42,7 +41,7 @@ __all__ = (
 
 
 @register_filterset(CustomFieldFilterSet)
-class CustomFieldFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class CustomFieldFilterForm(SavedFiltersMixin, FilterForm):
     model = CustomField
     fieldsets = (
         FieldSet('q', 'filter_id'),
@@ -127,7 +126,7 @@ class CustomFieldFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
 
 
 @register_filterset(CustomFieldChoiceSetFilterSet)
-class CustomFieldChoiceSetFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class CustomFieldChoiceSetFilterForm(SavedFiltersMixin, FilterForm):
     model = CustomFieldChoiceSet
     fieldsets = (
         FieldSet('q', 'filter_id'),
@@ -148,7 +147,7 @@ class CustomFieldChoiceSetFilterForm(FilterModifierMixin, SavedFiltersMixin, Fil
 
 
 @register_filterset(CustomLinkFilterSet)
-class CustomLinkFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class CustomLinkFilterForm(SavedFiltersMixin, FilterForm):
     model = CustomLink
     fieldsets = (
         FieldSet('q', 'filter_id'),
@@ -185,7 +184,7 @@ class CustomLinkFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
 
 
 @register_filterset(ExportTemplateFilterSet)
-class ExportTemplateFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class ExportTemplateFilterForm(SavedFiltersMixin, FilterForm):
     model = ExportTemplate
     fieldsets = (
         FieldSet('q', 'filter_id', 'object_type_id'),
@@ -237,7 +236,7 @@ class ExportTemplateFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterFor
 
 
 @register_filterset(ImageAttachmentFilterSet)
-class ImageAttachmentFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class ImageAttachmentFilterForm(SavedFiltersMixin, FilterForm):
     model = ImageAttachment
     fieldsets = (
         FieldSet('q', 'filter_id'),
@@ -255,7 +254,7 @@ class ImageAttachmentFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterFo
 
 
 @register_filterset(SavedFilterFilterSet)
-class SavedFilterFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class SavedFilterFilterForm(SavedFiltersMixin, FilterForm):
     model = SavedFilter
     fieldsets = (
         FieldSet('q', 'filter_id'),
@@ -292,7 +291,7 @@ class SavedFilterFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
 
 
 @register_filterset(TableConfigFilterSet)
-class TableConfigFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class TableConfigFilterForm(SavedFiltersMixin, FilterForm):
     fieldsets = (
         FieldSet('q', 'filter_id'),
         FieldSet('object_type_id', 'enabled', 'shared', 'weight', name=_('Attributes')),
@@ -323,7 +322,7 @@ class TableConfigFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
 
 
 @register_filterset(WebhookFilterSet)
-class WebhookFilterForm(FilterModifierMixin, NetBoxModelFilterSetForm):
+class WebhookFilterForm(NetBoxModelFilterSetForm):
     model = Webhook
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', 'owner_id'),
@@ -351,7 +350,7 @@ class WebhookFilterForm(FilterModifierMixin, NetBoxModelFilterSetForm):
 
 
 @register_filterset(EventRuleFilterSet)
-class EventRuleFilterForm(FilterModifierMixin, NetBoxModelFilterSetForm):
+class EventRuleFilterForm(NetBoxModelFilterSetForm):
     model = EventRule
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag', 'owner_id'),
@@ -388,7 +387,7 @@ class EventRuleFilterForm(FilterModifierMixin, NetBoxModelFilterSetForm):
 
 
 @register_filterset(TagFilterSet)
-class TagFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class TagFilterForm(SavedFiltersMixin, FilterForm):
     model = Tag
     content_type_id = ContentTypeMultipleChoiceField(
         queryset=ObjectType.objects.with_feature('tags'),
@@ -408,7 +407,7 @@ class TagFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
 
 
 @register_filterset(ConfigContextProfileFilterSet)
-class ConfigContextProfileFilterForm(FilterModifierMixin, PrimaryModelFilterSetForm):
+class ConfigContextProfileFilterForm(PrimaryModelFilterSetForm):
     model = ConfigContextProfile
     fieldsets = (
         FieldSet('q', 'filter_id'),
@@ -430,7 +429,7 @@ class ConfigContextProfileFilterForm(FilterModifierMixin, PrimaryModelFilterSetF
 
 
 @register_filterset(ConfigContextFilterSet)
-class ConfigContextFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class ConfigContextFilterForm(SavedFiltersMixin, FilterForm):
     model = ConfigContext
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag_id'),
@@ -532,7 +531,7 @@ class ConfigContextFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm
 
 
 @register_filterset(ConfigTemplateFilterSet)
-class ConfigTemplateFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class ConfigTemplateFilterForm(SavedFiltersMixin, FilterForm):
     model = ConfigTemplate
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
@@ -590,7 +589,7 @@ class LocalConfigContextFilterForm(forms.Form):
 
 
 @register_filterset(JournalEntryFilterSet)
-class JournalEntryFilterForm(FilterModifierMixin, NetBoxModelFilterSetForm):
+class JournalEntryFilterForm(NetBoxModelFilterSetForm):
     model = JournalEntry
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
@@ -626,7 +625,7 @@ class JournalEntryFilterForm(FilterModifierMixin, NetBoxModelFilterSetForm):
 
 
 @register_filterset(NotificationGroupFilterSet)
-class NotificationGroupFilterForm(FilterModifierMixin, SavedFiltersMixin, FilterForm):
+class NotificationGroupFilterForm(SavedFiltersMixin, FilterForm):
     model = NotificationGroup
     user_id = DynamicModelMultipleChoiceField(
         queryset=User.objects.all(),
