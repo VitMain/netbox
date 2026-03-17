@@ -11,7 +11,7 @@ from mptt.models import MPTTModel
 from core.choices import ObjectChangeActionChoices
 from core.querysets import ObjectChangeQuerySet
 from netbox.models.features import ChangeLoggingMixin, has_feature
-from utilities.data import shallow_compare_dict
+from utilities.data import deep_compare_dict, shallow_compare_dict
 
 __all__ = (
     'ObjectChange',
@@ -202,9 +202,11 @@ class ObjectChange(models.Model):
         elif self.action == ObjectChangeActionChoices.ACTION_DELETE:
             changed_attrs = sorted(prechange_data.keys())
         else:
-            # TODO: Support deep (recursive) comparison
-            changed_data = shallow_compare_dict(prechange_data, postchange_data)
-            changed_attrs = sorted(changed_data.keys())
+            diff_added, diff_removed = deep_compare_dict(prechange_data, postchange_data)
+            return {
+                'pre': dict(sorted(diff_removed.items())),
+                'post': dict(sorted(diff_added.items())),
+            }
 
         return {
             'pre': {
