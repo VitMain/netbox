@@ -11,7 +11,7 @@ from mptt.models import MPTTModel
 from core.choices import ObjectChangeActionChoices
 from core.querysets import ObjectChangeQuerySet
 from netbox.models.features import ChangeLoggingMixin, has_feature
-from utilities.data import deep_compare_dict, shallow_compare_dict
+from utilities.data import deep_compare_dict
 
 __all__ = (
     'ObjectChange',
