@@ -100,7 +100,6 @@ class RangeFunctionsTestCase(TestCase):
         )
 
 
-
 class GetConfigValueCITestCase(TestCase):
 
     def test_exact_match(self):

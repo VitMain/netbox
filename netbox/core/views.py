@@ -30,7 +30,7 @@ from netbox.views import generic
 from netbox.views.generic.base import BaseObjectView
 from netbox.views.generic.mixins import TableMixin
 from utilities.apps import get_installed_apps
-from utilities.data import deep_compare_dict, shallow_compare_dict
+from utilities.data import deep_compare_dict
 from utilities.forms import ConfirmationForm
 from utilities.htmx import htmx_partial
 from utilities.json import ConfigJSONEncoder
