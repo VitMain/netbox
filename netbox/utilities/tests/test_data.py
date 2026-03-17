@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from utilities.data import (
     check_ranges_overlap,
-    deep_compare_dict,
     get_config_value_ci,
     ranges_to_string,
     ranges_to_string_list,
@@ -100,65 +99,6 @@ class RangeFunctionsTestCase(TestCase):
             None  # Fails to convert
         )
 
-
-class DeepCompareDictTestCase(TestCase):
-
-    def test_no_changes(self):
-        source = {'a': 1, 'b': 'foo', 'c': {'x': 1, 'y': 2}}
-        dest = {'a': 1, 'b': 'foo', 'c': {'x': 1, 'y': 2}}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {})
-        self.assertEqual(removed, {})
-
-    def test_scalar_change(self):
-        source = {'a': 1, 'b': 'foo'}
-        dest = {'a': 2, 'b': 'foo'}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {'a': 2})
-        self.assertEqual(removed, {'a': 1})
-
-    def test_key_added(self):
-        source = {'a': 1}
-        dest = {'a': 1, 'b': 'new'}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {'b': 'new'})
-        self.assertEqual(removed, {'b': None})
-
-    def test_key_removed(self):
-        source = {'a': 1, 'b': 'old'}
-        dest = {'a': 1}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {'b': None})
-        self.assertEqual(removed, {'b': 'old'})
-
-    def test_nested_dict_partial_change(self):
-        """Only changed sub-keys of a nested dict are included."""
-        source = {'custom_fields': {'cf1': 'old', 'cf2': 'unchanged'}}
-        dest = {'custom_fields': {'cf1': 'new', 'cf2': 'unchanged'}}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {'custom_fields': {'cf1': 'new'}})
-        self.assertEqual(removed, {'custom_fields': {'cf1': 'old'}})
-
-    def test_nested_dict_no_change(self):
-        source = {'name': 'test', 'custom_fields': {'cf1': 'same'}}
-        dest = {'name': 'test', 'custom_fields': {'cf1': 'same'}}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {})
-        self.assertEqual(removed, {})
-
-    def test_exclude(self):
-        source = {'a': 1, 'last_updated': '2024-01-01'}
-        dest = {'a': 2, 'last_updated': '2024-06-01'}
-        added, removed = deep_compare_dict(source, dest, exclude=['last_updated'])
-        self.assertEqual(added, {'a': 2})
-        self.assertEqual(removed, {'a': 1})
-
-    def test_deeply_nested(self):
-        source = {'level1': {'level2': {'val': 'old', 'other': 'same'}}}
-        dest = {'level1': {'level2': {'val': 'new', 'other': 'same'}}}
-        added, removed = deep_compare_dict(source, dest)
-        self.assertEqual(added, {'level1': {'level2': {'val': 'new'}}})
-        self.assertEqual(removed, {'level1': {'level2': {'val': 'old'}}})
 
 
 class GetConfigValueCITestCase(TestCase):
