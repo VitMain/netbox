@@ -274,8 +274,8 @@ class ObjectChangeView(generic.ObjectView):
 
         if prechange_data and instance.postchange_data:
             diff_added, diff_removed = deep_compare_dict(
-                prechange_data or dict(),
-                instance.postchange_data_clean or dict(),
+                prechange_data,
+                instance.postchange_data_clean,
                 exclude=['last_updated'],
             )
         else:

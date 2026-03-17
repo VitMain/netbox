@@ -124,7 +124,7 @@
                       {% if subdiff.items %}
                         <span>{{ k }}: {</span>
                         {% for sub_k, sub_v in v.items %}
-                          <span{% if sub_k in subdiff %} class="removed"{% endif %} style="padding-left: 2em;">{{ sub_k }}: {{ sub_v|json }}</span>
+                          <span class="ps-4{% if sub_k in subdiff %} removed{% endif %}">{{ sub_k }}: {{ sub_v|json }}</span>
                         {% endfor %}
                         <span>}</span>
                       {% else %}
@@ -154,7 +154,7 @@
                           {% if subdiff.items %}
                             <span>{{ k }}: {</span>
                             {% for sub_k, sub_v in v.items %}
-                              <span{% if sub_k in subdiff %} class="added"{% endif %} style="padding-left: 2em;">{{ sub_k }}: {{ sub_v|json }}</span>
+                              <span class="ps-4{% if sub_k in subdiff %} added{% endif %}">{{ sub_k }}: {{ sub_v|json }}</span>
                             {% endfor %}
                             <span>}</span>
                           {% else %}

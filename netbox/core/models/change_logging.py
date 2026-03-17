@@ -199,20 +199,18 @@ class ObjectChange(models.Model):
         # Determine which attributes have changed
         if self.action == ObjectChangeActionChoices.ACTION_CREATE:
             changed_attrs = sorted(postchange_data.keys())
-        elif self.action == ObjectChangeActionChoices.ACTION_DELETE:
-            changed_attrs = sorted(prechange_data.keys())
-        else:
-            diff_added, diff_removed = deep_compare_dict(prechange_data, postchange_data)
             return {
-                'pre': dict(sorted(diff_removed.items())),
-                'post': dict(sorted(diff_added.items())),
+                'pre': {k: prechange_data.get(k) for k in changed_attrs},
+                'post': {k: postchange_data.get(k) for k in changed_attrs},
             }
-
+        if self.action == ObjectChangeActionChoices.ACTION_DELETE:
+            changed_attrs = sorted(prechange_data.keys())
+            return {
+                'pre': {k: prechange_data.get(k) for k in changed_attrs},
+                'post': {k: postchange_data.get(k) for k in changed_attrs},
+            }
+        diff_added, diff_removed = deep_compare_dict(prechange_data, postchange_data)
         return {
-            'pre': {
-                k: prechange_data.get(k) for k in changed_attrs
-            },
-            'post': {
-                k: postchange_data.get(k) for k in changed_attrs
-            },
+            'pre': dict(sorted(diff_removed.items())),
+            'post': dict(sorted(diff_added.items())),
         }
