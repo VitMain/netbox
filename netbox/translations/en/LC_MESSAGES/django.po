@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 05:18+0000\n"
+"POT-Creation-Date: 2026-03-18 05:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1517,7 +1517,7 @@ msgstr ""
 msgid "circuit terminations"
 msgstr ""
 
-#: netbox/circuits/models/circuits.py:360
+#: netbox/circuits/models/circuits.py:367
 msgid "A circuit termination must attach to a terminating object."
 msgstr ""
 
@@ -13781,12 +13781,12 @@ msgid "Not Connected"
 msgstr ""
 
 #: netbox/templates/dcim/device/attrs/ipaddress.html:5
-#: netbox/templates/virtualization/virtualmachine/attrs/ipaddress.html:4
+#: netbox/templates/virtualization/virtualmachine/attrs/ipaddress.html:5
 msgid "NAT for"
 msgstr ""
 
 #: netbox/templates/dcim/device/attrs/ipaddress.html:7
-#: netbox/templates/virtualization/virtualmachine/attrs/ipaddress.html:6
+#: netbox/templates/virtualization/virtualmachine/attrs/ipaddress.html:7
 msgid "NAT"
 msgstr ""
 
@@ -13794,7 +13794,7 @@ msgstr ""
 #: netbox/templates/ui/actions/copy_content.html:2
 #: netbox/templates/ui/attrs/numeric.html:9
 #: netbox/templates/ui/attrs/text.html:4
-#: netbox/templates/virtualization/virtualmachine/attrs/ipaddress.html:8
+#: netbox/templates/virtualization/virtualmachine/attrs/ipaddress.html:10
 #: netbox/utilities/templates/form_helpers/render_field.html:41
 msgid "Copy to clipboard"
 msgstr ""
