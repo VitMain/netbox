@@ -755,6 +755,10 @@ class ModuleBayTemplate(ModularComponentTemplateModel):
         blank=True,
         help_text=_('Identifier to reference when renaming installed components')
     )
+    enabled = models.BooleanField(
+        verbose_name=_('enabled'),
+        default=True,
+    )
 
     component_model = ModuleBay
 
@@ -767,6 +771,7 @@ class ModuleBayTemplate(ModularComponentTemplateModel):
             name=self.resolve_name(kwargs.get('module'), kwargs.get('device')),
             label=self.resolve_label(kwargs.get('module'), kwargs.get('device')),
             position=self.position,
+            enabled=self.enabled,
             **kwargs
         )
     instantiate.do_not_call_in_templates = True
@@ -776,6 +781,7 @@ class ModuleBayTemplate(ModularComponentTemplateModel):
             'name': self.name,
             'label': self.label,
             'position': self.position,
+            'enabled': self.enabled,
             'description': self.description,
         }
 
@@ -784,6 +790,11 @@ class DeviceBayTemplate(ComponentTemplateModel):
     """
     A template for a DeviceBay to be created for a new parent Device.
     """
+    enabled = models.BooleanField(
+        verbose_name=_('enabled'),
+        default=True,
+    )
+
     component_model = DeviceBay
 
     class Meta(ComponentTemplateModel.Meta):
@@ -794,7 +805,8 @@ class DeviceBayTemplate(ComponentTemplateModel):
         return self.component_model(
             device=device,
             name=self.name,
-            label=self.label
+            label=self.label,
+            enabled=self.enabled,
         )
     instantiate.do_not_call_in_templates = True
 
@@ -810,6 +822,7 @@ class DeviceBayTemplate(ComponentTemplateModel):
         return {
             'name': self.name,
             'label': self.label,
+            'enabled': self.enabled,
             'description': self.description,
         }
 
