@@ -807,8 +807,8 @@ class Interface(
         verbose_name=_('wireless channel')
     )
     rf_channel_frequency = models.DecimalField(
-        max_digits=7,
-        decimal_places=2,
+        max_digits=8,
+        decimal_places=3,
         blank=True,
         null=True,
         verbose_name=_('channel frequency (MHz)'),
