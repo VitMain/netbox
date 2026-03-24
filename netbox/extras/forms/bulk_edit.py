@@ -88,12 +88,19 @@ class CustomFieldBulkEditForm(ChangelogMessageMixin, OwnerMixin, BulkEditForm):
         label=_('Validation regex'),
         required=False
     )
+    validation_schema = forms.JSONField(
+        label=_('Validation schema'),
+        required=False
+    )
     comments = CommentField()
 
     fieldsets = (
         FieldSet('group_name', 'description', 'weight', 'required', 'unique', 'choice_set', name=_('Attributes')),
         FieldSet('ui_visible', 'ui_editable', 'is_cloneable', name=_('Behavior')),
-        FieldSet('validation_minimum', 'validation_maximum', 'validation_regex', name=_('Validation')),
+        FieldSet(
+            'validation_minimum', 'validation_maximum', 'validation_regex', 'validation_schema',
+            name=_('Validation')
+        ),
     )
     nullable_fields = ('group_name', 'description', 'choice_set')
 
