@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 05:28+0000\n"
+"POT-Creation-Date: 2026-03-24 05:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -322,9 +322,9 @@ msgstr ""
 #: netbox/circuits/forms/filtersets.py:232
 #: netbox/circuits/forms/filtersets.py:259
 #: netbox/circuits/forms/filtersets.py:306
-#: netbox/circuits/forms/model_forms.py:139
-#: netbox/circuits/forms/model_forms.py:162
-#: netbox/circuits/forms/model_forms.py:260
+#: netbox/circuits/forms/model_forms.py:143
+#: netbox/circuits/forms/model_forms.py:166
+#: netbox/circuits/forms/model_forms.py:264
 #: netbox/circuits/tables/circuits.py:103
 #: netbox/circuits/tables/circuits.py:199 netbox/dcim/forms/connections.py:83
 #: netbox/templates/circuits/circuit.html:15
@@ -387,8 +387,8 @@ msgstr ""
 #: netbox/circuits/forms/bulk_import.py:248
 #: netbox/circuits/forms/filtersets.py:384
 #: netbox/circuits/forms/filtersets.py:390
-#: netbox/circuits/forms/model_forms.py:338
-#: netbox/circuits/forms/model_forms.py:353
+#: netbox/circuits/forms/model_forms.py:342
+#: netbox/circuits/forms/model_forms.py:357
 #: netbox/circuits/tables/virtual_circuits.py:84
 #: netbox/templates/circuits/virtualcircuit.html:20
 #: netbox/templates/circuits/virtualcircuittermination.html:38
@@ -429,8 +429,8 @@ msgstr ""
 #: netbox/circuits/forms/filtersets.py:385
 #: netbox/circuits/forms/filtersets.py:408
 #: netbox/circuits/forms/model_forms.py:65
-#: netbox/circuits/forms/model_forms.py:80
-#: netbox/circuits/forms/model_forms.py:111
+#: netbox/circuits/forms/model_forms.py:84
+#: netbox/circuits/forms/model_forms.py:115
 #: netbox/circuits/tables/circuits.py:56 netbox/circuits/tables/circuits.py:107
 #: netbox/circuits/tables/circuits.py:192
 #: netbox/circuits/tables/providers.py:67
@@ -548,8 +548,8 @@ msgstr ""
 #: netbox/circuits/forms/bulk_import.py:213
 #: netbox/circuits/forms/filtersets.py:159
 #: netbox/circuits/forms/filtersets.py:357
-#: netbox/circuits/forms/model_forms.py:117
-#: netbox/circuits/forms/model_forms.py:326
+#: netbox/circuits/forms/model_forms.py:121
+#: netbox/circuits/forms/model_forms.py:330
 #: netbox/templates/circuits/virtualcircuit.html:31
 #: netbox/templates/circuits/virtualcircuittermination.html:34
 msgid "Provider account"
@@ -715,7 +715,7 @@ msgstr ""
 
 #: netbox/circuits/forms/bulk_edit.py:159
 #: netbox/circuits/forms/filtersets.py:217
-#: netbox/circuits/forms/model_forms.py:136
+#: netbox/circuits/forms/model_forms.py:140
 #: netbox/templates/circuits/circuit.html:38
 #: netbox/wireless/forms/bulk_edit.py:121
 #: netbox/wireless/forms/filtersets.py:137
@@ -735,7 +735,7 @@ msgid "Distance unit"
 msgstr ""
 
 #: netbox/circuits/forms/bulk_edit.py:173
-#: netbox/circuits/forms/model_forms.py:141
+#: netbox/circuits/forms/model_forms.py:145
 msgid "Service Parameters"
 msgstr ""
 
@@ -784,9 +784,9 @@ msgstr ""
 
 #: netbox/circuits/forms/bulk_edit.py:175
 #: netbox/circuits/forms/bulk_edit.py:317
-#: netbox/circuits/forms/model_forms.py:142
-#: netbox/circuits/forms/model_forms.py:238
-#: netbox/circuits/forms/model_forms.py:340
+#: netbox/circuits/forms/model_forms.py:146
+#: netbox/circuits/forms/model_forms.py:242
+#: netbox/circuits/forms/model_forms.py:344
 #: netbox/dcim/forms/model_forms.py:157 netbox/dcim/forms/model_forms.py:198
 #: netbox/dcim/forms/model_forms.py:285 netbox/dcim/forms/model_forms.py:342
 #: netbox/dcim/forms/model_forms.py:883 netbox/dcim/forms/model_forms.py:1897
@@ -894,7 +894,7 @@ msgid "Description"
 msgstr ""
 
 #: netbox/circuits/forms/bulk_edit.py:192
-#: netbox/circuits/forms/model_forms.py:170
+#: netbox/circuits/forms/model_forms.py:174
 #: netbox/dcim/forms/bulk_import.py:1419 netbox/dcim/forms/bulk_import.py:1444
 msgid "Termination type"
 msgstr ""
@@ -902,7 +902,7 @@ msgstr ""
 #: netbox/circuits/forms/bulk_edit.py:195
 #: netbox/circuits/forms/bulk_import.py:133
 #: netbox/circuits/forms/filtersets.py:234
-#: netbox/circuits/forms/model_forms.py:173
+#: netbox/circuits/forms/model_forms.py:177
 #: netbox/templates/circuits/inc/circuit_termination.html:6
 #: netbox/templates/dcim/cable.html:72 netbox/templates/dcim/cable.html:76
 #: netbox/vpn/forms/bulk_import.py:99 netbox/vpn/forms/filtersets.py:87
@@ -926,7 +926,7 @@ msgid "Mark connected"
 msgstr ""
 
 #: netbox/circuits/forms/bulk_edit.py:220
-#: netbox/circuits/forms/model_forms.py:184
+#: netbox/circuits/forms/model_forms.py:188
 #: netbox/templates/circuits/inc/circuit_termination_fields.html:55
 #: netbox/templates/dcim/frontport.html:118
 #: netbox/templates/dcim/interface.html:268
@@ -935,7 +935,7 @@ msgid "Circuit Termination"
 msgstr ""
 
 #: netbox/circuits/forms/bulk_edit.py:222
-#: netbox/circuits/forms/model_forms.py:186
+#: netbox/circuits/forms/model_forms.py:190
 msgid "Termination Details"
 msgstr ""
 
@@ -959,7 +959,7 @@ msgstr ""
 #: netbox/circuits/forms/filtersets.py:272
 #: netbox/circuits/forms/filtersets.py:365
 #: netbox/circuits/forms/filtersets.py:403
-#: netbox/circuits/forms/model_forms.py:321
+#: netbox/circuits/forms/model_forms.py:325
 #: netbox/circuits/tables/virtual_circuits.py:51
 #: netbox/circuits/tables/virtual_circuits.py:95
 msgid "Provider network"
@@ -968,7 +968,7 @@ msgstr ""
 #: netbox/circuits/forms/bulk_edit.py:326
 #: netbox/circuits/forms/bulk_import.py:253
 #: netbox/circuits/forms/filtersets.py:393
-#: netbox/circuits/forms/model_forms.py:360 netbox/dcim/forms/bulk_edit.py:351
+#: netbox/circuits/forms/model_forms.py:364 netbox/dcim/forms/bulk_edit.py:351
 #: netbox/dcim/forms/bulk_edit.py:1245 netbox/dcim/forms/bulk_edit.py:1681
 #: netbox/dcim/forms/bulk_import.py:270 netbox/dcim/forms/bulk_import.py:1199
 #: netbox/dcim/forms/filtersets.py:404 netbox/dcim/forms/filtersets.py:879
@@ -1089,7 +1089,7 @@ msgid "Operational role"
 msgstr ""
 
 #: netbox/circuits/forms/bulk_import.py:258
-#: netbox/circuits/forms/model_forms.py:363
+#: netbox/circuits/forms/model_forms.py:367
 #: netbox/circuits/tables/virtual_circuits.py:108
 #: netbox/dcim/forms/bulk_import.py:1330 netbox/dcim/forms/model_forms.py:1308
 #: netbox/dcim/forms/model_forms.py:1577 netbox/dcim/forms/model_forms.py:1758
@@ -1308,7 +1308,7 @@ msgid "Assignment"
 msgstr ""
 
 #: netbox/circuits/forms/filtersets.py:311
-#: netbox/circuits/forms/model_forms.py:250
+#: netbox/circuits/forms/model_forms.py:254
 #: netbox/circuits/tables/circuits.py:187 netbox/dcim/forms/bulk_edit.py:118
 #: netbox/dcim/forms/bulk_import.py:115 netbox/dcim/forms/model_forms.py:135
 #: netbox/dcim/tables/sites.py:69 netbox/extras/forms/filtersets.py:600
@@ -1344,16 +1344,16 @@ msgstr ""
 msgid "Group"
 msgstr ""
 
-#: netbox/circuits/forms/model_forms.py:237
+#: netbox/circuits/forms/model_forms.py:241
 #: netbox/templates/circuits/circuitgroup.html:25
 msgid "Circuit Group"
 msgstr ""
 
-#: netbox/circuits/forms/model_forms.py:257
+#: netbox/circuits/forms/model_forms.py:261
 msgid "Circuit type"
 msgstr ""
 
-#: netbox/circuits/forms/model_forms.py:268
+#: netbox/circuits/forms/model_forms.py:272
 msgid "Group Assignment"
 msgstr ""
 
