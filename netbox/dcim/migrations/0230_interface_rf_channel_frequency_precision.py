@@ -4,7 +4,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dcim', '0228_cable_bundle'),
+        ('dcim', '0229_devicebay_modulebay_enabled'),
     ]
 
     operations = [
