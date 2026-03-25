@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.db import router, transaction
-from django.db.models import Prefetch
+from django.db.models import Func, IntegerField, Prefetch
 from django.forms import ModelMultipleChoiceField, MultipleHiddenInput, modelformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -1227,7 +1227,9 @@ class RackBulkDeleteView(generic.BulkDeleteView):
 
 @register_model_view(RackReservation, 'list', path='', detail=False)
 class RackReservationListView(generic.ObjectListView):
-    queryset = RackReservation.objects.all()
+    queryset = RackReservation.objects.annotate(
+        unit_count=Func('units', function='CARDINALITY', output_field=IntegerField())
+    )
     filterset = filtersets.RackReservationFilterSet
     filterset_form = forms.RackReservationFilterForm
     table = tables.RackReservationTable
@@ -1236,7 +1238,9 @@ class RackReservationListView(generic.ObjectListView):
 
 @register_model_view(RackReservation)
 class RackReservationView(generic.ObjectView):
-    queryset = RackReservation.objects.all()
+    queryset = RackReservation.objects.annotate(
+        unit_count=Func('units', function='CARDINALITY', output_field=IntegerField())
+    )
     layout = layout.SimpleLayout(
         left_panels=[
             panels.RackPanel(accessor='object.rack', only=['region', 'site', 'location', 'group', 'name']),
@@ -1289,7 +1293,9 @@ class RackReservationImportView(generic.BulkImportView):
 
 @register_model_view(RackReservation, 'bulk_edit', path='edit', detail=False)
 class RackReservationBulkEditView(generic.BulkEditView):
-    queryset = RackReservation.objects.all()
+    queryset = RackReservation.objects.annotate(
+        unit_count=Func('units', function='CARDINALITY', output_field=IntegerField())
+    )
     filterset = filtersets.RackReservationFilterSet
     table = tables.RackReservationTable
     form = forms.RackReservationBulkEditForm
@@ -1297,7 +1303,9 @@ class RackReservationBulkEditView(generic.BulkEditView):
 
 @register_model_view(RackReservation, 'bulk_delete', path='delete', detail=False)
 class RackReservationBulkDeleteView(generic.BulkDeleteView):
-    queryset = RackReservation.objects.all()
+    queryset = RackReservation.objects.annotate(
+        unit_count=Func('units', function='CARDINALITY', output_field=IntegerField())
+    )
     filterset = filtersets.RackReservationFilterSet
     table = tables.RackReservationTable
 
