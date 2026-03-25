@@ -1465,6 +1465,29 @@ class ScriptModuleTest(APITestCase):
         response = self.client.post(self.url_list, {}, format='json', **self.header)
         self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
 
+    def test_update_script_module_upload(self):
+        self.add_permissions('extras.change_scriptmodule', 'core.change_managedfile')
+        module = self.modules[0]
+        url = reverse('extras-api:scriptmodule-detail', kwargs={'pk': module.pk})
+        script_content = b"from extras.scripts import Script\nclass UpdatedScript(Script):\n    pass\n"
+        upload_file = SimpleUploadedFile('updated_script.py', script_content, content_type='text/plain')
+
+        mock_storage = MagicMock()
+
+        with patch('extras.api.serializers_.scripts.storages') as mock_storages:
+            mock_storages.create_storage.return_value = mock_storage
+            mock_storages.backends = {'scripts': {}}
+            response = self.client.patch(
+                url,
+                {'upload_file': upload_file},
+                format='multipart',
+                **self.header,
+            )
+
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(response.data['file_path'], 'updated_script.py')
+        mock_storage.save.assert_called_once()
+
     def test_delete_script_module(self):
         self.add_permissions('extras.delete_scriptmodule', 'core.delete_managedfile')
         module = self.modules[0]

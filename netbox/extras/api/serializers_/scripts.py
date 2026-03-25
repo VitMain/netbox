@@ -53,20 +53,21 @@ class ScriptModuleSerializer(ValidatedModelSerializer):
 
         return data
 
+    def _save_upload(self, upload_file, validated_data):
+        storage = storages.create_storage(storages.backends["scripts"])
+        storage.save(upload_file.name, upload_file)
+        validated_data['file_path'] = upload_file.name
+
     def create(self, validated_data):
         upload_file = validated_data.pop('upload_file', None)
         if upload_file:
-            storage = storages.create_storage(storages.backends["scripts"])
-            storage.save(upload_file.name, upload_file)
-            validated_data['file_path'] = upload_file.name
+            self._save_upload(upload_file, validated_data)
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
         upload_file = validated_data.pop('upload_file', None)
         if upload_file:
-            storage = storages.create_storage(storages.backends["scripts"])
-            storage.save(upload_file.name, upload_file)
-            validated_data['file_path'] = upload_file.name
+            self._save_upload(upload_file, validated_data)
         return super().update(instance, validated_data)
 
 
