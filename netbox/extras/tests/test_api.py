@@ -1,6 +1,5 @@
 import datetime
 import hashlib
-from io import BytesIO
 from unittest.mock import MagicMock, patch
 
 from django.contrib.contenttypes.models import ContentType
