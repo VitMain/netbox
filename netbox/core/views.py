@@ -187,11 +187,13 @@ class DataFileListView(generic.ObjectListView):
 class DataFileView(generic.ObjectView):
     queryset = DataFile.objects.all()
     actions = (DeleteObject,)
-    layout = layout.SimpleLayout(
-        left_panels=[
-            panels.DataFilePanel(),
-            panels.DataFileContentPanel(),
-        ],
+    layout = layout.Layout(
+        layout.Row(
+            layout.Column(
+                panels.DataFilePanel(),
+                panels.DataFileContentPanel(),
+            ),
+        ),
     )
 
 
