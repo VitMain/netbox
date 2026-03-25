@@ -261,6 +261,16 @@ class ConfigTemplateViewSet(SyncedDataMixin, ConfigTemplateRenderMixin, NetBoxMo
 
 
 #
+# Script modules
+#
+
+class ScriptModuleViewSet(SyncedDataMixin, NetBoxModelViewSet):
+    queryset = ScriptModule.objects.all()
+    serializer_class = serializers.ScriptModuleSerializer
+    filterset_class = filtersets.ScriptModuleFilterSet
+
+
+#
 # Scripts
 #
 

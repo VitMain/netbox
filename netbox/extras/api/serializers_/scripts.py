@@ -1,17 +1,73 @@
+from django.core.files.storage import storages
 from django.utils.translation import gettext as _
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from core.api.serializers_.data import DataFileSerializer, DataSourceSerializer
 from core.api.serializers_.jobs import JobSerializer
-from extras.models import Script
+from core.choices import ManagedFileRootPathChoices
+from extras.models import Script, ScriptModule
 from netbox.api.serializers import ValidatedModelSerializer
 from utilities.datetime import local_now
 
 __all__ = (
     'ScriptDetailSerializer',
     'ScriptInputSerializer',
+    'ScriptModuleSerializer',
     'ScriptSerializer',
 )
+
+
+class ScriptModuleSerializer(ValidatedModelSerializer):
+    data_source = DataSourceSerializer(nested=True, required=False, allow_null=True)
+    data_file = DataFileSerializer(nested=True, required=False, allow_null=True)
+    upload_file = serializers.FileField(write_only=True, required=False, allow_null=True)
+    file_path = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = ScriptModule
+        fields = [
+            'id', 'url', 'display', 'file_path', 'upload_file',
+            'data_source', 'data_file', 'auto_sync_enabled',
+            'created', 'last_updated',
+        ]
+        brief_fields = ('id', 'url', 'display')
+
+    def validate(self, data):
+        upload_file = data.pop('upload_file', None)
+        # ScriptModule.save() sets file_root; inject it here so full_clean() succeeds
+        data['file_root'] = ManagedFileRootPathChoices.SCRIPTS
+        data = super().validate(data)
+        data.pop('file_root', None)
+        if upload_file is not None:
+            data['upload_file'] = upload_file
+
+        if upload_file and data.get('data_file'):
+            raise serializers.ValidationError(
+                _("Cannot upload a file and sync from an existing data file.")
+            )
+        if self.instance is None and not upload_file and not data.get('data_file'):
+            raise serializers.ValidationError(
+                _("Must upload a file or select a data file to sync.")
+            )
+
+        return data
+
+    def create(self, validated_data):
+        upload_file = validated_data.pop('upload_file', None)
+        if upload_file:
+            storage = storages.create_storage(storages.backends["scripts"])
+            storage.save(upload_file.name, upload_file)
+            validated_data['file_path'] = upload_file.name
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        upload_file = validated_data.pop('upload_file', None)
+        if upload_file:
+            storage = storages.create_storage(storages.backends["scripts"])
+            storage.save(upload_file.name, upload_file)
+            validated_data['file_path'] = upload_file.name
+        return super().update(instance, validated_data)
 
 
 class ScriptSerializer(ValidatedModelSerializer):
