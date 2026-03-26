@@ -14,10 +14,11 @@ from netbox.forms import NetBoxModelForm, OrganizationalModelForm, PrimaryModelF
 from netbox.forms.mixins import OwnerMixin
 from tenancy.forms import TenancyForm
 from utilities.forms import ConfirmationForm
-from utilities.forms.fields import DynamicModelChoiceField, DynamicModelMultipleChoiceField, JSONField
+from utilities.forms.fields import DynamicModelChoiceField, DynamicModelMultipleChoiceField, JSONField, SlugField
 from utilities.forms.rendering import FieldSet
 from utilities.forms.widgets import HTMXSelect
-from virtualization.models import *
+
+from ..models import *
 
 __all__ = (
     'ClusterAddDevicesForm',
@@ -28,6 +29,7 @@ __all__ = (
     'VMInterfaceForm',
     'VirtualDiskForm',
     'VirtualMachineForm',
+    'VirtualMachineTypeForm',
 )
 
 
@@ -167,7 +169,35 @@ class ClusterRemoveDevicesForm(ConfirmationForm):
     )
 
 
+class VirtualMachineTypeForm(PrimaryModelForm):
+    slug = SlugField()
+    default_platform = DynamicModelChoiceField(
+        label=_('Default platform'),
+        queryset=Platform.objects.all(),
+        required=False,
+        selector=True,
+    )
+
+    fieldsets = (
+        FieldSet('name', 'slug', 'description', 'tags', name=_('Virtual Machine Type')),
+        FieldSet('default_platform', 'default_vcpus', 'default_memory', name=_('Defaults')),
+    )
+
+    class Meta:
+        model = VirtualMachineType
+        fields = (
+            'name', 'slug', 'default_platform', 'default_vcpus', 'default_memory', 'description',
+            'owner', 'comments', 'tags',
+        )
+
+
 class VirtualMachineForm(TenancyForm, PrimaryModelForm):
+    virtual_machine_type = DynamicModelChoiceField(
+        label=_('Type'),
+        queryset=VirtualMachineType.objects.all(),
+        required=False,
+        selector=True,
+    )
     site = DynamicModelChoiceField(
         label=_('Site'),
         queryset=Site.objects.all(),
@@ -226,7 +256,10 @@ class VirtualMachineForm(TenancyForm, PrimaryModelForm):
     )
 
     fieldsets = (
-        FieldSet('name', 'role', 'status', 'start_on_boot', 'description', 'serial', 'tags', name=_('Virtual Machine')),
+        FieldSet(
+            'name', 'virtual_machine_type', 'role', 'status', 'start_on_boot', 'description', 'serial', 'tags',
+            name=_('Virtual Machine')
+        ),
         FieldSet('site', 'cluster', 'device', name=_('Placement')),
         FieldSet('tenant_group', 'tenant', name=_('Tenancy')),
         FieldSet('platform', 'primary_ip4', 'primary_ip6', 'config_template', name=_('Management')),
@@ -237,9 +270,9 @@ class VirtualMachineForm(TenancyForm, PrimaryModelForm):
     class Meta:
         model = VirtualMachine
         fields = [
-            'name', 'status', 'start_on_boot', 'site', 'cluster', 'device', 'role', 'tenant_group', 'tenant',
-            'platform', 'primary_ip4', 'primary_ip6', 'vcpus', 'memory', 'disk', 'description', 'serial', 'owner',
-            'comments', 'tags', 'local_context_data', 'config_template',
+            'name', 'virtual_machine_type', 'role', 'status', 'start_on_boot', 'site', 'cluster', 'device',
+            'platform', 'primary_ip4', 'primary_ip6', 'vcpus', 'memory', 'disk', 'description', 'serial',
+            'tenant_group', 'tenant', 'owner', 'comments', 'tags', 'local_context_data', 'config_template',
         ]
 
     def __init__(self, *args, **kwargs):

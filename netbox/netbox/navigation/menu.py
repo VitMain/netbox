@@ -271,6 +271,12 @@ VIRTUALIZATION_MENU = Menu(
             ),
         ),
         MenuGroup(
+            label=_('Virtual Machine Types'),
+            items=(
+                get_model_item('virtualization', 'virtualmachinetype', _('Virtual Machine Types')),
+            ),
+        ),
+        MenuGroup(
             label=_('Clusters'),
             items=(
                 get_model_item('virtualization', 'cluster', _('Clusters')),
