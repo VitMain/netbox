@@ -1137,8 +1137,18 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
             if form.is_valid():
                 logger.debug("Form validation was successful")
 
+                # If indicated, defer this request to a background job & redirect the user
+                if form.cleaned_data.get('background_job'):
+                    job_name = _('Bulk add {count} {object_type}').format(
+                        count=len(form.cleaned_data['pk']),
+                        object_type=model_name,
+                    )
+                    if process_request_as_job(self.__class__, request, name=job_name):
+                        return redirect(self.get_return_url(request))
+
                 new_components = []
                 data = deepcopy(form.cleaned_data)
+                data.pop('background_job', None)
                 replication_data = {
                     field: data.pop(field) for field in form.replication_fields
                 }
@@ -1189,6 +1199,12 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
                         parent_model_name
                     )
                     logger.info(msg)
+
+                    # Handle background job
+                    if is_background_request(request):
+                        request.job.logger.info(msg)
+                        return None
+
                     messages.success(request, msg)
 
                     return redirect(self.get_return_url(request))
