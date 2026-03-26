@@ -1189,7 +1189,7 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
                 except IntegrityError:
                     clear_events.send(sender=self)
                     if is_background_request(request):
-                        request.job.logger.error("An integrity error occurred while creating components")
+                        request.job.logger.error(_("An integrity error occurred while creating components"))
                         raise JobFailed
 
                 except (AbortRequest, PermissionsViolation) as e:
