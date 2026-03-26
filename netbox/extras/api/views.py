@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 from django_rq.queues import get_connection
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
@@ -261,20 +262,11 @@ class ConfigTemplateViewSet(SyncedDataMixin, ConfigTemplateRenderMixin, NetBoxMo
 
 
 #
-# Script modules
-#
-
-class ScriptModuleViewSet(SyncedDataMixin, NetBoxModelViewSet):
-    queryset = ScriptModule.objects.all()
-    serializer_class = serializers.ScriptModuleSerializer
-    filterset_class = filtersets.ScriptModuleFilterSet
-
-
-#
 # Scripts
 #
 
 @extend_schema_view(
+    create=extend_schema(request=serializers.ScriptModuleSerializer),
     update=extend_schema(request=serializers.ScriptInputSerializer),
     partial_update=extend_schema(request=serializers.ScriptInputSerializer),
 )
@@ -291,9 +283,27 @@ class ScriptViewSet(ModelViewSet):
         super().initial(request, *args, **kwargs)
 
         # Restrict the view's QuerySet to allow only the permitted objects
-        if request.user.is_authenticated:
+        if request.user.is_authenticated and self.action != 'create':
             action = 'run' if request.method == 'POST' else 'view'
             self.queryset = self.queryset.restrict(request.user, action)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Upload a new Script module (.py file) and return the created ScriptModule.
+        """
+        if not request.user.has_perm('extras.add_scriptmodule'):
+            raise PermissionDenied(_("This user does not have permission to add script modules."))
+        if not request.user.has_perm('core.add_managedfile'):
+            raise PermissionDenied(_("This user does not have permission to add managed files."))
+
+        serializer = serializers.ScriptModuleSerializer(
+            data=request.data,
+            context={'request': request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def _get_script(self, pk):
         # If pk is numeric, retrieve script by ID

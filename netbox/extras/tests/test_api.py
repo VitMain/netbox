@@ -1389,43 +1389,11 @@ class NotificationTest(APIViewTestCases.APIViewTestCase):
         ]
 
 
-class ScriptModuleTest(APITestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        # Use bulk_create to bypass ScriptModule.save() which tries to sync classes from disk
-        cls.modules = ScriptModule.objects.bulk_create((
-            ScriptModule(
-                file_root=ManagedFileRootPathChoices.SCRIPTS,
-                file_path='module1.py',
-            ),
-            ScriptModule(
-                file_root=ManagedFileRootPathChoices.SCRIPTS,
-                file_path='module2.py',
-            ),
-            ScriptModule(
-                file_root=ManagedFileRootPathChoices.SCRIPTS,
-                file_path='module3.py',
-            ),
-        ))
+class ScriptUploadTest(APITestCase):
 
     def setUp(self):
         super().setUp()
-        self.url_list = reverse('extras-api:scriptmodule-list')
-
-    @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
-    def test_list_script_modules(self):
-        response = self.client.get(self.url_list, **self.header)
-        self.assertHttpStatus(response, status.HTTP_200_OK)
-        self.assertEqual(response.data['count'], 3)
-
-    @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
-    def test_get_script_module(self):
-        module = self.modules[0]
-        url = reverse('extras-api:scriptmodule-detail', kwargs={'pk': module.pk})
-        response = self.client.get(url, **self.header)
-        self.assertHttpStatus(response, status.HTTP_200_OK)
-        self.assertEqual(response.data['file_path'], module.file_path)
+        self.url_list = reverse('extras-api:script-list')
 
     def test_upload_script_module_without_permission(self):
         script_content = b"from extras.scripts import Script\nclass TestScript(Script):\n    pass\n"
@@ -1439,13 +1407,11 @@ class ScriptModuleTest(APITestCase):
         self.assertHttpStatus(response, status.HTTP_403_FORBIDDEN)
 
     def test_upload_script_module(self):
-        # ScriptModule is a proxy of core.ManagedFile; both proxy and concrete model permissions required.
+        # ScriptModule is a proxy of core.ManagedFile; both permissions required.
         self.add_permissions('extras.add_scriptmodule', 'core.add_managedfile')
         script_content = b"from extras.scripts import Script\nclass TestScript(Script):\n    pass\n"
         upload_file = SimpleUploadedFile('test_upload.py', script_content, content_type='text/plain')
-
         mock_storage = MagicMock()
-
         with patch('extras.api.serializers_.scripts.storages') as mock_storages:
             mock_storages.create_storage.return_value = mock_storage
             mock_storages.backends = {'scripts': {}}
@@ -1455,7 +1421,6 @@ class ScriptModuleTest(APITestCase):
                 format='multipart',
                 **self.header,
             )
-
         self.assertHttpStatus(response, status.HTTP_201_CREATED)
         self.assertEqual(response.data['file_path'], 'test_upload.py')
         mock_storage.save.assert_called_once()
@@ -1464,39 +1429,3 @@ class ScriptModuleTest(APITestCase):
         self.add_permissions('extras.add_scriptmodule', 'core.add_managedfile')
         response = self.client.post(self.url_list, {}, format='json', **self.header)
         self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
-
-    def test_update_script_module_upload(self):
-        self.add_permissions('extras.change_scriptmodule', 'core.change_managedfile')
-        module = self.modules[0]
-        url = reverse('extras-api:scriptmodule-detail', kwargs={'pk': module.pk})
-        script_content = b"from extras.scripts import Script\nclass UpdatedScript(Script):\n    pass\n"
-        upload_file = SimpleUploadedFile('updated_script.py', script_content, content_type='text/plain')
-
-        mock_storage = MagicMock()
-
-        with patch('extras.api.serializers_.scripts.storages') as mock_storages:
-            mock_storages.create_storage.return_value = mock_storage
-            mock_storages.backends = {'scripts': {}}
-            response = self.client.patch(
-                url,
-                {'upload_file': upload_file},
-                format='multipart',
-                **self.header,
-            )
-
-        self.assertHttpStatus(response, status.HTTP_200_OK)
-        self.assertEqual(response.data['file_path'], 'updated_script.py')
-        mock_storage.save.assert_called_once()
-
-    def test_delete_script_module(self):
-        self.add_permissions('extras.delete_scriptmodule', 'core.delete_managedfile')
-        module = self.modules[0]
-        url = reverse('extras-api:scriptmodule-detail', kwargs={'pk': module.pk})
-
-        mock_storage = MagicMock()
-
-        with patch.object(ScriptModule, 'storage', new_callable=lambda: property(lambda self: mock_storage)):
-            response = self.client.delete(url, **self.header)
-
-        self.assertHttpStatus(response, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(ScriptModule.objects.filter(pk=module.pk).exists())
