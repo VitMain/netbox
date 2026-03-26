@@ -425,6 +425,11 @@ class TagPanel(panels.ObjectAttributesPanel):
     description = attrs.TextAttr('description')
     color = attrs.ColorAttr('color')
     weight = attrs.NumericAttr('weight')
+    tagged_items = attrs.TemplatedAttr(
+        'extras_taggeditem_items',
+        label=_('Tagged Items'),
+        template_name='extras/tag/attrs/tagged_item_count.html',
+    )
 
 
 class TagObjectTypesPanel(panels.ObjectPanel):
