@@ -58,8 +58,7 @@ Context:
             <h2 class="card-header">{{ model_name|title }} {% trans "to Add" %}</h2>
             <div class="card-body">
               {% for field in form.visible_fields %}
-                {% if form.meta_fields and field.name in form.meta_fields %}
-                {% else %}
+                {% if not form.meta_fields or field.name not in form.meta_fields %}
                   {% render_field field %}
                 {% endif %}
               {% endfor %}
