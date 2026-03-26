@@ -2,15 +2,58 @@ from django.contrib.contenttypes.models import ContentType
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
-from netbox.ui import actions, panels
+from netbox.ui import actions, attrs, panels
+from netbox.ui.actions import CopyContent
 from utilities.data import resolve_attr_path
 
 __all__ = (
+    'ConfigContextAssignmentPanel',
+    'ConfigContextPanel',
+    'ConfigContextProfilePanel',
+    'ConfigContextProfileSchemaPanel',
+    'ConfigTemplatePanel',
+    'CustomFieldBehaviorPanel',
+    'CustomFieldChoiceSetChoicesPanel',
+    'CustomFieldChoiceSetPanel',
+    'CustomFieldObjectTypesPanel',
+    'CustomFieldPanel',
+    'CustomFieldRelatedObjectsPanel',
+    'CustomFieldValidationPanel',
     'CustomFieldsPanel',
+    'CustomLinkPanel',
+    'EventRuleActionPanel',
+    'EventRuleEventTypesPanel',
+    'EventRulePanel',
+    'ExportTemplatePanel',
+    'ImageAttachmentFilePanel',
+    'ImageAttachmentImagePanel',
+    'ImageAttachmentPanel',
     'ImageAttachmentsPanel',
+    'JournalEntryPanel',
+    'NotificationGroupGroupsPanel',
+    'NotificationGroupPanel',
+    'NotificationGroupUsersPanel',
+    'ObjectTypesPanel',
+    'SavedFilterObjectTypesPanel',
+    'SavedFilterPanel',
+    'SyncCodePanel',
+    'TableConfigColumnsPanel',
+    'TableConfigOrderingPanel',
+    'TableConfigPanel',
+    'TagItemTypesPanel',
+    'TagObjectTypesPanel',
+    'TagPanel',
     'TagsPanel',
+    'TextCodePanel',
+    'WebhookHTTPPanel',
+    'WebhookPanel',
+    'WebhookSSLPanel',
 )
 
+
+#
+# Generic panels
+#
 
 class CustomFieldsPanel(panels.ObjectPanel):
     """
@@ -73,3 +116,426 @@ class TagsPanel(panels.ObjectPanel):
             **super().get_context(context),
             'object': resolve_attr_path(context, self.accessor),
         }
+
+
+class ObjectTypesPanel(panels.ObjectPanel):
+    """
+    A panel listing the object types assigned to the object.
+    """
+    template_name = 'extras/panels/object_types.html'
+    title = _('Object Types')
+
+
+class TextCodePanel(panels.ObjectPanel):
+    """
+    A panel displaying a text field as a pre-formatted code block.
+    """
+    template_name = 'extras/panels/text_code.html'
+
+    def __init__(self, field_name, **kwargs):
+        super().__init__(**kwargs)
+        self.field_name = field_name
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'value': getattr(context.get('object'), self.field_name, None),
+        }
+
+
+class SyncCodePanel(panels.ObjectPanel):
+    """
+    A panel displaying a text field with a sync warning included.
+    """
+    template_name = 'extras/panels/sync_code.html'
+
+    def __init__(self, field_name, **kwargs):
+        super().__init__(**kwargs)
+        self.field_name = field_name
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'value': getattr(context.get('object'), self.field_name, None),
+        }
+
+
+#
+# CustomField panels
+#
+
+class CustomFieldPanel(panels.ObjectAttributesPanel):
+    title = _('Custom Field')
+    name = attrs.TextAttr('name')
+    type = attrs.TemplatedAttr('type', label=_('Type'), template_name='extras/customfield/attrs/type.html')
+    label = attrs.TextAttr('label')
+    group_name = attrs.TextAttr('group_name', label=_('Group Name'))
+    description = attrs.TextAttr('description')
+    required = attrs.BooleanAttr('required')
+    unique = attrs.BooleanAttr('unique', label=_('Must be Unique'))
+    is_cloneable = attrs.BooleanAttr('is_cloneable', label=_('Cloneable'))
+    choice_set = attrs.TemplatedAttr(
+        'choice_set',
+        label=_('Choice Set'),
+        template_name='extras/customfield/attrs/choice_set.html',
+    )
+    default = attrs.TextAttr('default', label=_('Default Value'))
+    related_object_filter = attrs.TemplatedAttr(
+        'related_object_filter',
+        label=_('Related object filter'),
+        template_name='extras/customfield/attrs/related_object_filter.html',
+    )
+
+
+class CustomFieldBehaviorPanel(panels.ObjectAttributesPanel):
+    title = _('Behavior')
+    search_weight = attrs.TemplatedAttr(
+        'search_weight',
+        label=_('Search Weight'),
+        template_name='extras/customfield/attrs/search_weight.html',
+    )
+    filter_logic = attrs.ChoiceAttr('filter_logic', label=_('Filter Logic'))
+    weight = attrs.NumericAttr('weight', label=_('Display Weight'))
+    ui_visible = attrs.ChoiceAttr('ui_visible', label=_('UI Visible'))
+    ui_editable = attrs.ChoiceAttr('ui_editable', label=_('UI Editable'))
+
+
+class CustomFieldValidationPanel(panels.ObjectAttributesPanel):
+    title = _('Validation Rules')
+    validation_minimum = attrs.NumericAttr('validation_minimum', label=_('Minimum Value'))
+    validation_maximum = attrs.NumericAttr('validation_maximum', label=_('Maximum Value'))
+    validation_regex = attrs.TextAttr(
+        'validation_regex',
+        label=_('Regular Expression'),
+        style='font-monospace',
+    )
+
+
+class CustomFieldObjectTypesPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/object_types.html'
+    title = _('Object Types')
+
+
+class CustomFieldRelatedObjectsPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/customfield_related_objects.html'
+    title = _('Related Objects')
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'related_models': context.get('related_models'),
+        }
+
+
+#
+# CustomFieldChoiceSet panels
+#
+
+class CustomFieldChoiceSetPanel(panels.ObjectAttributesPanel):
+    title = _('Custom Field Choice Set')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+    base_choices = attrs.ChoiceAttr('base_choices', label=_('Base Choices'))
+    order_alphabetically = attrs.BooleanAttr('order_alphabetically', label=_('Order Alphabetically'))
+    choices_for = attrs.RelatedObjectListAttr('choices_for', linkify=True, label=_('Used by'))
+
+
+class CustomFieldChoiceSetChoicesPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/customfieldchoiceset_choices.html'
+
+    def get_context(self, context):
+        obj = context.get('object')
+        total = len(obj.choices) if obj else 0
+        return {
+            **super().get_context(context),
+            'title': f'{_("Choices")} ({total})',
+            'choices': context.get('choices'),
+        }
+
+
+#
+# CustomLink panels
+#
+
+class CustomLinkPanel(panels.ObjectAttributesPanel):
+    title = _('Custom Link')
+    name = attrs.TextAttr('name')
+    enabled = attrs.BooleanAttr('enabled')
+    group_name = attrs.TextAttr('group_name', label=_('Group Name'))
+    weight = attrs.NumericAttr('weight')
+    button_class = attrs.ChoiceAttr('button_class', label=_('Button Class'))
+    new_window = attrs.BooleanAttr('new_window', label=_('New Window'))
+
+
+#
+# ExportTemplate panels
+#
+
+class ExportTemplatePanel(panels.ObjectAttributesPanel):
+    title = _('Export Template')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+    mime_type = attrs.TextAttr('mime_type', label=_('MIME Type'))
+    file_name = attrs.TextAttr('file_name', label=_('File Name'))
+    file_extension = attrs.TextAttr('file_extension', label=_('File Extension'))
+    as_attachment = attrs.BooleanAttr('as_attachment', label=_('Attachment'))
+
+
+#
+# SavedFilter panels
+#
+
+class SavedFilterPanel(panels.ObjectAttributesPanel):
+    title = _('Saved Filter')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+    user = attrs.TextAttr('user')
+    enabled = attrs.BooleanAttr('enabled')
+    shared = attrs.BooleanAttr('shared')
+    weight = attrs.NumericAttr('weight')
+
+
+class SavedFilterObjectTypesPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/savedfilter_object_types.html'
+    title = _('Assigned Models')
+
+
+#
+# TableConfig panels
+#
+
+class TableConfigPanel(panels.ObjectAttributesPanel):
+    title = _('Table Config')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+    object_type = attrs.TextAttr('object_type', label=_('Object Type'))
+    table = attrs.TextAttr('table')
+    user = attrs.TextAttr('user')
+    enabled = attrs.BooleanAttr('enabled')
+    shared = attrs.BooleanAttr('shared')
+    weight = attrs.NumericAttr('weight')
+
+
+class TableConfigColumnsPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/tableconfig_columns.html'
+    title = _('Columns Displayed')
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'columns': context.get('columns'),
+        }
+
+
+class TableConfigOrderingPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/tableconfig_ordering.html'
+    title = _('Ordering')
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'columns': context.get('columns'),
+        }
+
+
+#
+# NotificationGroup panels
+#
+
+class NotificationGroupPanel(panels.ObjectAttributesPanel):
+    title = _('Notification Group')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+
+
+class NotificationGroupGroupsPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/notificationgroup_groups.html'
+    title = _('Groups')
+
+
+class NotificationGroupUsersPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/notificationgroup_users.html'
+    title = _('Users')
+
+
+#
+# Webhook panels
+#
+
+class WebhookPanel(panels.ObjectAttributesPanel):
+    title = _('Webhook')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+
+
+class WebhookHTTPPanel(panels.ObjectAttributesPanel):
+    title = _('HTTP Request')
+    http_method = attrs.ChoiceAttr('http_method', label=_('HTTP Method'))
+    payload_url = attrs.TextAttr('payload_url', label=_('Payload URL'), style='font-monospace')
+    http_content_type = attrs.TextAttr('http_content_type', label=_('HTTP Content Type'))
+    secret = attrs.TextAttr('secret', label=_('Secret'))
+
+
+class WebhookSSLPanel(panels.ObjectAttributesPanel):
+    title = _('SSL')
+    ssl_verification = attrs.BooleanAttr('ssl_verification', label=_('SSL Verification'))
+    ca_file_path = attrs.TextAttr('ca_file_path', label=_('CA File Path'))
+
+
+#
+# EventRule panels
+#
+
+class EventRulePanel(panels.ObjectAttributesPanel):
+    title = _('Event Rule')
+    name = attrs.TextAttr('name')
+    enabled = attrs.BooleanAttr('enabled')
+    description = attrs.TextAttr('description')
+
+
+class EventRuleEventTypesPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/eventrule_event_types.html'
+    title = _('Event Types')
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'registry': context.get('registry'),
+        }
+
+
+class EventRuleActionPanel(panels.ObjectAttributesPanel):
+    title = _('Action')
+    action_type = attrs.ChoiceAttr('action_type', label=_('Type'))
+    action_object = attrs.RelatedObjectAttr('action_object', linkify=True, label=_('Object'))
+    action_data = attrs.TemplatedAttr(
+        'action_data',
+        label=_('Data'),
+        template_name='extras/eventrule/attrs/action_data.html',
+    )
+
+
+#
+# Tag panels
+#
+
+class TagPanel(panels.ObjectAttributesPanel):
+    title = _('Tag')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+    color = attrs.ColorAttr('color')
+    weight = attrs.NumericAttr('weight')
+
+
+class TagObjectTypesPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/tag_object_types.html'
+    title = _('Allowed Object Types')
+
+
+class TagItemTypesPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/tag_item_types.html'
+    title = _('Tagged Item Types')
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'object_types': context.get('object_types'),
+        }
+
+
+#
+# ConfigContextProfile panels
+#
+
+class ConfigContextProfilePanel(panels.ObjectAttributesPanel):
+    title = _('Config Context Profile')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+
+
+class ConfigContextProfileSchemaPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/configcontextprofile_schema.html'
+    title = _('JSON Schema')
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.actions = [CopyContent('schema')]
+
+
+#
+# ConfigContext panels
+#
+
+class ConfigContextPanel(panels.ObjectAttributesPanel):
+    title = _('Config Context')
+    name = attrs.TextAttr('name')
+    weight = attrs.NumericAttr('weight')
+    profile = attrs.RelatedObjectAttr('profile', linkify=True)
+    description = attrs.TextAttr('description')
+    is_active = attrs.BooleanAttr('is_active', label=_('Active'))
+
+
+class ConfigContextAssignmentPanel(panels.ObjectPanel):
+    template_name = 'extras/panels/configcontext_assignment.html'
+    title = _('Assignment')
+
+    def get_context(self, context):
+        return {
+            **super().get_context(context),
+            'assigned_objects': context.get('assigned_objects'),
+        }
+
+
+#
+# ConfigTemplate panels
+#
+
+class ConfigTemplatePanel(panels.ObjectAttributesPanel):
+    title = _('Config Template')
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+    mime_type = attrs.TextAttr('mime_type', label=_('MIME Type'))
+    file_name = attrs.TextAttr('file_name', label=_('File Name'))
+    file_extension = attrs.TextAttr('file_extension', label=_('File Extension'))
+    as_attachment = attrs.BooleanAttr('as_attachment', label=_('Attachment'))
+    data_source = attrs.RelatedObjectAttr('data_source', linkify=True, label=_('Data Source'))
+    data_file = attrs.TemplatedAttr(
+        'data_path',
+        label=_('Data File'),
+        template_name='extras/configtemplate/attrs/data_file.html',
+    )
+    data_synced = attrs.DateTimeAttr('data_synced', label=_('Data Synced'))
+    auto_sync_enabled = attrs.BooleanAttr('auto_sync_enabled', label=_('Auto Sync Enabled'))
+
+
+#
+# ImageAttachment panels
+#
+
+class ImageAttachmentPanel(panels.ObjectAttributesPanel):
+    title = _('Image Attachment')
+    parent = attrs.RelatedObjectAttr('parent', linkify=True, label=_('Parent Object'))
+    name = attrs.TextAttr('name')
+    description = attrs.TextAttr('description')
+
+
+class ImageAttachmentFilePanel(panels.ObjectPanel):
+    template_name = 'extras/panels/imageattachment_file.html'
+    title = _('File')
+
+
+class ImageAttachmentImagePanel(panels.ObjectPanel):
+    template_name = 'extras/panels/imageattachment_image.html'
+    title = _('Image')
+
+
+#
+# JournalEntry panels
+#
+
+class JournalEntryPanel(panels.ObjectAttributesPanel):
+    title = _('Journal Entry')
+    assigned_object = attrs.RelatedObjectAttr('assigned_object', linkify=True, label=_('Object'))
+    created = attrs.DateTimeAttr('created', spec='minutes')
+    created_by = attrs.TextAttr('created_by', label=_('Created By'))
+    kind = attrs.ChoiceAttr('kind')
