@@ -42,7 +42,7 @@ class ProviderTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         cls.form_data = {
             'name': 'Provider X',
             'slug': 'provider-x',
-            'asns': [asns[6].pk, asns[7].pk],
+            'add_asns': [asns[6].pk, asns[7].pk],
             'comments': 'Another provider',
             'tags': [t.pk for t in tags],
         }

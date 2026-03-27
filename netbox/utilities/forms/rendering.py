@@ -5,6 +5,7 @@ from functools import cached_property
 __all__ = (
     'FieldSet',
     'InlineFields',
+    'M2MAddRemoveFields',
     'ObjectAttribute',
     'TabbedGroups',
 )
@@ -71,6 +72,21 @@ class TabbedGroups:
                 'fields': group.items,
             } for i, group in enumerate(self.groups, start=1)
         ]
+
+
+class M2MAddRemoveFields:
+    """
+    Represents an add/remove field pair for a many-to-many relationship. Rather than rendering
+    a single multi-select pre-populated with all current values (which can crash the browser for
+    large datasets), this renders two fields: one for adding new relations and one for removing
+    existing relations.
+
+    Parameters:
+        name: The name of the M2M field on the model (e.g. 'asns'). The form must define
+              corresponding 'add_{name}' and 'remove_{name}' fields.
+    """
+    def __init__(self, name):
+        self.name = name
 
 
 class ObjectAttribute:

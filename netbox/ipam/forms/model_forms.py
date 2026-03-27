@@ -21,7 +21,7 @@ from utilities.forms.fields import (
     NumericArrayField,
     NumericRangeArrayField,
 )
-from utilities.forms.rendering import FieldSet, InlineFields, ObjectAttribute, TabbedGroups
+from utilities.forms.rendering import FieldSet, InlineFields, M2MAddRemoveFields, ObjectAttribute, TabbedGroups
 from utilities.forms.utils import get_field_value
 from utilities.forms.widgets import DatePicker, HTMXSelect
 from utilities.templatetags.builtins.filters import bettertitle
@@ -152,36 +152,38 @@ class ASNForm(TenancyForm, PrimaryModelForm):
         label=_('RIR'),
         quick_add=True
     )
-    sites = DynamicModelMultipleChoiceField(
+    add_sites = DynamicModelMultipleChoiceField(
         queryset=Site.objects.all(),
-        label=_('Sites'),
+        label=_('Add sites'),
+        required=False
+    )
+    remove_sites = DynamicModelMultipleChoiceField(
+        queryset=Site.objects.all(),
+        label=_('Remove sites'),
         required=False
     )
 
     fieldsets = (
-        FieldSet('asn', 'rir', 'sites', 'description', 'tags', name=_('ASN')),
+        FieldSet('asn', 'rir', M2MAddRemoveFields('sites'), 'description', 'tags', name=_('ASN')),
         FieldSet('tenant_group', 'tenant', name=_('Tenancy')),
     )
 
     class Meta:
         model = ASN
         fields = [
-            'asn', 'rir', 'sites', 'tenant_group', 'tenant', 'description', 'owner', 'comments', 'tags'
+            'asn', 'rir', 'tenant_group', 'tenant', 'description', 'owner', 'comments', 'tags'
         ]
         widgets = {
             'date_added': DatePicker(),
         }
 
-    def __init__(self, data=None, instance=None, *args, **kwargs):
-        super().__init__(data=data, instance=instance, *args, **kwargs)
-
-        if self.instance and self.instance.pk is not None:
-            self.fields['sites'].initial = self.instance.sites.all().values_list('id', flat=True)
-
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-        instance.sites.set(self.cleaned_data['sites'])
-        return instance
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['remove_sites'].widget.add_query_param('asn_id', self.instance.pk)
+        else:
+            self.fields.pop('remove_sites')
+            self.fields['add_sites'].label = _('Sites')
 
 
 class RoleForm(OrganizationalModelForm):

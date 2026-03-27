@@ -75,7 +75,19 @@ class NetBoxModelForm(
         self.instance._m2m_values = {}
         for field in self.instance._meta.local_many_to_many:
             if field.name in self.cleaned_data:
+                # Standard M2M field (set-based)
                 self.instance._m2m_values[field.name] = list(self.cleaned_data[field.name])
+            elif f'add_{field.name}' in self.cleaned_data or f'remove_{field.name}' in self.cleaned_data:
+                # Add/remove M2M field pair: compute the effective set
+                current = set(getattr(self.instance, field.name).values_list('pk', flat=True)) \
+                    if self.instance.pk else set()
+                add_values = set(
+                    v.pk for v in self.cleaned_data.get(f'add_{field.name}', [])
+                )
+                remove_values = set(
+                    v.pk for v in self.cleaned_data.get(f'remove_{field.name}', [])
+                )
+                self.instance._m2m_values[field.name] = list((current | add_values) - remove_values)
 
         return super()._post_clean()
 

@@ -22,7 +22,7 @@ from utilities.forms.fields import (
     SlugField,
 )
 from utilities.forms.mixins import DistanceValidationMixin
-from utilities.forms.rendering import FieldSet, InlineFields
+from utilities.forms.rendering import FieldSet, InlineFields, M2MAddRemoveFields
 from utilities.forms.widgets import DatePicker, HTMXSelect, NumberWithOptions
 from utilities.templatetags.builtins.filters import bettertitle
 
@@ -43,21 +43,34 @@ __all__ = (
 
 class ProviderForm(PrimaryModelForm):
     slug = SlugField()
-    asns = DynamicModelMultipleChoiceField(
+    add_asns = DynamicModelMultipleChoiceField(
         queryset=ASN.objects.all(),
-        label=_('ASNs'),
+        label=_('Add ASNs'),
+        required=False
+    )
+    remove_asns = DynamicModelMultipleChoiceField(
+        queryset=ASN.objects.all(),
+        label=_('Remove ASNs'),
         required=False
     )
 
     fieldsets = (
-        FieldSet('name', 'slug', 'asns', 'description', 'tags'),
+        FieldSet('name', 'slug', M2MAddRemoveFields('asns'), 'description', 'tags'),
     )
 
     class Meta:
         model = Provider
         fields = [
-            'name', 'slug', 'asns', 'description', 'owner', 'comments', 'tags',
+            'name', 'slug', 'description', 'owner', 'comments', 'tags',
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['remove_asns'].widget.add_query_param('provider_id', self.instance.pk)
+        else:
+            self.fields.pop('remove_asns')
+            self.fields['add_asns'].label = _('ASNs')
 
 
 class ProviderAccountForm(PrimaryModelForm):
