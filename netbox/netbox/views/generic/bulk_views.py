@@ -1137,8 +1137,18 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
             if form.is_valid():
                 logger.debug("Form validation was successful")
 
+                # If indicated, defer this request to a background job & redirect the user
+                if form.cleaned_data['background_job']:
+                    job_name = _('Bulk add {count} {object_type}').format(
+                        count=len(form.cleaned_data['pk']),
+                        object_type=self.queryset.model._meta.verbose_name_plural,
+                    )
+                    if process_request_as_job(self.__class__, request, name=job_name):
+                        return redirect(self.get_return_url(request))
+
                 new_components = []
                 data = deepcopy(form.cleaned_data)
+                data.pop('background_job', None)
                 replication_data = {
                     field: data.pop(field) for field in form.replication_fields
                 }
@@ -1166,7 +1176,10 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
                                 else:
                                     for field, errors in component_form.errors.as_data().items():
                                         for e in errors:
-                                            form.add_error(field, '{}: {}'.format(obj, ', '.join(e)))
+                                            err_msg = '{}: {}'.format(obj, ', '.join(e))
+                                            form.add_error(field, err_msg)
+                                            if is_background_request(request):
+                                                request.job.logger.error(err_msg)
 
                         # Enforce object-level permissions
                         component_ids = [obj.pk for obj in new_components]
@@ -1175,20 +1188,32 @@ class BulkComponentCreateView(GetReturnURLMixin, BaseMultiObjectView):
 
                 except IntegrityError:
                     clear_events.send(sender=self)
+                    if is_background_request(request):
+                        request.job.logger.error(_("An integrity error occurred while creating components"))
+                        raise JobFailed
 
                 except (AbortRequest, PermissionsViolation) as e:
                     logger.debug(e.message)
                     form.add_error(None, e.message)
                     clear_events.send(sender=self)
+                    if is_background_request(request):
+                        request.job.logger.error(e.message)
+                        raise JobFailed
 
                 if not form.errors:
-                    msg = "Added {} {} to {} {}.".format(
-                        len(new_components),
-                        model_name,
-                        len(form.cleaned_data['pk']),
-                        parent_model_name
+                    msg = _("Added {count} {component} to {parent_count} {parent}.").format(
+                        count=len(new_components),
+                        component=model_name,
+                        parent_count=len(form.cleaned_data['pk']),
+                        parent=parent_model_name,
                     )
                     logger.info(msg)
+
+                    # Handle background job
+                    if is_background_request(request):
+                        request.job.logger.info(msg)
+                        return None
+
                     messages.success(request, msg)
 
                     return redirect(self.get_return_url(request))
