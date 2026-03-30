@@ -74,6 +74,7 @@ class ProviderForm(PrimaryModelForm):
         if self.instance.pk and (count := self.instance.asns.count()) >= M2MAddRemoveFields.THRESHOLD:
             # Add/remove mode for large M2M sets
             self.fields.pop('asns')
+            self.fields['add_asns'].widget.add_query_param('provider_id__n', self.instance.pk)
             self.fields['remove_asns'].widget.add_query_param('provider_id', self.instance.pk)
             self.fields['remove_asns'].help_text = _("{count} ASNs currently assigned").format(count=count)
         else:
