@@ -2,7 +2,6 @@ import json
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
 from django.db.models.fields.related import ManyToManyRel
 
 from extras.choices import *
@@ -77,15 +76,17 @@ class NetBoxModelForm(
         and add/remove (dual field) modes.
         """
         self.instance._m2m_values = {}
-        for field in self.instance._meta.get_fields():
-            # Determine the accessor name for this M2M relationship
-            if isinstance(field, models.ManyToManyField):
-                name = field.name
-            elif isinstance(field, ManyToManyRel):
-                name = field.get_accessor_name()
-            else:
-                continue
 
+        # Collect names to process: local M2M fields (includes TaggableManager from django-taggit)
+        # plus reverse M2M relations (ManyToManyRel).
+        names = [field.name for field in self.instance._meta.local_many_to_many]
+        names += [
+            field.get_accessor_name()
+            for field in self.instance._meta.get_fields()
+            if isinstance(field, ManyToManyRel)
+        ]
+
+        for name in names:
             if name in self.cleaned_data:
                 # Simple mode: single multi-select field
                 self.instance._m2m_values[name] = list(self.cleaned_data[name])
