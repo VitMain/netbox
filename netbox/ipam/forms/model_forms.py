@@ -184,10 +184,11 @@ class ASNForm(TenancyForm, PrimaryModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.pk and self.instance.sites.count() >= M2MAddRemoveFields.THRESHOLD:
+        if self.instance.pk and (count := self.instance.sites.count()) >= M2MAddRemoveFields.THRESHOLD:
             # Add/remove mode for large M2M sets
             self.fields.pop('sites')
             self.fields['remove_sites'].widget.add_query_param('asn_id', self.instance.pk)
+            self.fields['remove_sites'].help_text = _("{count} sites currently assigned").format(count=count)
         else:
             # Simple mode for new objects or small M2M sets
             self.fields.pop('add_sites')
