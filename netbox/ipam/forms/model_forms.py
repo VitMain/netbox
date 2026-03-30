@@ -152,6 +152,11 @@ class ASNForm(TenancyForm, PrimaryModelForm):
         label=_('RIR'),
         quick_add=True
     )
+    sites = DynamicModelMultipleChoiceField(
+        queryset=Site.objects.all(),
+        label=_('Sites'),
+        required=False
+    )
     add_sites = DynamicModelMultipleChoiceField(
         queryset=Site.objects.all(),
         label=_('Add sites'),
@@ -179,11 +184,16 @@ class ASNForm(TenancyForm, PrimaryModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.pk:
+        if self.instance.pk and self.instance.sites.count() >= M2MAddRemoveFields.THRESHOLD:
+            # Add/remove mode for large M2M sets
+            self.fields.pop('sites')
             self.fields['remove_sites'].widget.add_query_param('asn_id', self.instance.pk)
         else:
+            # Simple mode for new objects or small M2M sets
+            self.fields.pop('add_sites')
             self.fields.pop('remove_sites')
-            self.fields['add_sites'].label = _('Sites')
+            if self.instance.pk:
+                self.initial['sites'] = list(self.instance.sites.values_list('pk', flat=True))
 
 
 class RoleForm(OrganizationalModelForm):

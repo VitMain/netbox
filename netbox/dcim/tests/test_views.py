@@ -160,7 +160,7 @@ class SiteTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'group': groups[1].pk,
             'tenant': None,
             'facility': 'Facility X',
-            'add_asns': [asns[6].pk, asns[7].pk],
+            'asns': [asns[6].pk, asns[7].pk],
             'time_zone': ZoneInfo('UTC'),
             'description': 'Site description',
             'physical_address': '742 Evergreen Terrace, Springfield, USA',

@@ -81,11 +81,18 @@ def render_fieldset(form, fieldset):
             )
 
         elif type(item) is M2MAddRemoveFields:
-            for field_name in (f'add_{item.name}', f'remove_{item.name}'):
-                if field_name in form.fields:
-                    rows.append(
-                        ('field', None, [form[field_name]])
-                    )
+            if item.name in form.fields:
+                # Simple mode: render a single multi-select field
+                rows.append(
+                    ('field', None, [form[item.name]])
+                )
+            else:
+                # Add/remove mode: render separate add and remove fields
+                for field_name in (f'add_{item.name}', f'remove_{item.name}'):
+                    if field_name in form.fields:
+                        rows.append(
+                            ('field', None, [form[field_name]])
+                        )
 
         elif type(item) is ObjectAttribute:
             value = getattr(form.instance, item.name)

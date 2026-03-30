@@ -137,6 +137,11 @@ class SiteForm(TenancyForm, PrimaryModelForm):
         required=False,
         quick_add=True
     )
+    asns = DynamicModelMultipleChoiceField(
+        queryset=ASN.objects.all(),
+        label=_('ASNs'),
+        required=False
+    )
     add_asns = DynamicModelMultipleChoiceField(
         queryset=ASN.objects.all(),
         label=_('Add ASNs'),
@@ -185,11 +190,16 @@ class SiteForm(TenancyForm, PrimaryModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.pk:
+        if self.instance.pk and self.instance.asns.count() >= M2MAddRemoveFields.THRESHOLD:
+            # Add/remove mode for large M2M sets
+            self.fields.pop('asns')
             self.fields['remove_asns'].widget.add_query_param('site_id', self.instance.pk)
         else:
+            # Simple mode for new objects or small M2M sets
+            self.fields.pop('add_asns')
             self.fields.pop('remove_asns')
-            self.fields['add_asns'].label = _('ASNs')
+            if self.instance.pk:
+                self.initial['asns'] = list(self.instance.asns.values_list('pk', flat=True))
 
 
 class LocationForm(TenancyForm, NestedGroupModelForm):

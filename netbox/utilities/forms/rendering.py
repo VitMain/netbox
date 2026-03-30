@@ -76,15 +76,21 @@ class TabbedGroups:
 
 class M2MAddRemoveFields:
     """
-    Represents an add/remove field pair for a many-to-many relationship. Rather than rendering
-    a single multi-select pre-populated with all current values (which can crash the browser for
-    large datasets), this renders two fields: one for adding new relations and one for removing
-    existing relations.
+    Represents a many-to-many relationship field on a form. It supports two rendering modes:
+
+    1. Simple mode: A single multi-select field pre-populated with current values. This is used
+       for new objects or existing objects with fewer than THRESHOLD current assignments.
+    2. Add/remove mode: Two separate fields for adding and removing relations. This avoids
+       crashing the browser when an object has a very large number of current assignments.
+
+    The form must define three fields: '{name}', 'add_{name}', and 'remove_{name}'. The form's
+    __init__() method determines the mode and removes the unused fields.
 
     Parameters:
-        name: The name of the M2M field on the model (e.g. 'asns'). The form must define
-              corresponding 'add_{name}' and 'remove_{name}' fields.
+        name: The name of the M2M field on the model (e.g. 'asns').
     """
+    THRESHOLD = 100
+
     def __init__(self, name):
         self.name = name
 

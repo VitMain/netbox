@@ -299,17 +299,6 @@ class ObjectEditView(GetReturnURLMixin, BaseObjectView):
                     object_created = form.instance.pk is None
                     obj = form.save()
 
-                    # Process any add/remove M2M field pairs
-                    for field in obj._meta.local_many_to_many:
-                        add_key = f'add_{field.name}'
-                        remove_key = f'remove_{field.name}'
-                        if add_key in form.cleaned_data or remove_key in form.cleaned_data:
-                            m2m_manager = getattr(obj, field.name)
-                            if add_values := form.cleaned_data.get(add_key):
-                                m2m_manager.add(*add_values)
-                            if remove_values := form.cleaned_data.get(remove_key):
-                                m2m_manager.remove(*remove_values)
-
                     # Check that the new object conforms with any assigned object-level permissions
                     if not self.queryset.filter(pk=obj.pk).exists():
                         raise PermissionsViolation()
