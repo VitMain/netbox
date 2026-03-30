@@ -21,7 +21,7 @@ from utilities.forms.fields import (
     NumericArrayField,
     NumericRangeArrayField,
 )
-from utilities.forms.rendering import FieldSet, InlineFields, M2MAddRemoveFields, ObjectAttribute, TabbedGroups
+from utilities.forms.rendering import FieldSet, InlineFields, ObjectAttribute, TabbedGroups
 from utilities.forms.utils import get_field_value
 from utilities.forms.widgets import DatePicker, HTMXSelect
 from utilities.templatetags.builtins.filters import bettertitle
@@ -157,45 +157,31 @@ class ASNForm(TenancyForm, PrimaryModelForm):
         label=_('Sites'),
         required=False
     )
-    add_sites = DynamicModelMultipleChoiceField(
-        queryset=Site.objects.all(),
-        label=_('Add sites'),
-        required=False
-    )
-    remove_sites = DynamicModelMultipleChoiceField(
-        queryset=Site.objects.all(),
-        label=_('Remove sites'),
-        required=False
-    )
 
     fieldsets = (
-        FieldSet('asn', 'rir', M2MAddRemoveFields('sites'), 'description', 'tags', name=_('ASN')),
+        FieldSet('asn', 'rir', 'sites', 'description', 'tags', name=_('ASN')),
         FieldSet('tenant_group', 'tenant', name=_('Tenancy')),
     )
 
     class Meta:
         model = ASN
         fields = [
-            'asn', 'rir', 'tenant_group', 'tenant', 'description', 'owner', 'comments', 'tags'
+            'asn', 'rir', 'sites', 'tenant_group', 'tenant', 'description', 'owner', 'comments', 'tags'
         ]
         widgets = {
             'date_added': DatePicker(),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance.pk and (count := self.instance.sites.count()) >= M2MAddRemoveFields.THRESHOLD:
-            # Add/remove mode for large M2M sets
-            self.fields.pop('sites')
-            self.fields['add_sites'].widget.add_query_param('asn_id__n', self.instance.pk)
-            self.fields['remove_sites'].widget.add_query_param('asn_id', self.instance.pk)
-            self.fields['remove_sites'].help_text = _("{count} sites currently assigned").format(count=count)
-        else:
-            # Simple mode for new objects or small M2M sets
-            self.fields.pop('add_sites')
-            self.fields.pop('remove_sites')
-            if self.instance.pk:
-                self.initial['sites'] = list(self.instance.sites.values_list('pk', flat=True))
+    def __init__(self, data=None, instance=None, *args, **kwargs):
+        super().__init__(data=data, instance=instance, *args, **kwargs)
+
+        if self.instance and self.instance.pk is not None:
+            self.fields['sites'].initial = self.instance.sites.all().values_list('id', flat=True)
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+        instance.sites.set(self.cleaned_data['sites'])
+        return instance
 
 
 class RoleForm(OrganizationalModelForm):
