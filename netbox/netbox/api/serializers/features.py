@@ -55,6 +55,11 @@ class TaggableModelSerializer(serializers.Serializer):
                 'tags': 'Cannot specify "tags" together with "add_tags" or "remove_tags".'
             })
 
+        if self.instance is None and data.get('remove_tags'):
+            raise serializers.ValidationError({
+                'remove_tags': 'Cannot use "remove_tags" when creating a new object.'
+            })
+
         # Pop add_tags/remove_tags before calling super() to prevent them from being passed
         # to the model constructor during ValidatedModelSerializer validation
         add_tags = data.pop('add_tags', None)

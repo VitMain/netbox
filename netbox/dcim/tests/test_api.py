@@ -368,6 +368,27 @@ class SiteTest(APIViewTestCases.APIViewTestCase):
         tag_names = sorted(site.tags.values_list('name', flat=True))
         self.assertEqual(tag_names, ['Alpha', 'Bravo'])
 
+    def test_create_with_remove_tags_error(self):
+        """
+        Using remove_tags when creating a new object should raise a validation error.
+        """
+        Tag.objects.bulk_create((
+            Tag(name='Alpha', slug='alpha'),
+        ))
+
+        obj_perm = ObjectPermission(name='Test permission', actions=['add'])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(self.model))
+
+        data = {
+            'name': 'Site 10',
+            'slug': 'site-10',
+            'remove_tags': [{'name': 'Alpha'}],
+        }
+        response = self.client.post(self._get_list_url(), data, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
 
 class LocationTest(APIViewTestCases.APIViewTestCase):
     model = Location
