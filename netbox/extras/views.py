@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.module_loading import import_string
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 from jinja2.exceptions import TemplateError
 
@@ -23,6 +23,14 @@ from extras.dashboard.forms import DashboardWidgetAddForm, DashboardWidgetForm
 from extras.dashboard.utils import get_widget_class
 from extras.utils import SharedObjectViewMixin
 from netbox.object_actions import *
+from netbox.ui import layout
+from netbox.ui.panels import (
+    CommentsPanel,
+    ContextTablePanel,
+    JSONPanel,
+    TemplatePanel,
+    TextCodePanel,
+)
 from netbox.views import generic
 from netbox.views.generic.mixins import TableMixin
 from utilities.forms import ConfirmationForm, get_field_value
@@ -40,6 +48,7 @@ from . import filtersets, forms, tables
 from .constants import LOG_LEVEL_RANK
 from .models import *
 from .tables import ReportResultsTable, ScriptJobTable, ScriptResultsTable
+from .ui import panels
 
 #
 # Custom fields
@@ -57,6 +66,18 @@ class CustomFieldListView(generic.ObjectListView):
 @register_model_view(CustomField)
 class CustomFieldView(generic.ObjectView):
     queryset = CustomField.objects.select_related('choice_set')
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.CustomFieldPanel(),
+            panels.CustomFieldBehaviorPanel(),
+            CommentsPanel(),
+        ],
+        right_panels=[
+            panels.CustomFieldObjectTypesPanel(),
+            panels.CustomFieldValidationPanel(),
+            panels.CustomFieldRelatedObjectsPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance):
         related_models = ()
@@ -128,6 +149,14 @@ class CustomFieldChoiceSetListView(generic.ObjectListView):
 @register_model_view(CustomFieldChoiceSet)
 class CustomFieldChoiceSetView(generic.ObjectView):
     queryset = CustomFieldChoiceSet.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.CustomFieldChoiceSetPanel(),
+        ],
+        right_panels=[
+            panels.CustomFieldChoiceSetChoicesPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance):
 
@@ -203,6 +232,16 @@ class CustomLinkListView(generic.ObjectListView):
 @register_model_view(CustomLink)
 class CustomLinkView(generic.ObjectView):
     queryset = CustomLink.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.CustomLinkPanel(),
+            panels.ObjectTypesPanel(title=_('Assigned Models')),
+        ],
+        right_panels=[
+            TextCodePanel('link_text', title=_('Link Text')),
+            TextCodePanel('link_url', title=_('Link URL')),
+        ],
+    )
 
 
 @register_model_view(CustomLink, 'add', detail=False)
@@ -260,6 +299,19 @@ class ExportTemplateListView(generic.ObjectListView):
 @register_model_view(ExportTemplate)
 class ExportTemplateView(generic.ObjectView):
     queryset = ExportTemplate.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.ExportTemplatePanel(),
+            TemplatePanel('core/inc/datafile_panel.html'),
+        ],
+        right_panels=[
+            panels.ObjectTypesPanel(title=_('Assigned Models')),
+            JSONPanel('environment_params', title=_('Environment Parameters')),
+        ],
+        bottom_panels=[
+            TextCodePanel('template_code', title=_('Template'), show_sync_warning=True),
+        ],
+    )
 
 
 @register_model_view(ExportTemplate, 'add', detail=False)
@@ -321,6 +373,15 @@ class SavedFilterListView(SharedObjectViewMixin, generic.ObjectListView):
 @register_model_view(SavedFilter)
 class SavedFilterView(SharedObjectViewMixin, generic.ObjectView):
     queryset = SavedFilter.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.SavedFilterPanel(),
+            panels.SavedFilterObjectTypesPanel(),
+        ],
+        right_panels=[
+            JSONPanel('parameters', title=_('Parameters')),
+        ],
+    )
 
 
 @register_model_view(SavedFilter, 'add', detail=False)
@@ -383,6 +444,15 @@ class TableConfigListView(SharedObjectViewMixin, generic.ObjectListView):
 @register_model_view(TableConfig)
 class TableConfigView(SharedObjectViewMixin, generic.ObjectView):
     queryset = TableConfig.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.TableConfigPanel(),
+        ],
+        right_panels=[
+            panels.TableConfigColumnsPanel(),
+            panels.TableConfigOrderingPanel(),
+        ],
+    )
 
     def get_extra_context(self, request, instance):
         table = instance.table_class([])
@@ -476,6 +546,15 @@ class NotificationGroupListView(generic.ObjectListView):
 @register_model_view(NotificationGroup)
 class NotificationGroupView(generic.ObjectView):
     queryset = NotificationGroup.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.NotificationGroupPanel(),
+        ],
+        right_panels=[
+            panels.NotificationGroupGroupsPanel(),
+            panels.NotificationGroupUsersPanel(),
+        ],
+    )
 
 
 @register_model_view(NotificationGroup, 'add', detail=False)
@@ -660,6 +739,19 @@ class WebhookListView(generic.ObjectListView):
 @register_model_view(Webhook)
 class WebhookView(generic.ObjectView):
     queryset = Webhook.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.WebhookPanel(),
+            panels.WebhookHTTPPanel(),
+            panels.WebhookSSLPanel(),
+        ],
+        right_panels=[
+            TextCodePanel('additional_headers', title=_('Additional Headers')),
+            TextCodePanel('body_template', title=_('Body Template')),
+            panels.CustomFieldsPanel(),
+            panels.TagsPanel(),
+        ],
+    )
 
 
 @register_model_view(Webhook, 'add', detail=False)
@@ -716,6 +808,19 @@ class EventRuleListView(generic.ObjectListView):
 @register_model_view(EventRule)
 class EventRuleView(generic.ObjectView):
     queryset = EventRule.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.EventRulePanel(),
+            panels.ObjectTypesPanel(),
+            panels.EventRuleEventTypesPanel(),
+        ],
+        right_panels=[
+            JSONPanel('conditions', title=_('Conditions')),
+            panels.EventRuleActionPanel(),
+            panels.CustomFieldsPanel(),
+            panels.TagsPanel(),
+        ],
+    )
 
 
 @register_model_view(EventRule, 'add', detail=False)
@@ -774,6 +879,18 @@ class TagListView(generic.ObjectListView):
 @register_model_view(Tag)
 class TagView(generic.ObjectView):
     queryset = Tag.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.TagPanel(),
+        ],
+        right_panels=[
+            panels.TagObjectTypesPanel(),
+            panels.TagItemTypesPanel(),
+        ],
+        bottom_panels=[
+            ContextTablePanel('taggeditem_table', title=_('Tagged Objects')),
+        ],
+    )
 
     def get_extra_context(self, request, instance):
         tagged_items = TaggedItem.objects.filter(tag=instance)
@@ -853,6 +970,18 @@ class ConfigContextProfileListView(generic.ObjectListView):
 @register_model_view(ConfigContextProfile)
 class ConfigContextProfileView(generic.ObjectView):
     queryset = ConfigContextProfile.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.ConfigContextProfilePanel(),
+            TemplatePanel('core/inc/datafile_panel.html'),
+            panels.CustomFieldsPanel(),
+            panels.TagsPanel(),
+            CommentsPanel(),
+        ],
+        right_panels=[
+            JSONPanel('schema', title=_('JSON Schema')),
+        ],
+    )
 
 
 @register_model_view(ConfigContextProfile, 'add', detail=False)
@@ -915,6 +1044,16 @@ class ConfigContextListView(generic.ObjectListView):
 @register_model_view(ConfigContext)
 class ConfigContextView(generic.ObjectView):
     queryset = ConfigContext.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.ConfigContextPanel(),
+            TemplatePanel('core/inc/datafile_panel.html'),
+            panels.ConfigContextAssignmentPanel(),
+        ],
+        right_panels=[
+            TemplatePanel('extras/panels/configcontext_data.html'),
+        ],
+    )
 
     def get_extra_context(self, request, instance):
         # Gather assigned objects for parsing in the template
@@ -1034,6 +1173,18 @@ class ConfigTemplateListView(generic.ObjectListView):
 @register_model_view(ConfigTemplate)
 class ConfigTemplateView(generic.ObjectView):
     queryset = ConfigTemplate.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.ConfigTemplatePanel(),
+            panels.TagsPanel(),
+        ],
+        right_panels=[
+            JSONPanel('environment_params', title=_('Environment Parameters')),
+        ],
+        bottom_panels=[
+            TextCodePanel('template_code', title=_('Template'), show_sync_warning=True),
+        ],
+    )
 
 
 @register_model_view(ConfigTemplate, 'add', detail=False)
@@ -1151,6 +1302,17 @@ class ImageAttachmentListView(generic.ObjectListView):
 @register_model_view(ImageAttachment)
 class ImageAttachmentView(generic.ObjectView):
     queryset = ImageAttachment.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.ImageAttachmentPanel(),
+        ],
+        right_panels=[
+            panels.ImageAttachmentFilePanel(),
+        ],
+        bottom_panels=[
+            panels.ImageAttachmentImagePanel(),
+        ],
+    )
 
 
 @register_model_view(ImageAttachment, 'add', detail=False)
@@ -1215,6 +1377,16 @@ class JournalEntryListView(generic.ObjectListView):
 @register_model_view(JournalEntry)
 class JournalEntryView(generic.ObjectView):
     queryset = JournalEntry.objects.all()
+    layout = layout.SimpleLayout(
+        left_panels=[
+            panels.JournalEntryPanel(),
+            panels.CustomFieldsPanel(),
+            panels.TagsPanel(),
+        ],
+        right_panels=[
+            CommentsPanel(),
+        ],
+    )
 
 
 @register_model_view(JournalEntry, 'add', detail=False)
