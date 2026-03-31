@@ -389,6 +389,29 @@ class SiteTest(APIViewTestCases.APIViewTestCase):
         response = self.client.post(self._get_list_url(), data, format='json', **self.header)
         self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
 
+    def test_add_and_remove_same_tag_error(self):
+        """
+        Including the same tag in both add_tags and remove_tags should raise a validation error.
+        """
+        site = Site.objects.first()
+        Tag.objects.bulk_create((
+            Tag(name='Alpha', slug='alpha'),
+            Tag(name='Bravo', slug='bravo'),
+        ))
+
+        obj_perm = ObjectPermission(name='Test permission', actions=['change'])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(self.model))
+
+        url = self._get_detail_url(site)
+        data = {
+            'add_tags': [{'name': 'Alpha'}, {'name': 'Bravo'}],
+            'remove_tags': [{'name': 'Alpha'}],
+        }
+        response = self.client.patch(url, data, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
 
 class LocationTest(APIViewTestCases.APIViewTestCase):
     model = Location

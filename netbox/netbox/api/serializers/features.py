@@ -60,6 +60,17 @@ class TaggableModelSerializer(serializers.Serializer):
                 'remove_tags': 'Cannot use "remove_tags" when creating a new object.'
             })
 
+        if data.get('add_tags') and data.get('remove_tags'):
+            add_pks = {t.pk for t in data['add_tags']}
+            remove_pks = {t.pk for t in data['remove_tags']}
+            overlap = [t for t in data['add_tags'] if t.pk in (add_pks & remove_pks)]
+            if overlap:
+                raise serializers.ValidationError({
+                    'remove_tags':
+                        f'Tags may not be present in both "add_tags" and "remove_tags": '
+                        f'{", ".join(t.name for t in overlap)}'
+                })
+
         # Pop add_tags/remove_tags before calling super() to prevent them from being passed
         # to the model constructor during ValidatedModelSerializer validation
         add_tags = data.pop('add_tags', None)
