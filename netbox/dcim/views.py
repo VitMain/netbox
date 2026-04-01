@@ -3387,7 +3387,7 @@ class InterfaceView(generic.ObjectView):
                 model='ipam.IPAddress',
                 filters={'interface_id': lambda ctx: ctx['object'].pk},
                 title=_('IP Addresses'),
-                exclude_columns=['assigned'],
+                exclude_columns=['assigned', 'assigned_object', 'assigned_object_parent'],
             ),
             ObjectsTablePanel(
                 model='dcim.MACAddress',

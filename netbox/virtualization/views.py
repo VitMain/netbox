@@ -651,7 +651,7 @@ class VMInterfaceView(generic.ObjectView):
             ObjectsTablePanel(
                 model='ipam.IPaddress',
                 filters={'vminterface_id': lambda ctx: ctx['object'].pk},
-                exclude_columns=['assigned'],
+                exclude_columns=['assigned', 'assigned_object', 'assigned_object_parent'],
                 actions=[
                     actions.AddObject(
                         'ipam.IPaddress',
