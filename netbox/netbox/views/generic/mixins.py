@@ -97,16 +97,4 @@ class TableMixin:
             table.columns.show('pk')
         table.configure(request)
 
-        # Apply column inclusion/exclusion (overrides user preferences)
-        if include_columns := request.GET.get('include_columns'):
-            include_columns = include_columns.split(',')
-            for column in table.columns:
-                if column.name not in table.exempt_columns and column.name not in include_columns:
-                    table.columns.hide(column.name)
-        elif exclude_columns := request.GET.get('exclude_columns'):
-            exclude_columns = exclude_columns.split(',')
-            for column_name in exclude_columns:
-                if column_name in table.columns.names():
-                    table.columns.hide(column_name)
-
         return table

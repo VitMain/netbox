@@ -185,6 +185,19 @@ class BaseTable(tables.Table):
             columns = getattr(self.Meta, 'default_columns', self.Meta.fields)
 
         self._set_columns(columns)
+
+        # Apply column inclusion/exclusion (overrides user preferences)
+        if include_columns := request.GET.get('include_columns'):
+            include_columns = include_columns.split(',')
+            for column in self.columns:
+                if column.name not in self.exempt_columns and column.name not in include_columns:
+                    self.columns.hide(column.name)
+        elif exclude_columns := request.GET.get('exclude_columns'):
+            exclude_columns = exclude_columns.split(',')
+            for column_name in exclude_columns:
+                if column_name in self.columns.names():
+                    self.columns.hide(column_name)
+
         self._apply_prefetching()
         if ordering is not None:
             self.order_by = ordering
