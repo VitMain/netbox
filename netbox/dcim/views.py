@@ -2627,7 +2627,7 @@ class DeviceView(generic.ObjectView):
                 model='ipam.Service',
                 title=_('Application Services'),
                 filters={'device_id': lambda ctx: ctx['object'].pk},
-                exclude_columns=['device'],
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject(
                         'ipam.Service',

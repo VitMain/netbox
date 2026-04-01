@@ -203,7 +203,6 @@ class GroupView(generic.ObjectView):
             ObjectsTablePanel(
                 'users.User',
                 filters={'group_id': lambda ctx: ctx['object'].pk},
-                exclude_columns=['group'],
             ),
             ObjectsTablePanel(
                 'users.ObjectPermission',
@@ -420,12 +419,10 @@ class OwnerView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 'users.Group',
                 filters={'owner_id': lambda ctx: ctx['object'].pk},
-                exclude_columns=['owner'],
             ),
             ObjectsTablePanel(
                 'users.User',
                 filters={'owner_id': lambda ctx: ctx['object'].pk},
-                exclude_columns=['owner'],
             ),
         ],
         right_panels=[
