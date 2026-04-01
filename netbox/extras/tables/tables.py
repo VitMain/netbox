@@ -514,8 +514,9 @@ class EventRuleTable(NetBoxTable):
         verbose_name=_('Type'),
     )
     action_object = tables.Column(
-        linkify=True,
         verbose_name=_('Object'),
+        orderable=False,
+        linkify=True,
     )
     object_types = columns.ContentTypesColumn(
         verbose_name=_('Object Types'),

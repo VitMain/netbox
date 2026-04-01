@@ -197,42 +197,21 @@ class ModularComponentTemplateModel(ComponentTemplateModel):
         modules.reverse()
         return modules
 
-    def resolve_name(self, module=None, device=None):
-        has_module = MODULE_TOKEN in self.name
-        has_vc = VC_POSITION_RE.search(self.name) is not None
-        if not has_module and not has_vc:
-            return self.name
-
-        name = self.name
-
-        if has_module and module:
+    def _resolve_module_placeholder(self, value, module=None, device=None):
+        if MODULE_TOKEN in value and module:
             modules = self._get_module_tree(module)
             for m in modules:
-                name = name.replace(MODULE_TOKEN, m.module_bay.position, 1)
-
-        if has_vc:
+                value = value.replace(MODULE_TOKEN, m.module_bay.position, 1)
+        if VC_POSITION_RE.search(value) is not None:
             resolved_device = (module.device if module else None) or device
-            name = self._resolve_vc_position(name, resolved_device)
+            value = self._resolve_vc_position(value, resolved_device)
+        return value
 
-        return name
+    def resolve_name(self, module=None, device=None):
+        return self._resolve_module_placeholder(self.name, module, device)
 
     def resolve_label(self, module=None, device=None):
-        has_module = MODULE_TOKEN in self.label
-        has_vc = VC_POSITION_RE.search(self.label) is not None
-        if not has_module and not has_vc:
-            return self.label
-
-        label = self.label
-
-        if has_module and module:
-            modules = self._get_module_tree(module)
-            for m in modules:
-                label = label.replace(MODULE_TOKEN, m.module_bay.position, 1)
-        if has_vc:
-            resolved_device = (module.device if module else None) or device
-            label = self._resolve_vc_position(label, resolved_device)
-
-        return label
+        return self._resolve_module_placeholder(self.label, module, device)
 
 
 class ConsolePortTemplate(ModularComponentTemplateModel):
@@ -766,11 +745,14 @@ class ModuleBayTemplate(ModularComponentTemplateModel):
         verbose_name = _('module bay template')
         verbose_name_plural = _('module bay templates')
 
+    def resolve_position(self, module):
+        return self._resolve_module_placeholder(self.position, module)
+
     def instantiate(self, **kwargs):
         return self.component_model(
             name=self.resolve_name(kwargs.get('module'), kwargs.get('device')),
             label=self.resolve_label(kwargs.get('module'), kwargs.get('device')),
-            position=self.position,
+            position=self.resolve_position(kwargs.get('module')),
             enabled=self.enabled,
             **kwargs
         )
