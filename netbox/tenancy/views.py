@@ -57,6 +57,7 @@ class TenantGroupView(GetRelatedModelsMixin, generic.ObjectView):
                 'tenancy.tenantgroup',
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
                 title=_('Child Groups'),
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject(
                         'tenancy.tenantgroup',
@@ -235,6 +236,7 @@ class ContactGroupView(GetRelatedModelsMixin, generic.ObjectView):
                 'tenancy.contactgroup',
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
                 title=_('Child Groups'),
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject(
                         'tenancy.contactgroup',
@@ -414,6 +416,7 @@ class ContactView(generic.ObjectView):
                 'tenancy.contactassignment',
                 filters={'contact_id': lambda ctx: ctx['object'].pk},
                 title=_('Assignments'),
+                exclude_columns=['contact'],
             ),
         ],
     )

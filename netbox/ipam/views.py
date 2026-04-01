@@ -1331,6 +1331,7 @@ class VLANTranslationPolicyView(generic.ObjectView):
                 'ipam.vlantranslationrule',
                 filters={'policy_id': lambda ctx: ctx['object'].pk},
                 title=_('VLAN translation rules'),
+                exclude_columns=['policy'],
                 actions=[
                     actions.AddObject(
                         'ipam.vlantranslationrule',
@@ -1628,6 +1629,7 @@ class VLANView(generic.ObjectView):
                 'ipam.prefix',
                 filters={'vlan_id': lambda ctx: ctx['object'].pk},
                 title=_('Prefixes'),
+                exclude_columns=['vlan'],
                 actions=[
                     actions.AddObject(
                         'ipam.prefix',

@@ -258,6 +258,7 @@ class RegionView(GetRelatedModelsMixin, generic.ObjectView):
                 model='dcim.Region',
                 title=_('Child Regions'),
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject('dcim.Region', url_params={'parent': lambda ctx: ctx['object'].pk}),
                 ],
@@ -390,6 +391,7 @@ class SiteGroupView(GetRelatedModelsMixin, generic.ObjectView):
                 model='dcim.SiteGroup',
                 title=_('Child Groups'),
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject('dcim.SiteGroup', url_params={'parent': lambda ctx: ctx['object'].pk}),
                 ],
@@ -540,6 +542,7 @@ class SiteView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 model='dcim.Location',
                 filters={'site_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['site'],
                 actions=[
                     actions.AddObject('dcim.Location', url_params={'site': lambda ctx: ctx['object'].pk}),
                 ],
@@ -552,6 +555,7 @@ class SiteView(GetRelatedModelsMixin, generic.ObjectView):
                     'rack_id': settings.FILTERS_NULL_CHOICE_VALUE,
                     'parent_bay_id': settings.FILTERS_NULL_CHOICE_VALUE,
                 },
+                exclude_columns=['site'],
                 actions=[
                     actions.AddObject('dcim.Device', url_params={'site': lambda ctx: ctx['object'].pk}),
                 ],
@@ -674,6 +678,7 @@ class LocationView(GetRelatedModelsMixin, generic.ObjectView):
                 model='dcim.Location',
                 title=_('Child Locations'),
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject(
                         'dcim.Location',
@@ -692,6 +697,7 @@ class LocationView(GetRelatedModelsMixin, generic.ObjectView):
                     'rack_id': settings.FILTERS_NULL_CHOICE_VALUE,
                     'parent_bay_id': settings.FILTERS_NULL_CHOICE_VALUE,
                 },
+                exclude_columns=['location'],
                 actions=[
                     actions.AddObject(
                         'dcim.Device',
@@ -1686,6 +1692,7 @@ class ModuleTypeProfileView(generic.ObjectView):
                 filters={
                     'profile_id': lambda ctx: ctx['object'].pk,
                 },
+                exclude_columns=['profile'],
                 actions=[
                     actions.AddObject(
                         'dcim.ModuleType',
@@ -2427,6 +2434,7 @@ class DeviceRoleView(GetRelatedModelsMixin, generic.ObjectView):
                 model='dcim.DeviceRole',
                 title=_('Child Device Roles'),
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject('dcim.DeviceRole', url_params={'parent': lambda ctx: ctx['object'].pk}),
                 ],
@@ -2527,6 +2535,7 @@ class PlatformView(GetRelatedModelsMixin, generic.ObjectView):
                 model='dcim.Platform',
                 title=_('Child Platforms'),
                 filters={'parent_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['parent'],
                 actions=[
                     actions.AddObject('dcim.Platform', url_params={'parent': lambda ctx: ctx['object'].pk}),
                 ],
@@ -2605,6 +2614,7 @@ class DeviceView(generic.ObjectView):
             ObjectsTablePanel(
                 model='dcim.VirtualDeviceContext',
                 filters={'device_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['device'],
                 actions=[
                     actions.AddObject('dcim.VirtualDeviceContext', url_params={'device': lambda ctx: ctx['object'].pk}),
                 ],
@@ -2617,6 +2627,7 @@ class DeviceView(generic.ObjectView):
                 model='ipam.Service',
                 title=_('Application Services'),
                 filters={'device_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['device'],
                 actions=[
                     actions.AddObject(
                         'ipam.Service',
@@ -3376,11 +3387,13 @@ class InterfaceView(generic.ObjectView):
                 model='ipam.IPAddress',
                 filters={'interface_id': lambda ctx: ctx['object'].pk},
                 title=_('IP Addresses'),
+                exclude_columns=['assigned'],
             ),
             ObjectsTablePanel(
                 model='dcim.MACAddress',
                 filters={'interface_id': lambda ctx: ctx['object'].pk},
                 title=_('MAC Addresses'),
+                exclude_columns=['assigned_object', 'assigned_object_parent'],
             ),
             ObjectsTablePanel(
                 model='ipam.VLAN',
