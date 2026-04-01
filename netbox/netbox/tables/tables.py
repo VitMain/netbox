@@ -195,7 +195,7 @@ class BaseTable(tables.Table):
         elif exclude_columns := request.GET.get('exclude_columns'):
             exclude_columns = exclude_columns.split(',')
             for column_name in exclude_columns:
-                if column_name in self.columns.names():
+                if column_name in self.columns.names() and column_name not in self.exempt_columns:
                     self.columns.hide(column_name)
 
         self._apply_prefetching()
