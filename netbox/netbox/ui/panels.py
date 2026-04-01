@@ -282,11 +282,13 @@ class ObjectsTablePanel(Panel):
         model (str): The dotted label of the model to be added (e.g. "dcim.site")
         filters (dict): A dictionary of arbitrary URL parameters to append to the table's URL. If the value of a key is
             a callable, it will be passed the current template context.
+        include_columns (list): A list of column names to display exclusively (overrides user preferences)
+        exclude_columns (list): A list of column names to hide from the table (overrides user preferences)
     """
     template_name = 'ui/panels/objects_table.html'
     title = None
 
-    def __init__(self, model, filters=None, **kwargs):
+    def __init__(self, model, filters=None, include_columns=None, exclude_columns=None, **kwargs):
         super().__init__(**kwargs)
 
         # Resolve the model class from its app.name label
@@ -297,6 +299,8 @@ class ObjectsTablePanel(Panel):
             raise ValueError(f"Invalid model label: {model}")
 
         self.filters = filters or {}
+        self.include_columns = include_columns or []
+        self.exclude_columns = exclude_columns or []
 
         # If no title is specified, derive one from the model name
         if self.title is None:
@@ -308,6 +312,10 @@ class ObjectsTablePanel(Panel):
         }
         if 'return_url' not in url_params and 'object' in context:
             url_params['return_url'] = context['object'].get_absolute_url()
+        if self.include_columns:
+            url_params['include_columns'] = ','.join(self.include_columns)
+        if self.exclude_columns:
+            url_params['exclude_columns'] = ','.join(self.exclude_columns)
         return {
             **super().get_context(context),
             'viewname': get_viewname(self.model, 'list'),
