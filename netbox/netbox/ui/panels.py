@@ -282,7 +282,7 @@ class ObjectsTablePanel(Panel):
         model (str): The dotted label of the model to be added (e.g. "dcim.site")
         filters (dict): A dictionary of arbitrary URL parameters to append to the table's URL. If the value of a key is
             a callable, it will be passed the current template context.
-        include_columns (list): A list of column names to display exclusively (overrides user preferences)
+        include_columns (list): A list of column names to always display (overrides user preferences)
         exclude_columns (list): A list of column names to hide from the table (overrides user preferences)
     """
     template_name = 'ui/panels/objects_table.html'

@@ -187,12 +187,11 @@ class BaseTable(tables.Table):
         self._set_columns(columns)
 
         # Apply column inclusion/exclusion (overrides user preferences)
-        if include_columns := request.GET.get('include_columns'):
-            include_columns = include_columns.split(',')
-            for column in self.columns:
-                if column.name not in self.exempt_columns and column.name not in include_columns:
-                    self.columns.hide(column.name)
-        elif exclude_columns := request.GET.get('exclude_columns'):
+        if columns_param := request.GET.get('include_columns'):
+            for column_name in columns_param.split(','):
+                if column_name in self.columns.names():
+                    self.columns.show(column_name)
+        if exclude_columns := request.GET.get('exclude_columns'):
             exclude_columns = exclude_columns.split(',')
             for column_name in exclude_columns:
                 if column_name in self.columns.names() and column_name not in self.exempt_columns:
