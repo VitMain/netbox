@@ -9,6 +9,7 @@ from dcim.choices import *
 from dcim.constants import *
 from dcim.models.base import PortMappingBase
 from dcim.models.mixins import InterfaceValidationMixin
+from dcim.utils import get_module_bay_positions, resolve_module_placeholder
 from netbox.models import ChangeLoggedModel
 from utilities.fields import ColorField, NaturalOrderingField
 from utilities.mptt import TreeManager
@@ -185,33 +186,27 @@ class ModularComponentTemplateModel(ComponentTemplateModel):
 
         return VC_POSITION_RE.sub(replacer, value)
 
-    def _get_module_tree(self, module):
-        modules = []
-        while module:
-            modules.append(module)
-            if module.module_bay:
-                module = module.module_bay.module
-            else:
-                module = None
-
-        modules.reverse()
-        return modules
-
-    def _resolve_module_placeholder(self, value, module=None, device=None):
-        if MODULE_TOKEN in value and module:
-            modules = self._get_module_tree(module)
-            for m in modules:
-                value = value.replace(MODULE_TOKEN, m.module_bay.position, 1)
-        if VC_POSITION_RE.search(value) is not None:
+    def _resolve_all_placeholders(self, value, module=None, device=None):
+        has_module = MODULE_TOKEN in value
+        has_vc = VC_POSITION_RE.search(value) is not None
+        if not has_module and not has_vc:
+            return value
+        if has_module and module:
+            positions = get_module_bay_positions(module.module_bay)
+            value = resolve_module_placeholder(value, positions)
+        if has_vc:
             resolved_device = (module.device if module else None) or device
             value = self._resolve_vc_position(value, resolved_device)
         return value
 
     def resolve_name(self, module=None, device=None):
-        return self._resolve_module_placeholder(self.name, module, device)
+        return self._resolve_all_placeholders(self.name, module, device)
 
     def resolve_label(self, module=None, device=None):
-        return self._resolve_module_placeholder(self.label, module, device)
+        return self._resolve_all_placeholders(self.label, module, device)
+
+    def resolve_position(self, module=None, device=None):
+        return self._resolve_all_placeholders(self.position, module, device)
 
 
 class ConsolePortTemplate(ModularComponentTemplateModel):
@@ -745,14 +740,11 @@ class ModuleBayTemplate(ModularComponentTemplateModel):
         verbose_name = _('module bay template')
         verbose_name_plural = _('module bay templates')
 
-    def resolve_position(self, module):
-        return self._resolve_module_placeholder(self.position, module)
-
     def instantiate(self, **kwargs):
         return self.component_model(
             name=self.resolve_name(kwargs.get('module'), kwargs.get('device')),
             label=self.resolve_label(kwargs.get('module'), kwargs.get('device')),
-            position=self.resolve_position(kwargs.get('module')),
+            position=self.resolve_position(kwargs.get('module'), kwargs.get('device')),
             enabled=self.enabled,
             **kwargs
         )
