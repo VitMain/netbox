@@ -737,6 +737,9 @@ class Device(
 
     class Meta:
         ordering = ('name', 'pk')  # Name may be null
+        indexes = (
+            models.Index(fields=('name', 'id')),  # Default ordering
+        )
         constraints = (
             models.UniqueConstraint(
                 Lower('name'), 'site', 'tenant',
@@ -1184,6 +1187,9 @@ class VirtualChassis(PrimaryModel):
 
     class Meta:
         ordering = ['name']
+        indexes = (
+            models.Index(fields=('name',)),  # Default ordering
+        )
         verbose_name = _('virtual chassis')
         verbose_name_plural = _('virtual chassis')
 
@@ -1290,6 +1296,9 @@ class VirtualDeviceContext(PrimaryModel):
                 name='%(app_label)s_%(class)s_device_name'
             ),
         )
+        indexes = (
+            models.Index(fields=('name',)),  # Default ordering
+        )
         verbose_name = _('virtual device context')
         verbose_name_plural = _('virtual device contexts')
 
@@ -1356,6 +1365,7 @@ class MACAddress(PrimaryModel):
     class Meta:
         ordering = ('mac_address', 'pk')
         indexes = (
+            models.Index(fields=('mac_address', 'id')),  # Default ordering
             models.Index(fields=('assigned_object_type', 'assigned_object_id')),
         )
         verbose_name = _('MAC address')

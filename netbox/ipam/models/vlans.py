@@ -267,6 +267,9 @@ class VLAN(PrimaryModel):
 
     class Meta:
         ordering = ('site', 'group', 'vid', 'pk')  # (site, group, vid) may be non-unique
+        indexes = (
+            models.Index(fields=('site', 'group', 'vid', 'id')),  # Default ordering
+        )
         constraints = (
             models.UniqueConstraint(
                 fields=('group', 'vid'),
