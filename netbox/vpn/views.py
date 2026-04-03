@@ -129,6 +129,7 @@ class TunnelView(generic.ObjectView):
             ObjectsTablePanel(
                 'vpn.tunneltermination',
                 filters={'tunnel_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['tunnel'],
                 actions=[
                     actions.AddObject(
                         'vpn.tunneltermination',
@@ -223,6 +224,7 @@ class TunnelTerminationView(generic.ObjectView):
                     'tunnel_id': lambda ctx: ctx['object'].tunnel.pk,
                     'id__n': lambda ctx: ctx['object'].pk,
                 },
+                exclude_columns=['tunnel'],
                 title=_('Peer Terminations'),
             ),
         ],
@@ -675,6 +677,7 @@ class L2VPNView(generic.ObjectView):
                 ObjectsTablePanel(
                     'vpn.l2vpntermination',
                     filters={'l2vpn_id': lambda ctx: ctx['object'].pk},
+                    exclude_columns=['l2vpn'],
                     actions=[
                         actions.AddObject(
                             'vpn.l2vpntermination',

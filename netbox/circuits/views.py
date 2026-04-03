@@ -53,6 +53,7 @@ class ProviderView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 model='circuits.ProviderAccount',
                 filters={'provider_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['provider'],
                 actions=[
                     actions.AddObject(
                         'circuits.ProviderAccount', url_params={'provider': lambda ctx: ctx['object'].pk}
@@ -62,6 +63,7 @@ class ProviderView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 model='circuits.Circuit',
                 filters={'provider_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['provider'],
                 actions=[
                     actions.AddObject('circuits.Circuit', url_params={'provider': lambda ctx: ctx['object'].pk}),
                 ],
@@ -161,6 +163,7 @@ class ProviderAccountView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 model='circuits.Circuit',
                 filters={'provider_account_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['provider_account'],
                 actions=[
                     actions.AddObject(
                         'circuits.Circuit',
@@ -257,6 +260,7 @@ class ProviderNetworkView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 model='circuits.VirtualCircuit',
                 filters={'provider_network_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['provider_network'],
                 actions=[
                     actions.AddObject(
                         'circuits.VirtualCircuit', url_params={'provider_network': lambda ctx: ctx['object'].pk}
@@ -801,6 +805,7 @@ class VirtualCircuitView(generic.ObjectView):
                 model='circuits.VirtualCircuitTermination',
                 title=_('Terminations'),
                 filters={'virtual_circuit_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['virtual_circuit'],
                 actions=[
                     actions.AddObject(
                         'circuits.VirtualCircuitTermination',

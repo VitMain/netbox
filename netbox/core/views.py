@@ -94,6 +94,7 @@ class DataSourceView(GetRelatedModelsMixin, generic.ObjectView):
             ObjectsTablePanel(
                 model='core.DataFile',
                 filters={'source_id': lambda ctx: ctx['object'].pk},
+                exclude_columns=['source'],
             ),
         ],
     )
