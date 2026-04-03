@@ -186,26 +186,52 @@ def action_url(parser, token):
     return ActionURLNode(model, action, kwargs, asvar)
 
 
+def _format_speed(speed, divisor, unit):
+    """
+    Format a speed value with a given divisor and unit.
+
+    Handles decimal values and strips trailing zeros for clean output.
+    """
+    whole, remainder = divmod(speed, divisor)
+    if remainder == 0:
+        return f'{whole} {unit}'
+
+    # Divisors are powers of 10, so len(str(divisor)) - 1 matches the decimal precision.
+    precision = len(str(divisor)) - 1
+    fraction = f'{remainder:0{precision}d}'.rstrip('0')
+    return f'{whole}.{fraction} {unit}'
+
+
 @register.filter()
 def humanize_speed(speed):
     """
-    Humanize speeds given in Kbps. Examples:
+    Humanize speeds given in Kbps, always using the largest appropriate unit.
 
-        1544 => "1.544 Mbps"
-        100000 => "100 Mbps"
-        10000000 => "10 Gbps"
+    Decimal values are displayed when the result is not a whole number;
+    trailing zeros after the decimal point are stripped for clean output.
+
+    Examples:
+
+        1_544 => "1.544 Mbps"
+        100_000 => "100 Mbps"
+        1_000_000 => "1 Gbps"
+        2_500_000 => "2.5 Gbps"
+        10_000_000 => "10 Gbps"
+        800_000_000 => "800 Gbps"
+        1_600_000_000 => "1.6 Tbps"
     """
     if not speed:
         return ''
-    if speed >= 1000000000 and speed % 1000000000 == 0:
-        return '{} Tbps'.format(int(speed / 1000000000))
-    if speed >= 1000000 and speed % 1000000 == 0:
-        return '{} Gbps'.format(int(speed / 1000000))
-    if speed >= 1000 and speed % 1000 == 0:
-        return '{} Mbps'.format(int(speed / 1000))
-    if speed >= 1000:
-        return '{} Mbps'.format(float(speed) / 1000)
-    return '{} Kbps'.format(speed)
+
+    speed = int(speed)
+
+    if speed >= 1_000_000_000:
+        return _format_speed(speed, 1_000_000_000, 'Tbps')
+    if speed >= 1_000_000:
+        return _format_speed(speed, 1_000_000, 'Gbps')
+    if speed >= 1_000:
+        return _format_speed(speed, 1_000, 'Mbps')
+    return f'{speed} Kbps'
 
 
 def _humanize_capacity(value, divisor=1000):
