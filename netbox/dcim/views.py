@@ -27,7 +27,6 @@ from netbox.ui.panels import (
     NestedGroupObjectPanel,
     ObjectsTablePanel,
     OrganizationalObjectPanel,
-    Panel,
     RelatedObjectsPanel,
     TemplatePanel,
 )
@@ -1771,7 +1770,7 @@ class ModuleTypeView(GetRelatedModelsMixin, generic.ObjectView):
             CommentsPanel(),
         ],
         right_panels=[
-            Panel(
+            TemplatePanel(
                 title=_('Attributes'),
                 template_name='dcim/panels/module_type_attributes.html',
             ),
@@ -2945,7 +2944,7 @@ class ModuleView(GetRelatedModelsMixin, generic.ObjectView):
             CommentsPanel(),
         ],
         right_panels=[
-            Panel(
+            TemplatePanel(
                 title=_('Module Type'),
                 template_name='dcim/panels/module_type.html',
             ),
@@ -3753,10 +3752,7 @@ class ModuleBayView(generic.ObjectView):
         ],
         right_panels=[
             CustomFieldsPanel(),
-            Panel(
-                title=_('Installed Module'),
-                template_name='dcim/panels/installed_module.html',
-            ),
+            panels.InstalledModulePanel(),
         ],
     )
 
@@ -3828,10 +3824,7 @@ class DeviceBayView(generic.ObjectView):
             TagsPanel(),
         ],
         right_panels=[
-            Panel(
-                title=_('Installed Device'),
-                template_name='dcim/panels/installed_device.html',
-            ),
+            panels.InstalledDevicePanel(),
         ],
     )
 
@@ -4323,11 +4316,11 @@ class CableView(generic.ObjectView):
             CommentsPanel(),
         ],
         right_panels=[
-            Panel(
+            TemplatePanel(
                 title=_('Termination A'),
                 template_name='dcim/panels/cable_termination_a.html',
             ),
-            Panel(
+            TemplatePanel(
                 title=_('Termination B'),
                 template_name='dcim/panels/cable_termination_b.html',
             ),

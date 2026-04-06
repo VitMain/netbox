@@ -193,7 +193,13 @@ class DataFileView(generic.ObjectView):
             layout.Column(
                 panels.DataFilePanel(),
                 panels.DataFileContentPanel(),
+                PluginContentPanel('left_page'),
             ),
+        ),
+        layout.Row(
+            layout.Column(
+                PluginContentPanel('full_width_page'),
+            )
         ),
     )
 

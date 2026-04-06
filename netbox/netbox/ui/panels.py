@@ -45,18 +45,17 @@ class Panel:
     Parameters:
         title (str): The human-friendly title of the panel
         actions (list): An iterable of PanelActions to include in the panel header
-        template_name (str): Overrides the default template name, if defined
     """
     template_name = None
     title = None
     actions = None
 
-    def __init__(self, title=None, actions=None, template_name=None):
+    def __init__(self, title=None, actions=None):
         if title is not None:
             self.title = title
-        self.actions = actions or self.actions or []
-        if template_name is not None:
-            self.template_name = template_name
+        if actions is not None:
+            self.actions = actions
+        self.actions = list(self.actions) if self.actions else []
 
     def get_context(self, context):
         """
@@ -74,6 +73,15 @@ class Panel:
             'panel_class': self.__class__.__name__,
         }
 
+    def should_render(self, context):
+        """
+        Determines whether the panel should render on the page. (Default: True)
+
+        Parameters:
+            context (dict): The panel's prepared context (the return value of get_context())
+        """
+        return True
+
     def render(self, context):
         """
         Render the panel as HTML.
@@ -81,7 +89,10 @@ class Panel:
         Parameters:
             context (dict): The template context
         """
-        return render_to_string(self.template_name, self.get_context(context))
+        ctx = self.get_context(context)
+        if not self.should_render(ctx):
+            return ''
+        return render_to_string(self.template_name, ctx, request=ctx.get('request'))
 
 
 #
@@ -105,9 +116,15 @@ class ObjectPanel(Panel):
 
     def get_context(self, context):
         obj = resolve_attr_path(context, self.accessor)
+        if self.title is not None:
+            title_ = self.title
+        elif obj is not None:
+            title_ = title(obj._meta.verbose_name)
+        else:
+            title_ = None
         return {
             **super().get_context(context),
-            'title': self.title or title(obj._meta.verbose_name),
+            'title': title_,
             'object': obj,
         }
 
@@ -187,7 +204,7 @@ class ObjectAttributesPanel(ObjectPanel, metaclass=ObjectAttributesPanelMeta):
             'attrs': [
                 {
                     'label': attr.label or self._name_to_label(name),
-                    'value': attr.render(ctx['object'], {'name': name}),
+                    'value': attr.render(ctx['object'], {'name': name, 'perms': ctx['perms']}),
                 } for name, attr in self._attrs.items() if name in attr_names
             ],
         }
@@ -225,9 +242,10 @@ class CommentsPanel(ObjectPanel):
         self.field_name = field_name
 
     def get_context(self, context):
+        ctx = super().get_context(context)
         return {
-            **super().get_context(context),
-            'comments': getattr(context['object'], self.field_name),
+            **ctx,
+            'comments': getattr(ctx['object'], self.field_name, None),
         }
 
 
@@ -249,9 +267,10 @@ class JSONPanel(ObjectPanel):
             self.actions.append(CopyContent(f'panel_{field_name}'))
 
     def get_context(self, context):
+        ctx = super().get_context(context)
         return {
-            **super().get_context(context),
-            'data': getattr(context['object'], self.field_name),
+            **ctx,
+            'data': getattr(ctx['object'], self.field_name, None),
             'field_name': self.field_name,
         }
 
@@ -291,22 +310,27 @@ class ObjectsTablePanel(Panel):
     def __init__(self, model, filters=None, include_columns=None, exclude_columns=None, **kwargs):
         super().__init__(**kwargs)
 
-        # Resolve the model class from its app.name label
-        try:
-            app_label, model_name = model.split('.')
-            self.model = apps.get_model(app_label, model_name)
-        except (ValueError, LookupError):
+        # Validate the model label format
+        if '.' not in model:
             raise ValueError(f"Invalid model label: {model}")
-
+        self.model_label = model
         self.filters = filters or {}
         self.include_columns = include_columns or []
         self.exclude_columns = exclude_columns or []
 
-        # If no title is specified, derive one from the model name
-        if self.title is None:
-            self.title = title(self.model._meta.verbose_name_plural)
+    @property
+    def model(self):
+        try:
+            return apps.get_model(self.model_label)
+        except LookupError:
+            raise ValueError(f"Invalid model label: {self.model_label}")
 
     def get_context(self, context):
+        model = self.model
+
+        # If no title is specified, derive one from the model name
+        panel_title = self.title or title(model._meta.verbose_name_plural)
+
         url_params = {
             k: v(context) if callable(v) else v for k, v in self.filters.items()
         }
@@ -318,7 +342,8 @@ class ObjectsTablePanel(Panel):
             url_params['exclude_columns'] = ','.join(self.exclude_columns)
         return {
             **super().get_context(context),
-            'viewname': get_viewname(self.model, 'list'),
+            'title': panel_title,
+            'viewname': get_viewname(model, 'list'),
             'url_params': dict_to_querydict(url_params),
         }
 
@@ -330,12 +355,17 @@ class TemplatePanel(Panel):
     Parameters:
         template_name (str): The name of the template to render
     """
-    def __init__(self, template_name):
-        super().__init__(template_name=template_name)
+    def __init__(self, template_name, **kwargs):
+        self.template_name = template_name
+        super().__init__(**kwargs)
 
-    def render(self, context):
-        # Pass the entire context to the template
-        return render_to_string(self.template_name, context.flatten())
+    def get_context(self, context):
+        # Pass the entire context to the template, but let the panel's own context take precedence
+        # for panel-specific variables (title, actions, panel_class)
+        return {
+            **context.flatten(),
+            **super().get_context(context)
+        }
 
 
 class TextCodePanel(ObjectPanel):
@@ -350,10 +380,11 @@ class TextCodePanel(ObjectPanel):
         self.show_sync_warning = show_sync_warning
 
     def get_context(self, context):
+        ctx = super().get_context(context)
         return {
-            **super().get_context(context),
+            **ctx,
             'show_sync_warning': self.show_sync_warning,
-            'value': getattr(context.get('object'), self.field_name, None),
+            'value': getattr(ctx['object'], self.field_name, None),
         }
 
 
@@ -369,6 +400,7 @@ class PluginContentPanel(Panel):
         self.method = method
 
     def render(self, context):
+        # Override the default render() method to simply embed rendered plugin content
         obj = context.get('object')
         return _get_registered_content(obj, self.method, context)
 
@@ -399,14 +431,10 @@ class ContextTablePanel(ObjectPanel):
         return context.get(self.table)
 
     def get_context(self, context):
-        table = self._resolve_table(context)
         return {
             **super().get_context(context),
-            'table': table,
+            'table': self._resolve_table(context),
         }
 
-    def render(self, context):
-        table = self._resolve_table(context)
-        if table is None:
-            return ''
-        return super().render(context)
+    def should_render(self, context):
+        return context.get('table') is not None
