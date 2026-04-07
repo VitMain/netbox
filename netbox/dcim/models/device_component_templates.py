@@ -144,6 +144,9 @@ class ModularComponentTemplateModel(ComponentTemplateModel):
                 name='%(app_label)s_%(class)s_unique_module_type_name'
             ),
         )
+        indexes = (
+            models.Index(fields=('device_type', 'module_type', 'name')),  # Default ordering
+        )
 
     def to_objectchange(self, action):
         objectchange = super().to_objectchange(action)

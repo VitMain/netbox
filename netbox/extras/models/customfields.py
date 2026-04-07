@@ -274,6 +274,9 @@ class CustomField(CloningMixin, ExportTemplatesMixin, OwnerMixin, ChangeLoggedMo
 
     class Meta:
         ordering = ['group_name', 'weight', 'name']
+        indexes = (
+            models.Index(fields=('group_name', 'weight', 'name')),  # Default ordering
+        )
         verbose_name = _('custom field')
         verbose_name_plural = _('custom fields')
 
