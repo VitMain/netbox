@@ -37,6 +37,10 @@ class Migration(migrations.Migration):
             index=models.Index(fields=['protocol', 'ports', 'id'], name='ipam_servic_protoco_687d13_idx'),
         ),
         migrations.AddIndex(
+            model_name='vlangroup',
+            index=models.Index(fields=['name', 'id'], name='ipam_vlangr_name_ffa83e_idx'),
+        ),
+        migrations.AddIndex(
             model_name='vlan',
             index=models.Index(fields=['site', 'group', 'vid', 'id'], name='ipam_vlan_site_id_985573_idx'),
         ),

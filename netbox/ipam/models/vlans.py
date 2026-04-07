@@ -76,6 +76,7 @@ class VLANGroup(OrganizationalModel):
     class Meta:
         ordering = ('name', 'pk')  # Name may be non-unique
         indexes = (
+            models.Index(fields=('name', 'id')),  # Default ordering
             models.Index(fields=('scope_type', 'scope_id')),
         )
         constraints = (
