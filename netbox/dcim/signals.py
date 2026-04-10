@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
+from netbox.signals import post_raw_create
+
 from dcim.choices import CableEndChoices, LinkStatusChoices
 from ipam.models import Prefix
 from virtualization.models import Cluster, VMInterface
@@ -164,6 +166,23 @@ def retrace_cable_paths(instance, **kwargs):
     """
     for cablepath in CablePath.objects.filter(_nodes__contains=instance):
         cablepath.retrace()
+
+
+@receiver(post_raw_create, sender=Cable)
+def retrace_cable_paths_after_raw_create(sender, pks, **kwargs):
+    """
+    When Cables are created via a raw save, the normal Cable.save() path is bypassed,
+    so trace_paths is never sent. Retrace paths for all newly created cables once their
+    CableTerminations have been applied.
+    """
+    logger = logging.getLogger('netbox.dcim.cable')
+    for cable in Cable.objects.filter(pk__in=pks):
+        cable._terminations_modified = True
+        try:
+            trace_paths.send(Cable, instance=cable, created=True)
+            logger.debug(f"Retraced cable paths for Cable {cable.pk}")
+        except Exception as e:
+            logger.warning(f"Failed to retrace cable paths for Cable {cable.pk}: {e}")
 
 
 @receiver((post_delete, post_save), sender=PortMapping)
