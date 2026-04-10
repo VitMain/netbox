@@ -4,10 +4,9 @@ from django.db.models import Q
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from netbox.signals import post_raw_create
-
 from dcim.choices import CableEndChoices, LinkStatusChoices
 from ipam.models import Prefix
+from netbox.signals import post_raw_create
 from virtualization.models import Cluster, VMInterface
 from wireless.models import WirelessLAN
 
