@@ -171,8 +171,15 @@ def retrace_cable_paths(instance, **kwargs):
 def retrace_cable_paths_after_raw_create(sender, pks, **kwargs):
     """
     When Cables are created via a raw save, the normal Cable.save() path is bypassed,
-    so trace_paths is never sent. Retrace paths for all newly created cables once their
-    CableTerminations have been applied.
+    so trace_paths is never sent. Retrace paths for all newly created cables.
+
+    Callers must only send this signal after all CableTerminations for the given cables
+    have been applied. If a cable has no terminations, update_connected_endpoints will
+    find empty termination lists and skip path creation — so this is safe to call even
+    if terminations are absent, but path tracing will have no effect.
+
+    Note: raw=False (the default) is intentional here — we explicitly want
+    update_connected_endpoints to run, unlike during fixture loading (raw=True).
     """
     logger = logging.getLogger('netbox.dcim.cable')
     for cable in Cable.objects.filter(pk__in=pks):
