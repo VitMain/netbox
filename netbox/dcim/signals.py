@@ -177,11 +177,8 @@ def retrace_cable_paths_after_raw_create(sender, pks, **kwargs):
     logger = logging.getLogger('netbox.dcim.cable')
     for cable in Cable.objects.filter(pk__in=pks):
         cable._terminations_modified = True
-        try:
-            trace_paths.send(Cable, instance=cable, created=True)
-            logger.debug(f"Retraced cable paths for Cable {cable.pk}")
-        except Exception as e:
-            logger.warning(f"Failed to retrace cable paths for Cable {cable.pk}: {e}")
+        trace_paths.send(Cable, instance=cable, created=True)
+        logger.debug(f"Retraced cable paths for Cable {cable.pk}")
 
 
 @receiver((post_delete, post_save), sender=PortMapping)

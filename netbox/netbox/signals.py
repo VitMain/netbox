@@ -4,5 +4,6 @@ from django.dispatch import Signal
 post_clean = Signal()
 
 # Sent after objects of a given model are created via raw save.
-# Provides pks (list) of the created objects.
+# Expected call signature: post_raw_create.send(sender=MyModel, pks=[...])
+# Provides: pks (list) - PKs of the newly created objects.
 post_raw_create = Signal()
