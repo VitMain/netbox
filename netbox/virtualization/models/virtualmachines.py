@@ -282,6 +282,9 @@ class VirtualMachine(
         )
         verbose_name = _('virtual machine')
         verbose_name_plural = _('virtual machines')
+        permissions = [
+            ('render_config', 'Render configuration'),
+        ]
 
     def __str__(self):
         return self.name
