@@ -4,10 +4,10 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
+from extras.models import ConfigTemplate
 from netbox.api.authentication import TokenWritePermission
 from netbox.api.renderers import TextRenderer
 
-from extras.models import ConfigTemplate
 from .serializers import ConfigTemplateSerializer
 
 __all__ = (
