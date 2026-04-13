@@ -343,6 +343,34 @@ class VirtualMachineTest(APIViewTestCases.APIViewTestCase):
         response = self.client.post(url, {}, format='json', HTTP_AUTHORIZATION=token_header)
         self.assertHttpStatus(response, status.HTTP_200_OK)
 
+    def test_render_config_with_config_template_id(self):
+        default_template = ConfigTemplate.objects.create(
+            name='Default Template',
+            template_code='Default config for {{ virtualmachine.name }}'
+        )
+        override_template = ConfigTemplate.objects.create(
+            name='Override Template',
+            template_code='Override config for {{ virtualmachine.name }}'
+        )
+
+        vm = VirtualMachine.objects.first()
+        vm.config_template = default_template
+        vm.save()
+
+        self.add_permissions(
+            'virtualization.render_config_virtualmachine', 'virtualization.view_virtualmachine'
+        )
+        url = reverse('virtualization-api:virtualmachine-render-config', kwargs={'pk': vm.pk})
+
+        # Render with override template
+        response = self.client.post(url, {'config_template_id': override_template.pk}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], f'Override config for {vm.name}')
+
+        # Render with invalid config_template_id
+        response = self.client.post(url, {'config_template_id': 999999}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
 
 class VMInterfaceTest(APIViewTestCases.APIViewTestCase):
     model = VMInterface

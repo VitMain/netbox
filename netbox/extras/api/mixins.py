@@ -7,6 +7,7 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 from netbox.api.authentication import TokenWritePermission
 from netbox.api.renderers import TextRenderer
 
+from extras.models import ConfigTemplate
 from .serializers import ConfigTemplateSerializer
 
 __all__ = (
@@ -85,15 +86,25 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
         instance = self.get_object()
 
         object_type = instance._meta.model_name
-        configtemplate = instance.get_config_template()
-        if not configtemplate:
-            return Response({
-                'error': f'No config template found for this {object_type}.'
-            }, status=HTTP_400_BAD_REQUEST)
+
+        # Check for an optional config_template_id override in the request data
+        if config_template_id := request.data.get('config_template_id'):
+            try:
+                configtemplate = ConfigTemplate.objects.get(pk=config_template_id)
+            except ConfigTemplate.DoesNotExist:
+                return Response({
+                    'error': f'Config template with ID {config_template_id} not found.'
+                }, status=HTTP_400_BAD_REQUEST)
+        else:
+            configtemplate = instance.get_config_template()
+            if not configtemplate:
+                return Response({
+                    'error': f'No config template found for this {object_type}.'
+                }, status=HTTP_400_BAD_REQUEST)
 
         # Compile context data
         context_data = instance.get_config_context()
-        context_data.update(request.data)
+        context_data.update({k: v for k, v in request.data.items() if k != 'config_template_id'})
         context_data.update({object_type: instance})
 
         return self.render_configtemplate(request, configtemplate, context_data)
