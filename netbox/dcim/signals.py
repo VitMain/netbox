@@ -6,7 +6,6 @@ from django.dispatch import receiver
 
 from dcim.choices import CableEndChoices, LinkStatusChoices
 from ipam.models import Prefix
-from netbox.signals import post_raw_create
 from virtualization.models import Cluster, VMInterface
 from wireless.models import WirelessLAN
 
@@ -167,25 +166,17 @@ def retrace_cable_paths(instance, **kwargs):
         cablepath.retrace()
 
 
-@receiver(post_raw_create, sender=Cable)
-def retrace_cable_paths_after_raw_create(sender, pks, **kwargs):
+@receiver(post_save, sender=Cable)
+def retrace_cable_paths_on_update_dependencies(sender, instance, update_dependencies=False, **kwargs):
     """
-    When Cables are created via a raw save, the normal Cable.save() path is bypassed,
-    so trace_paths is never sent. Retrace paths for all newly created cables.
-
-    Callers must only send this signal after all CableTerminations for the given cables
-    have been applied. If a cable has no terminations, update_connected_endpoints will
-    find empty termination lists and skip path creation — so this is safe to call even
-    if terminations are absent, but path tracing will have no effect.
-
-    Note: raw=False (the default) is intentional here — we explicitly want
-    update_connected_endpoints to run, unlike during fixture loading (raw=True).
+    Trigger cable path retracing for a Cable instance when dependencies need to be
+    recalculated. Callers should fire post_save with update_dependencies=True after
+    all CableTerminations are in place.
     """
-    logger = logging.getLogger('netbox.dcim.cable')
-    for cable in Cable.objects.filter(pk__in=pks):
-        cable._terminations_modified = True
-        trace_paths.send(Cable, instance=cable, created=True)
-        logger.debug(f"Retraced cable paths for Cable {cable.pk}")
+    if not update_dependencies:
+        return
+    instance._terminations_modified = True
+    trace_paths.send(Cable, instance=instance, created=True)
 
 
 @receiver((post_delete, post_save), sender=PortMapping)
