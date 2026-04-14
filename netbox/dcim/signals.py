@@ -167,13 +167,13 @@ def retrace_cable_paths(instance, **kwargs):
 
 
 @receiver(post_save, sender=Cable)
-def retrace_cable_paths_on_update_dependencies(sender, instance, update_dependencies=False, **kwargs):
+def retrace_cable_paths_on_raw_create(sender, instance, post_raw_create=False, **kwargs):
     """
     Trigger cable path retracing for a Cable instance when dependencies need to be
-    recalculated. Callers should fire post_save with update_dependencies=True after
+    recalculated. Callers should fire post_save with post_raw_create=True after
     all CableTerminations are in place.
     """
-    if not update_dependencies:
+    if not post_raw_create:
         return
     instance._terminations_modified = True
     trace_paths.send(Cable, instance=instance, created=True)
