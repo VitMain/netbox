@@ -1,4 +1,5 @@
 import importlib
+import types
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured, SuspiciousFileOperation
@@ -21,6 +22,7 @@ __all__ = (
     'is_script',
     'is_taggable',
     'run_validators',
+    'validate_script_content',
 )
 
 
@@ -132,6 +134,17 @@ def is_script(obj):
         return (issubclass(obj, Report) and obj != Report) or (issubclass(obj, Script) and obj != Script)
     except TypeError:
         return False
+
+
+def validate_script_content(content, filename):
+    """
+    Validate that the given content can be loaded as a Python module by compiling
+    and executing it. Raises an exception if the script cannot be loaded.
+    """
+    code = compile(content, filename, 'exec')
+    module_name = Path(filename).stem
+    module = types.ModuleType(module_name)
+    exec(code, module.__dict__)
 
 
 def is_report(obj):
