@@ -45,6 +45,7 @@ from netbox.graphql.types import (
     PrimaryObjectType,
 )
 from netbox.models import NestedGroupModel, NetBoxModel, OrganizationalModel, PrimaryModel
+from netbox.registry import registry
 from netbox.tables import (
     NestedGroupModelTable,
     NetBoxTable,
@@ -174,11 +175,10 @@ class FilterSetClassesTestCase(TestCase):
     @staticmethod
     def get_filterset_for_model(model):
         """
-        Import and return the filterset class for a given model.
+        Return the filterset class for a given model from the application registry.
         """
-        app_label = model._meta.app_label
-        model_name = model.__name__
-        return import_string(f'{app_label}.filtersets.{model_name}FilterSet')
+        label = f'{model._meta.app_label}.{model._meta.model_name}'
+        return registry['filtersets'].get(label)
 
     @staticmethod
     def get_model_filterset_base_class(model):
@@ -204,6 +204,7 @@ class FilterSetClassesTestCase(TestCase):
         for model in apps.get_models():
             if base_class := self.get_model_filterset_base_class(model):
                 filterset = self.get_filterset_for_model(model)
+                self.assertIsNotNone(filterset, f"No registered filterset found for model {model}")
                 self.assertTrue(
                     issubclass(filterset, base_class),
                     f"{filterset} does not inherit from {base_class}",
