@@ -102,6 +102,12 @@ This is useful for rendering partial or alternative templates against a device's
 !!! note "Permissions"
     Overriding the config template requires the requesting user to have `view` permission for the "Extras > Config Template" object type in addition to the `render_config` permission on the device.
 
+The same override is available in the UI by appending `config_template_id` as a query parameter to the device's render config URL:
+
+```no-highlight
+/dcim/devices/123/render-config/?config_template_id=42
+```
+
 ### General Purpose Use
 
 NetBox config templates can also be rendered without being tied to any specific device, using a separate general purpose REST API endpoint. Any data included with a POST request to this endpoint will be passed as context data for the template.
