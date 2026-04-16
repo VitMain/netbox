@@ -192,8 +192,8 @@ class ViewTestCases:
                     changed_object_id=instance.pk
                 )
                 self.assertEqual(len(objectchanges), 1)
-                self.assertEqual(objectchanges[0].action, ObjectChangeActionChoices.ACTION_CREATE)
-                self.assertEqual(objectchanges[0].message, self.form_data['changelog_message'])
+                self.assertObjectChange(objectchanges[0], action=ObjectChangeActionChoices.ACTION_CREATE,
+                    message=self.form_data['changelog_message'])
 
         @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'], EXEMPT_EXCLUDE_MODELS=[])
         def test_create_object_with_constrained_permission(self):
@@ -299,8 +299,8 @@ class ViewTestCases:
                     changed_object_id=instance.pk
                 )
                 self.assertEqual(len(objectchanges), 1)
-                self.assertEqual(objectchanges[0].action, ObjectChangeActionChoices.ACTION_UPDATE)
-                self.assertEqual(objectchanges[0].message, self.form_data['changelog_message'])
+                self.assertObjectChange(objectchanges[0], action=ObjectChangeActionChoices.ACTION_UPDATE,
+                    message=self.form_data['changelog_message'])
 
         @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'], EXEMPT_EXCLUDE_MODELS=[])
         def test_edit_object_with_constrained_permission(self):
@@ -394,8 +394,8 @@ class ViewTestCases:
                     changed_object_id=instance.pk
                 )
                 self.assertEqual(len(objectchanges), 1)
-                self.assertEqual(objectchanges[0].action, ObjectChangeActionChoices.ACTION_DELETE)
-                self.assertEqual(objectchanges[0].message, form_data['changelog_message'])
+                self.assertObjectChange(objectchanges[0], action=ObjectChangeActionChoices.ACTION_DELETE,
+                    message=form_data['changelog_message'])
 
         @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
         def test_delete_object_with_constrained_permission(self):
@@ -716,7 +716,8 @@ class ViewTestCases:
                 self.assertEqual(len(objectchanges), expected_new_objects)
 
                 for oc in objectchanges:
-                    self.assertEqual(oc.message, data['changelog_message'])
+                    self.assertObjectChange(oc, action=ObjectChangeActionChoices.ACTION_CREATE,
+                        message=data['changelog_message'])
 
         @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
         def test_bulk_update_objects_with_permission(self):
@@ -868,8 +869,8 @@ class ViewTestCases:
                 )
                 self.assertEqual(len(objectchanges), len(pk_list))
                 for oc in objectchanges:
-                    self.assertEqual(oc.action, ObjectChangeActionChoices.ACTION_UPDATE)
-                    self.assertEqual(oc.message, data['changelog_message'])
+                    self.assertObjectChange(oc, action=ObjectChangeActionChoices.ACTION_UPDATE,
+                        message=data['changelog_message'])
 
         @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'], EXEMPT_EXCLUDE_MODELS=[])
         def test_bulk_edit_objects_with_constrained_permission(self):
@@ -964,8 +965,8 @@ class ViewTestCases:
                 )
                 self.assertEqual(len(objectchanges), len(pk_list))
                 for oc in objectchanges:
-                    self.assertEqual(oc.action, ObjectChangeActionChoices.ACTION_DELETE)
-                    self.assertEqual(oc.message, data['changelog_message'])
+                    self.assertObjectChange(oc, action=ObjectChangeActionChoices.ACTION_DELETE,
+                        message=data['changelog_message'])
 
         def test_bulk_delete_objects_with_constrained_permission(self):
             pk_list = self._get_queryset().values_list('pk', flat=True)
