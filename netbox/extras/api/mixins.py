@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from jinja2.exceptions import TemplateError
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
@@ -93,13 +94,13 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
                 configtemplate = ConfigTemplate.objects.restrict(request.user, 'view').get(pk=config_template_id)
             except (ConfigTemplate.DoesNotExist, ValueError):
                 return Response({
-                    'error': f'Config template with ID {config_template_id} not found.'
+                    'error': _('Config template with ID {id} not found.').format(id=config_template_id)
                 }, status=HTTP_400_BAD_REQUEST)
         else:
             configtemplate = instance.get_config_template()
             if not configtemplate:
                 return Response({
-                    'error': f'No config template found for this {object_type}.'
+                    'error': _('No config template found for this {object_type}.').format(object_type=object_type)
                 }, status=HTTP_400_BAD_REQUEST)
 
         # Compile context data
