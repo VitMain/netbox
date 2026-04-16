@@ -1647,7 +1647,7 @@ class DeviceTest(APIViewTestCases.APIViewTestCase):
         device.config_template = default_template
         device.save()
 
-        self.add_permissions('dcim.render_config_device', 'dcim.view_device')
+        self.add_permissions('dcim.render_config_device', 'dcim.view_device', 'extras.view_configtemplate')
         url = reverse('dcim-api:device-render-config', kwargs={'pk': device.pk})
 
         # Render with override template
@@ -1655,8 +1655,17 @@ class DeviceTest(APIViewTestCases.APIViewTestCase):
         self.assertHttpStatus(response, status.HTTP_200_OK)
         self.assertEqual(response.data['content'], f'Override config for {device.name}')
 
-        # Render with invalid config_template_id
+        # Render with nonexistent config_template_id
         response = self.client.post(url, {'config_template_id': 999999}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
+        # Render with non-integer config_template_id
+        response = self.client.post(url, {'config_template_id': 'abc'}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
+        # Without view_configtemplate permission, override template should not be accessible
+        self.remove_permissions('extras.view_configtemplate')
+        response = self.client.post(url, {'config_template_id': override_template.pk}, format='json', **self.header)
         self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
 
 

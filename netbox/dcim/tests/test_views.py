@@ -2375,7 +2375,7 @@ class DeviceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         device.config_template = default_template
         device.save()
 
-        self.add_permissions('dcim.view_device', 'dcim.render_config_device')
+        self.add_permissions('dcim.view_device', 'dcim.render_config_device', 'extras.view_configtemplate')
         url = reverse('dcim:device_render-config', kwargs={'pk': device.pk})
 
         # Render with override config_template_id
@@ -2383,8 +2383,19 @@ class DeviceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         self.assertHttpStatus(response, 200)
         self.assertIn(b'Override config for', response.content)
 
-        # Render with invalid config_template_id still returns 200 with error message
+        # Render with nonexistent config_template_id still returns 200 with error message
         response = self.client.get(url, {'config_template_id': 999999})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Render with non-integer config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 'abc'})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Without view_configtemplate permission, override template should not be accessible
+        self.remove_permissions('extras.view_configtemplate')
+        response = self.client.get(url, {'config_template_id': override_template.pk})
         self.assertHttpStatus(response, 200)
         self.assertIn(b'Error rendering template', response.content)
 
