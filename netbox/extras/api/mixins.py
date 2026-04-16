@@ -77,7 +77,7 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
     @action(detail=True, methods=['post'], url_path='render-config', renderer_classes=[JSONRenderer, TextRenderer])
     def render_config(self, request, pk):
         """
-        Resolve and render the preferred ConfigTemplate for this Device.
+        Resolve and render the preferred ConfigTemplate for this Device or Virtual Machine.
         """
         # Override restrict() on the default queryset to enforce the render_config & view actions
         self.queryset = self.queryset.model.objects.restrict(request.user, 'render_config').restrict(
