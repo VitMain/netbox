@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-14 05:39+0000\n"
+"POT-Creation-Date: 2026-04-16 05:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -402,7 +402,7 @@ msgstr ""
 #: netbox/dcim/forms/bulk_edit.py:140 netbox/dcim/forms/filtersets.py:225
 #: netbox/dcim/forms/model_forms.py:142 netbox/dcim/tables/sites.py:74
 #: netbox/ipam/models/asns.py:155 netbox/ipam/tables/asn.py:37
-#: netbox/ipam/views.py:365 netbox/netbox/navigation/menu.py:182
+#: netbox/ipam/views.py:380 netbox/netbox/navigation/menu.py:182
 #: netbox/netbox/navigation/menu.py:185
 msgid "ASNs"
 msgstr ""
@@ -864,7 +864,7 @@ msgstr ""
 #: netbox/dcim/forms/filtersets.py:404 netbox/dcim/forms/filtersets.py:879
 #: netbox/dcim/forms/filtersets.py:1902 netbox/dcim/forms/filtersets.py:1942
 #: netbox/dcim/forms/model_forms.py:293 netbox/dcim/forms/model_forms.py:1260
-#: netbox/dcim/forms/model_forms.py:1743 netbox/dcim/forms/object_import.py:182
+#: netbox/dcim/forms/model_forms.py:1743 netbox/dcim/forms/object_import.py:198
 #: netbox/dcim/tables/devices.py:173 netbox/dcim/tables/devices.py:1052
 #: netbox/dcim/tables/devicetypes.py:318 netbox/dcim/tables/racks.py:118
 #: netbox/extras/filtersets.py:734 netbox/ipam/forms/bulk_edit.py:209
@@ -1331,7 +1331,7 @@ msgid "member ID"
 msgstr ""
 
 #: netbox/circuits/models/circuits.py:206 netbox/ipam/models/fhrp.py:96
-#: netbox/tenancy/models/contacts.py:121
+#: netbox/tenancy/models/contacts.py:147
 msgid "priority"
 msgstr ""
 
@@ -1430,7 +1430,7 @@ msgstr ""
 #: netbox/ipam/models/vlans.py:38 netbox/ipam/models/vlans.py:217
 #: netbox/ipam/models/vlans.py:363 netbox/ipam/models/vrfs.py:20
 #: netbox/ipam/models/vrfs.py:75 netbox/netbox/models/__init__.py:160
-#: netbox/netbox/models/__init__.py:208 netbox/tenancy/models/contacts.py:59
+#: netbox/netbox/models/__init__.py:208 netbox/tenancy/models/contacts.py:85
 #: netbox/tenancy/models/tenants.py:19 netbox/tenancy/models/tenants.py:45
 #: netbox/users/models/owners.py:19 netbox/users/models/owners.py:38
 #: netbox/users/models/permissions.py:20 netbox/users/models/users.py:36
@@ -1614,7 +1614,7 @@ msgid "Commit Rate"
 msgstr ""
 
 #: netbox/circuits/tables/circuits.py:85 netbox/dcim/forms/filtersets.py:1973
-#: netbox/tenancy/tables/contacts.py:67 netbox/tenancy/views.py:416
+#: netbox/tenancy/tables/contacts.py:67 netbox/tenancy/views.py:398
 msgid "Assignments"
 msgstr ""
 
@@ -2576,7 +2576,7 @@ msgstr ""
 msgid "Interval"
 msgstr ""
 
-#: netbox/core/tables/jobs.py:49 netbox/core/views.py:255
+#: netbox/core/tables/jobs.py:49 netbox/core/views.py:261
 msgid "Log Entries"
 msgstr ""
 
@@ -2744,7 +2744,7 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
-#: netbox/core/utils.py:85 netbox/core/utils.py:151 netbox/core/views.py:531
+#: netbox/core/utils.py:85 netbox/core/utils.py:151 netbox/core/views.py:549
 #, python-brace-format
 msgid "Job {job_id} not found"
 msgstr ""
@@ -2759,57 +2759,57 @@ msgstr ""
 msgid "Queued job #{id} to sync {datasource}"
 msgstr ""
 
-#: netbox/core/views.py:237 netbox/extras/forms/filtersets.py:179
+#: netbox/core/views.py:243 netbox/extras/forms/filtersets.py:179
 #: netbox/extras/forms/filtersets.py:380 netbox/extras/forms/filtersets.py:403
 #: netbox/extras/forms/filtersets.py:499 netbox/extras/forms/model_forms.py:696
 #: netbox/extras/ui/panels.py:386
 msgid "Data"
 msgstr ""
 
-#: netbox/core/views.py:248 netbox/templates/extras/htmx/script_result.html:43
+#: netbox/core/views.py:254 netbox/templates/extras/htmx/script_result.html:43
 msgid "Log"
 msgstr ""
 
-#: netbox/core/views.py:467
+#: netbox/core/views.py:485
 #, python-brace-format
 msgid "Restored configuration revision #{id}"
 msgstr ""
 
-#: netbox/core/views.py:570
+#: netbox/core/views.py:588
 #, python-brace-format
 msgid "Job {id} has been deleted."
 msgstr ""
 
-#: netbox/core/views.py:572
+#: netbox/core/views.py:590
 #, python-brace-format
 msgid "Error deleting job {id}: {error}"
 msgstr ""
 
-#: netbox/core/views.py:581
+#: netbox/core/views.py:599
 #, python-brace-format
 msgid "Job {id} has been re-enqueued."
 msgstr ""
 
-#: netbox/core/views.py:590
+#: netbox/core/views.py:608
 #, python-brace-format
 msgid "Job {id} has been enqueued."
 msgstr ""
 
-#: netbox/core/views.py:599
+#: netbox/core/views.py:617
 #, python-brace-format
 msgid "Job {id} has been stopped."
 msgstr ""
 
-#: netbox/core/views.py:601
+#: netbox/core/views.py:619
 #, python-brace-format
 msgid "Failed to stop job {id}"
 msgstr ""
 
-#: netbox/core/views.py:755
+#: netbox/core/views.py:773
 msgid "Plugins catalog could not be loaded"
 msgstr ""
 
-#: netbox/core/views.py:791
+#: netbox/core/views.py:809
 #, python-brace-format
 msgid "Plugin {name} not found"
 msgstr ""
@@ -2963,7 +2963,7 @@ msgstr ""
 #: netbox/dcim/forms/model_forms.py:93 netbox/dcim/forms/model_forms.py:111
 #: netbox/dcim/forms/model_forms.py:214 netbox/dcim/forms/model_forms.py:540
 #: netbox/dcim/forms/model_forms.py:561 netbox/dcim/forms/model_forms.py:1252
-#: netbox/dcim/forms/model_forms.py:1735 netbox/dcim/forms/object_import.py:177
+#: netbox/dcim/forms/model_forms.py:1735 netbox/dcim/forms/object_import.py:193
 #: netbox/dcim/tables/devices.py:722 netbox/dcim/tables/devices.py:757
 #: netbox/dcim/tables/devices.py:985 netbox/dcim/tables/devices.py:1072
 #: netbox/dcim/tables/devices.py:1225 netbox/ipam/forms/bulk_import.py:601
@@ -4110,7 +4110,7 @@ msgstr ""
 #: netbox/dcim/forms/model_forms.py:380 netbox/dcim/forms/model_forms.py:392
 #: netbox/dcim/forms/model_forms.py:462 netbox/dcim/forms/model_forms.py:566
 #: netbox/dcim/forms/model_forms.py:1265 netbox/dcim/forms/model_forms.py:1748
-#: netbox/dcim/forms/object_import.py:188 netbox/dcim/tables/devices.py:101
+#: netbox/dcim/forms/object_import.py:204 netbox/dcim/tables/devices.py:101
 #: netbox/dcim/tables/devices.py:176 netbox/dcim/tables/devices.py:1055
 #: netbox/dcim/tables/devicetypes.py:87 netbox/dcim/tables/devicetypes.py:322
 #: netbox/dcim/tables/modules.py:47 netbox/dcim/tables/modules.py:92
@@ -5755,7 +5755,7 @@ msgstr ""
 
 #: netbox/dcim/forms/object_create.py:312 netbox/dcim/tables/devices.py:1150
 #: netbox/ipam/tables/fhrp.py:31 netbox/ipam/ui/panels.py:184
-#: netbox/ipam/views.py:1477 netbox/templates/dcim/virtualchassis_edit.html:59
+#: netbox/ipam/views.py:1492 netbox/templates/dcim/virtualchassis_edit.html:59
 #: netbox/users/views.py:347
 msgid "Members"
 msgstr ""
@@ -7547,8 +7547,8 @@ msgstr ""
 
 #: netbox/dcim/tables/devices.py:597 netbox/dcim/views.py:3291
 #: netbox/ipam/forms/model_forms.py:775 netbox/ipam/tables/fhrp.py:28
-#: netbox/ipam/ui/panels.py:253 netbox/ipam/views.py:826
-#: netbox/ipam/views.py:940 netbox/netbox/navigation/menu.py:168
+#: netbox/ipam/ui/panels.py:253 netbox/ipam/views.py:841
+#: netbox/ipam/views.py:955 netbox/netbox/navigation/menu.py:168
 #: netbox/netbox/navigation/menu.py:170
 #: netbox/templates/ipam/ipaddress_bulk_add.html:15
 #: netbox/vpn/tables/tunnels.py:98
@@ -7925,7 +7925,7 @@ msgid "Child Regions"
 msgstr ""
 
 #: netbox/dcim/views.py:391 netbox/tenancy/views.py:59
-#: netbox/tenancy/views.py:237 netbox/wireless/views.py:54
+#: netbox/tenancy/views.py:231 netbox/wireless/views.py:54
 msgid "Child Groups"
 msgstr ""
 
@@ -7977,7 +7977,7 @@ msgstr ""
 
 #: netbox/dcim/views.py:3301 netbox/ipam/forms/filtersets.py:458
 #: netbox/ipam/models/vlans.py:291 netbox/ipam/tables/ip.py:121
-#: netbox/ipam/tables/vlans.py:52 netbox/ipam/views.py:1274
+#: netbox/ipam/tables/vlans.py:52 netbox/ipam/views.py:1289
 #: netbox/netbox/navigation/menu.py:203 netbox/netbox/navigation/menu.py:205
 msgid "VLANs"
 msgstr ""
@@ -8042,17 +8042,23 @@ msgstr ""
 msgid "Changing the type of custom fields is not supported."
 msgstr ""
 
-#: netbox/extras/api/serializers_/scripts.py:57
+#: netbox/extras/api/serializers_/scripts.py:50
+#: netbox/extras/forms/scripts.py:79
+#, python-brace-format
+msgid "Error loading script: {error}"
+msgstr ""
+
+#: netbox/extras/api/serializers_/scripts.py:67
 msgid "A script module with this file name already exists."
 msgstr ""
 
-#: netbox/extras/api/serializers_/scripts.py:124
 #: netbox/extras/api/serializers_/scripts.py:134
+#: netbox/extras/api/serializers_/scripts.py:144
 msgid "Scheduling is not enabled for this script."
 msgstr ""
 
-#: netbox/extras/api/serializers_/scripts.py:126
-#: netbox/extras/forms/reports.py:45 netbox/extras/forms/scripts.py:54
+#: netbox/extras/api/serializers_/scripts.py:136
+#: netbox/extras/forms/reports.py:45 netbox/extras/forms/scripts.py:55
 msgid "Scheduled time must be in the future."
 msgstr ""
 
@@ -8968,7 +8974,7 @@ msgstr ""
 msgid "Must specify either local data or a data file"
 msgstr ""
 
-#: netbox/extras/forms/reports.py:17 netbox/extras/forms/scripts.py:26
+#: netbox/extras/forms/reports.py:17 netbox/extras/forms/scripts.py:27
 msgid "Schedule at"
 msgstr ""
 
@@ -8976,7 +8982,7 @@ msgstr ""
 msgid "Schedule execution of report to a set time"
 msgstr ""
 
-#: netbox/extras/forms/reports.py:23 netbox/extras/forms/scripts.py:32
+#: netbox/extras/forms/reports.py:23 netbox/extras/forms/scripts.py:33
 msgid "Recurs every"
 msgstr ""
 
@@ -8984,24 +8990,24 @@ msgstr ""
 msgid "Interval at which this report is re-run (in minutes)"
 msgstr ""
 
-#: netbox/extras/forms/reports.py:35 netbox/extras/forms/scripts.py:44
+#: netbox/extras/forms/reports.py:35 netbox/extras/forms/scripts.py:45
 #, python-brace-format
 msgid " (current time: <strong>{now}</strong>)"
 msgstr ""
 
-#: netbox/extras/forms/scripts.py:20
+#: netbox/extras/forms/scripts.py:21
 msgid "Commit changes"
 msgstr ""
 
-#: netbox/extras/forms/scripts.py:21
+#: netbox/extras/forms/scripts.py:22
 msgid "Commit changes to the database (uncheck for a dry-run)"
 msgstr ""
 
-#: netbox/extras/forms/scripts.py:27
+#: netbox/extras/forms/scripts.py:28
 msgid "Schedule execution of script to a set time"
 msgstr ""
 
-#: netbox/extras/forms/scripts.py:36
+#: netbox/extras/forms/scripts.py:37
 msgid "Interval at which this script is re-run (in minutes)"
 msgstr ""
 
@@ -10601,11 +10607,11 @@ msgstr ""
 msgid "Ports"
 msgstr ""
 
-#: netbox/ipam/forms/bulk_import.py:55 netbox/ipam/views.py:67
+#: netbox/ipam/forms/bulk_import.py:55 netbox/ipam/views.py:70
 msgid "Import route targets"
 msgstr ""
 
-#: netbox/ipam/forms/bulk_import.py:61 netbox/ipam/views.py:70
+#: netbox/ipam/forms/bulk_import.py:61 netbox/ipam/views.py:73
 msgid "Export route targets"
 msgstr ""
 
@@ -11147,7 +11153,7 @@ msgstr ""
 msgid "Defined range exceeds maximum supported size ({max_size})"
 msgstr ""
 
-#: netbox/ipam/models/ip.py:762 netbox/tenancy/models/contacts.py:78
+#: netbox/ipam/models/ip.py:762 netbox/tenancy/models/contacts.py:104
 msgid "address"
 msgstr ""
 
@@ -11396,8 +11402,8 @@ msgid "Added"
 msgstr ""
 
 #: netbox/ipam/tables/ip.py:76 netbox/ipam/tables/ip.py:111
-#: netbox/ipam/tables/vlans.py:121 netbox/ipam/views.py:542
-#: netbox/ipam/views.py:1619 netbox/netbox/navigation/menu.py:175
+#: netbox/ipam/tables/vlans.py:121 netbox/ipam/views.py:557
+#: netbox/ipam/views.py:1634 netbox/netbox/navigation/menu.py:175
 #: netbox/netbox/navigation/menu.py:177
 msgid "Prefixes"
 msgstr ""
@@ -11598,76 +11604,76 @@ msgid ""
 "are allowed in DNS names"
 msgstr ""
 
-#: netbox/ipam/views.py:96 netbox/ipam/views.py:1645
+#: netbox/ipam/views.py:104 netbox/ipam/views.py:1660
 msgid "Device Interfaces"
 msgstr ""
 
-#: netbox/ipam/views.py:101 netbox/ipam/views.py:1663
+#: netbox/ipam/views.py:109 netbox/ipam/views.py:1678
 msgid "VM Interfaces"
 msgstr ""
 
-#: netbox/ipam/views.py:183
+#: netbox/ipam/views.py:193
 msgid "Importing VRFs"
 msgstr ""
 
-#: netbox/ipam/views.py:190
+#: netbox/ipam/views.py:200
 msgid "Exporting VRFs"
 msgstr ""
 
-#: netbox/ipam/views.py:199
+#: netbox/ipam/views.py:209
 msgid "Importing L2VPNs"
 msgstr ""
 
-#: netbox/ipam/views.py:206
+#: netbox/ipam/views.py:216
 msgid "Exporting L2VPNs"
 msgstr ""
 
-#: netbox/ipam/views.py:710
+#: netbox/ipam/views.py:725
 msgid "Duplicate prefixes"
 msgstr ""
 
-#: netbox/ipam/views.py:711 netbox/ipam/views.py:905 netbox/ipam/views.py:1013
+#: netbox/ipam/views.py:726 netbox/ipam/views.py:920 netbox/ipam/views.py:1028
 msgid "Parent prefixes"
 msgstr ""
 
-#: netbox/ipam/views.py:763
+#: netbox/ipam/views.py:778
 msgid "Child Prefixes"
 msgstr ""
 
-#: netbox/ipam/views.py:799
+#: netbox/ipam/views.py:814
 msgid "Child Ranges"
 msgstr ""
 
-#: netbox/ipam/views.py:1014
+#: netbox/ipam/views.py:1029
 msgid "Duplicate IPs"
 msgstr ""
 
-#: netbox/ipam/views.py:1018
+#: netbox/ipam/views.py:1033
 msgid "Application services"
 msgstr ""
 
-#: netbox/ipam/views.py:1184
+#: netbox/ipam/views.py:1199
 msgid "Related IPs"
 msgstr ""
 
-#: netbox/ipam/views.py:1322
+#: netbox/ipam/views.py:1337
 msgid "VLAN translation rules"
 msgstr ""
 
-#: netbox/ipam/views.py:1327
+#: netbox/ipam/views.py:1342
 msgid "Add Rule"
 msgstr ""
 
-#: netbox/ipam/views.py:1468
+#: netbox/ipam/views.py:1483
 msgid "Virtual IP addresses"
 msgstr ""
 
-#: netbox/ipam/views.py:1473 netbox/templates/ipam/iprange/ip_addresses.html:7
+#: netbox/ipam/views.py:1488 netbox/templates/ipam/iprange/ip_addresses.html:7
 #: netbox/templates/ipam/prefix/ip_addresses.html:7
 msgid "Add IP Address"
 msgstr ""
 
-#: netbox/ipam/views.py:1628
+#: netbox/ipam/views.py:1643
 msgid "Add a Prefix"
 msgstr ""
 
@@ -15111,55 +15117,55 @@ msgstr ""
 msgid "Contact Group"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:34
+#: netbox/tenancy/models/contacts.py:60
 msgid "contact group"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:35
+#: netbox/tenancy/models/contacts.py:61
 msgid "contact groups"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:44
+#: netbox/tenancy/models/contacts.py:70
 msgid "contact role"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:45
+#: netbox/tenancy/models/contacts.py:71
 msgid "contact roles"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:64
+#: netbox/tenancy/models/contacts.py:90
 msgid "title"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:69
+#: netbox/tenancy/models/contacts.py:95
 msgid "phone"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:74
+#: netbox/tenancy/models/contacts.py:100
 msgid "email"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:83
+#: netbox/tenancy/models/contacts.py:109
 msgid "link"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:93
+#: netbox/tenancy/models/contacts.py:119
 msgid "contact"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:94
+#: netbox/tenancy/models/contacts.py:120
 msgid "contacts"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:141
+#: netbox/tenancy/models/contacts.py:167
 msgid "contact assignment"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:142
+#: netbox/tenancy/models/contacts.py:168
 msgid "contact assignments"
 msgstr ""
 
-#: netbox/tenancy/models/contacts.py:158
+#: netbox/tenancy/models/contacts.py:184
 #, python-brace-format
 msgid "Contacts cannot be assigned to this object type ({type})."
 msgstr ""
@@ -15216,7 +15222,7 @@ msgstr ""
 msgid "Add Tenant Group"
 msgstr ""
 
-#: netbox/tenancy/views.py:242
+#: netbox/tenancy/views.py:236
 msgid "Add Contact Group"
 msgstr ""
 
