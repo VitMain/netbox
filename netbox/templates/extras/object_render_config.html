@@ -52,7 +52,7 @@
       {% if error_message %}
         <div class="alert alert-warning">
           <h4 class="alert-title mb-1">{% trans "Error rendering template" %}</h4>
-          {% trans error_message %}
+          {{ error_message }}
         </div>
       {% elif config_template %}
         {% if rendered_config %}

@@ -90,8 +90,8 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
         # Check for an optional config_template_id override in the request data
         if config_template_id := request.data.get('config_template_id'):
             try:
-                configtemplate = ConfigTemplate.objects.get(pk=config_template_id)
-            except ConfigTemplate.DoesNotExist:
+                configtemplate = ConfigTemplate.objects.restrict(request.user, 'view').get(pk=config_template_id)
+            except (ConfigTemplate.DoesNotExist, ValueError):
                 return Response({
                     'error': f'Config template with ID {config_template_id} not found.'
                 }, status=HTTP_400_BAD_REQUEST)

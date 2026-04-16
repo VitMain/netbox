@@ -1273,7 +1273,7 @@ class ObjectRenderConfigView(generic.ObjectView):
         error_message = ''
         if config_template_id := request.GET.get('config_template_id'):
             try:
-                config_template = ConfigTemplate.objects.get(pk=config_template_id)
+                config_template = ConfigTemplate.objects.restrict(request.user, 'view').get(pk=config_template_id)
             except (ConfigTemplate.DoesNotExist, ValueError):
                 error_message = _("Config template with ID {id} not found.").format(id=config_template_id)
         else:
