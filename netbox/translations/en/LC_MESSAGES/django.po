@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-16 05:42+0000\n"
+"POT-Creation-Date: 2026-04-17 05:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -770,7 +770,7 @@ msgstr ""
 #: netbox/extras/tables/tables.py:97 netbox/ipam/tables/vlans.py:214
 #: netbox/ipam/tables/vlans.py:241 netbox/netbox/forms/bulk_edit.py:79
 #: netbox/netbox/forms/bulk_edit.py:91 netbox/netbox/forms/bulk_edit.py:103
-#: netbox/netbox/ui/panels.py:201 netbox/netbox/ui/panels.py:210
+#: netbox/netbox/ui/panels.py:214 netbox/netbox/ui/panels.py:223
 #: netbox/templates/circuits/inc/circuit_termination_fields.html:85
 #: netbox/templates/core/plugin.html:80
 #: netbox/templates/extras/dashboard/widget_add.html:14
@@ -1555,7 +1555,7 @@ msgstr ""
 #: netbox/ipam/tables/vlans.py:33 netbox/ipam/tables/vlans.py:86
 #: netbox/ipam/tables/vlans.py:205 netbox/ipam/tables/vrfs.py:26
 #: netbox/ipam/tables/vrfs.py:65 netbox/netbox/tables/tables.py:325
-#: netbox/netbox/ui/panels.py:200 netbox/netbox/ui/panels.py:209
+#: netbox/netbox/ui/panels.py:213 netbox/netbox/ui/panels.py:222
 #: netbox/templates/core/plugin.html:54 netbox/templates/core/rq_worker.html:43
 #: netbox/templates/dcim/inc/interface_vlans_table.html:5
 #: netbox/templates/dcim/inc/panels/inventory_items.html:18
@@ -2969,7 +2969,7 @@ msgstr ""
 #: netbox/dcim/tables/devices.py:1225 netbox/ipam/forms/bulk_import.py:601
 #: netbox/ipam/forms/model_forms.py:758 netbox/ipam/tables/fhrp.py:56
 #: netbox/ipam/tables/ip.py:329 netbox/ipam/tables/services.py:42
-#: netbox/netbox/tables/tables.py:329 netbox/netbox/ui/panels.py:208
+#: netbox/netbox/tables/tables.py:329 netbox/netbox/ui/panels.py:221
 #: netbox/tenancy/forms/bulk_edit.py:33 netbox/tenancy/forms/bulk_edit.py:62
 #: netbox/tenancy/forms/bulk_import.py:31
 #: netbox/tenancy/forms/bulk_import.py:64
@@ -8681,7 +8681,7 @@ msgstr ""
 
 #: netbox/extras/forms/bulk_import.py:305 netbox/extras/tables/tables.py:760
 #: netbox/netbox/tables/tables.py:295 netbox/netbox/tables/tables.py:310
-#: netbox/netbox/tables/tables.py:333 netbox/netbox/ui/panels.py:221
+#: netbox/netbox/tables/tables.py:333 netbox/netbox/ui/panels.py:234
 #: netbox/templates/dcim/htmx/cable_edit.html:99
 #: netbox/templates/generic/bulk_edit.html:99
 #: netbox/templates/inc/panels/comments.html:5
@@ -10033,7 +10033,7 @@ msgstr ""
 msgid "Regular expression"
 msgstr ""
 
-#: netbox/extras/ui/panels.py:183 netbox/netbox/ui/panels.py:268
+#: netbox/extras/ui/panels.py:183 netbox/netbox/ui/panels.py:281
 #: netbox/templates/inc/panels/related_objects.html:5
 msgid "Related Objects"
 msgstr ""
@@ -16131,7 +16131,7 @@ msgstr ""
 msgid "Selected"
 msgstr ""
 
-#: netbox/utilities/testing/views.py:724
+#: netbox/utilities/testing/views.py:725
 msgid "The test must define csv_update_data."
 msgstr ""
 
