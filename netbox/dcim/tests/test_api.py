@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.test import override_settings, tag
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -1640,16 +1641,23 @@ class ModuleTest(APIViewTestCases.APIViewTestCase):
     bulk_update_data = {
         'serial': '1234ABCD',
     }
-    user_permissions = ('dcim.view_modulebay', 'dcim.view_moduletype', 'dcim.view_device')
+    user_permissions = (
+        'dcim.view_modulebay', 'dcim.view_moduletype', 'dcim.view_moduletypeprofile', 'dcim.view_device'
+    )
 
     @classmethod
     def setUpTestData(cls):
         manufacturer = Manufacturer.objects.create(name='Generic', slug='generic')
+        profiles = (
+            ModuleTypeProfile(name='Test CPU'),
+            ModuleTypeProfile(name='Test Hard disk'),
+        )
+        ModuleTypeProfile.objects.bulk_create(profiles)
         device = create_test_device('Test Device 1')
 
         module_types = (
-            ModuleType(manufacturer=manufacturer, model='Module Type 1'),
-            ModuleType(manufacturer=manufacturer, model='Module Type 2'),
+            ModuleType(manufacturer=manufacturer, model='Module Type 1', profile=profiles[0]),
+            ModuleType(manufacturer=manufacturer, model='Module Type 2', profile=profiles[1]),
             ModuleType(manufacturer=manufacturer, model='Module Type 3'),
         )
         ModuleType.objects.bulk_create(module_types)
@@ -1698,6 +1706,36 @@ class ModuleTest(APIViewTestCases.APIViewTestCase):
                 'asset_tag': 'Foo3',
             },
         ]
+
+    def test_list_objects_by_profile_id(self):
+        profiles = ModuleTypeProfile.objects.filter(name__startswith='Test').order_by('name')
+        self.add_permissions('dcim.view_module')
+        response = self.client.get(self._get_list_url(), {'profile_id': [profiles[0].pk]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        response = self.client.get(self._get_list_url(), {'profile_id': [profiles[1].pk]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        response = self.client.get(
+            self._get_list_url(),
+            {'profile_id': [settings.FILTERS_NULL_CHOICE_VALUE]},
+            **self.header,
+        )
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+    def test_list_objects_by_profile(self):
+        profiles = ModuleTypeProfile.objects.filter(name__startswith='Test').order_by('name')
+        self.add_permissions('dcim.view_module')
+        response = self.client.get(self._get_list_url(), {'profile': [profiles[0].name]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        response = self.client.get(self._get_list_url(), {'profile': [profiles[1].name]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
 
 
 class ConsolePortTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase):
