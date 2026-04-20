@@ -1707,6 +1707,7 @@ class ScriptView(BaseScriptView):
                 user=request.user,
                 schedule_at=form.cleaned_data.pop('_schedule_at'),
                 interval=form.cleaned_data.pop('_interval'),
+                notifications=form.cleaned_data.pop('_notifications'),
                 data=form.cleaned_data,
                 request=copy_safe_request(request),
                 job_timeout=script.python_class.job_timeout,
