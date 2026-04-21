@@ -2384,6 +2384,43 @@ class DeviceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         self.remove_permissions('dcim.view_device')
         self.assertHttpStatus(self.client.get(url), 403)
 
+    def test_device_renderconfig_with_config_template_id(self):
+        default_template = ConfigTemplate.objects.create(
+            name='Default Template',
+            template_code='Default config for {{ device.name }}'
+        )
+        override_template = ConfigTemplate.objects.create(
+            name='Override Template',
+            template_code='Override config for {{ device.name }}'
+        )
+        device = Device.objects.first()
+        device.config_template = default_template
+        device.save()
+
+        self.add_permissions('dcim.view_device', 'dcim.render_config_device', 'extras.view_configtemplate')
+        url = reverse('dcim:device_render-config', kwargs={'pk': device.pk})
+
+        # Render with override config_template_id
+        response = self.client.get(url, {'config_template_id': override_template.pk})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Override config for', response.content)
+
+        # Render with nonexistent config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 999999})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Render with non-integer config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 'abc'})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Without view_configtemplate permission, override template should not be accessible
+        self.remove_permissions('extras.view_configtemplate')
+        response = self.client.get(url, {'config_template_id': override_template.pk})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
     def test_device_role_display_colored(self):
         parent_role = DeviceRole.objects.create(name='Parent Role', slug='parent-role', color='111111')
         child_role = DeviceRole.objects.create(name='Child Role', slug='child-role', parent=parent_role, color='aa00bb')

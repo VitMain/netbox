@@ -1,9 +1,11 @@
+from django.utils.translation import gettext as _
 from jinja2.exceptions import TemplateError
 from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
+from extras.models import ConfigTemplate
 from netbox.api.authentication import TokenWritePermission
 from netbox.api.renderers import TextRenderer
 
@@ -76,7 +78,7 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
     @action(detail=True, methods=['post'], url_path='render-config', renderer_classes=[JSONRenderer, TextRenderer])
     def render_config(self, request, pk):
         """
-        Resolve and render the preferred ConfigTemplate for this Device.
+        Resolve and render the preferred ConfigTemplate for this Device or Virtual Machine.
         """
         # Override restrict() on the default queryset to enforce the render_config & view actions
         self.queryset = self.queryset.model.objects.restrict(request.user, 'render_config').restrict(
@@ -85,15 +87,25 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
         instance = self.get_object()
 
         object_type = instance._meta.model_name
-        configtemplate = instance.get_config_template()
-        if not configtemplate:
-            return Response({
-                'error': f'No config template found for this {object_type}.'
-            }, status=HTTP_400_BAD_REQUEST)
+
+        # Check for an optional config_template_id override in the request data
+        if config_template_id := request.data.get('config_template_id'):
+            try:
+                configtemplate = ConfigTemplate.objects.restrict(request.user, 'view').get(pk=config_template_id)
+            except (ConfigTemplate.DoesNotExist, ValueError):
+                return Response({
+                    'error': _('Config template with ID {id} not found.').format(id=config_template_id)
+                }, status=HTTP_400_BAD_REQUEST)
+        else:
+            configtemplate = instance.get_config_template()
+            if not configtemplate:
+                return Response({
+                    'error': _('No config template found for this {object_type}.').format(object_type=object_type)
+                }, status=HTTP_400_BAD_REQUEST)
 
         # Compile context data
         context_data = instance.get_config_context()
-        context_data.update(request.data)
+        context_data.update({k: v for k, v in request.data.items() if k != 'config_template_id'})
         context_data.update({object_type: instance})
 
         return self.render_configtemplate(request, configtemplate, context_data)
