@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-18 05:30+0000\n"
+"POT-Creation-Date: 2026-04-21 05:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -498,6 +498,7 @@ msgstr ""
 #: netbox/extras/forms/bulk_import.py:48 netbox/extras/tables/tables.py:511
 #: netbox/extras/tables/tables.py:580 netbox/extras/ui/panels.py:133
 #: netbox/extras/ui/panels.py:382 netbox/netbox/tables/tables.py:339
+#: netbox/templates/core/htmx/system_db_schema.html:70
 #: netbox/templates/dcim/panels/interface_connection.html:68
 #: netbox/templates/wireless/panels/wirelesslink_interface.html:16
 #: netbox/virtualization/forms/bulk_edit.py:52
@@ -562,7 +563,7 @@ msgstr ""
 #: netbox/ipam/tables/ip.py:261 netbox/ipam/tables/ip.py:314
 #: netbox/ipam/tables/ip.py:389 netbox/ipam/tables/ip.py:416
 #: netbox/ipam/tables/vlans.py:98 netbox/templates/core/rq_task.html:81
-#: netbox/templates/core/system.html:19
+#: netbox/templates/core/system.html:20
 #: netbox/templates/extras/inc/script_list_content.html:35
 #: netbox/users/forms/filtersets.py:36 netbox/users/forms/model_forms.py:223
 #: netbox/virtualization/forms/bulk_edit.py:62
@@ -1556,6 +1557,7 @@ msgstr ""
 #: netbox/ipam/tables/vlans.py:205 netbox/ipam/tables/vrfs.py:26
 #: netbox/ipam/tables/vrfs.py:65 netbox/netbox/tables/tables.py:325
 #: netbox/netbox/ui/panels.py:213 netbox/netbox/ui/panels.py:222
+#: netbox/templates/core/htmx/system_db_schema.html:99
 #: netbox/templates/core/plugin.html:54 netbox/templates/core/rq_worker.html:43
 #: netbox/templates/dcim/inc/interface_vlans_table.html:5
 #: netbox/templates/dcim/inc/panels/inventory_items.html:18
@@ -2576,7 +2578,7 @@ msgstr ""
 msgid "Interval"
 msgstr ""
 
-#: netbox/core/tables/jobs.py:49 netbox/core/views.py:261
+#: netbox/core/tables/jobs.py:49 netbox/core/views.py:270
 msgid "Log Entries"
 msgstr ""
 
@@ -2744,72 +2746,72 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
-#: netbox/core/utils.py:85 netbox/core/utils.py:151 netbox/core/views.py:549
+#: netbox/core/utils.py:87 netbox/core/utils.py:153 netbox/core/views.py:558
 #, python-brace-format
 msgid "Job {job_id} not found"
 msgstr ""
 
-#: netbox/core/utils.py:103 netbox/core/utils.py:119
+#: netbox/core/utils.py:105 netbox/core/utils.py:121
 #, python-brace-format
 msgid "Job {id} not found."
 msgstr ""
 
-#: netbox/core/views.py:125
+#: netbox/core/views.py:134
 #, python-brace-format
 msgid "Queued job #{id} to sync {datasource}"
 msgstr ""
 
-#: netbox/core/views.py:243 netbox/extras/forms/filtersets.py:179
+#: netbox/core/views.py:252 netbox/extras/forms/filtersets.py:179
 #: netbox/extras/forms/filtersets.py:380 netbox/extras/forms/filtersets.py:403
 #: netbox/extras/forms/filtersets.py:499 netbox/extras/forms/model_forms.py:696
 #: netbox/extras/ui/panels.py:386
 msgid "Data"
 msgstr ""
 
-#: netbox/core/views.py:254 netbox/templates/extras/htmx/script_result.html:43
+#: netbox/core/views.py:263 netbox/templates/extras/htmx/script_result.html:43
 msgid "Log"
 msgstr ""
 
-#: netbox/core/views.py:485
+#: netbox/core/views.py:494
 #, python-brace-format
 msgid "Restored configuration revision #{id}"
 msgstr ""
 
-#: netbox/core/views.py:588
+#: netbox/core/views.py:597
 #, python-brace-format
 msgid "Job {id} has been deleted."
 msgstr ""
 
-#: netbox/core/views.py:590
+#: netbox/core/views.py:599
 #, python-brace-format
 msgid "Error deleting job {id}: {error}"
 msgstr ""
 
-#: netbox/core/views.py:599
+#: netbox/core/views.py:608
 #, python-brace-format
 msgid "Job {id} has been re-enqueued."
 msgstr ""
 
-#: netbox/core/views.py:608
+#: netbox/core/views.py:617
 #, python-brace-format
 msgid "Job {id} has been enqueued."
 msgstr ""
 
-#: netbox/core/views.py:617
+#: netbox/core/views.py:626
 #, python-brace-format
 msgid "Job {id} has been stopped."
 msgstr ""
 
-#: netbox/core/views.py:619
+#: netbox/core/views.py:628
 #, python-brace-format
 msgid "Failed to stop job {id}"
 msgstr ""
 
-#: netbox/core/views.py:773
+#: netbox/core/views.py:842
 msgid "Plugins catalog could not be loaded"
 msgstr ""
 
-#: netbox/core/views.py:809
+#: netbox/core/views.py:878
 #, python-brace-format
 msgid "Plugin {name} not found"
 msgstr ""
@@ -8301,8 +8303,8 @@ msgstr ""
 msgid "Display some arbitrary custom content. Markdown is supported."
 msgstr ""
 
-#: netbox/extras/dashboard/widgets.py:183 netbox/templates/core/system.html:34
-#: netbox/templates/core/system.html:163
+#: netbox/extras/dashboard/widgets.py:183 netbox/templates/core/system.html:35
+#: netbox/templates/core/system.html:169
 msgid "Object Counts"
 msgstr ""
 
@@ -11784,6 +11786,7 @@ msgid "Dark Grey"
 msgstr ""
 
 #: netbox/netbox/choices.py:103
+#: netbox/templates/core/htmx/system_db_schema.html:72
 #: netbox/templates/extras/panels/tableconfig_ordering.html:19
 #: netbox/templates/extras/script_result.html:56
 msgid "Default"
@@ -12475,7 +12478,7 @@ msgid "Owners"
 msgstr ""
 
 #: netbox/netbox/navigation/menu.py:429 netbox/netbox/navigation/menu.py:433
-#: netbox/templates/core/system.html:7
+#: netbox/templates/core/system.html:8
 msgid "System"
 msgstr ""
 
@@ -12484,7 +12487,7 @@ msgstr ""
 #: netbox/templates/core/plugin.html:13
 #: netbox/templates/core/plugin_list.html:7
 #: netbox/templates/core/plugin_list.html:12
-#: netbox/templates/core/system.html:29
+#: netbox/templates/core/system.html:30
 msgid "Plugins"
 msgstr ""
 
@@ -12949,7 +12952,7 @@ msgstr ""
 msgid "The complete exception is provided below"
 msgstr ""
 
-#: netbox/templates/500.html:33 netbox/templates/core/system.html:62
+#: netbox/templates/500.html:33 netbox/templates/core/system.html:68
 msgid "Python version"
 msgstr ""
 
@@ -13057,11 +13060,13 @@ msgid "Table"
 msgstr ""
 
 #: netbox/templates/account/preferences.html:51
+#: netbox/templates/core/htmx/system_db_schema.html:18
+#: netbox/templates/core/htmx/system_db_schema.html:65
 msgid "Columns"
 msgstr ""
 
 #: netbox/templates/account/preferences.html:71
-#: netbox/templates/core/system.html:113
+#: netbox/templates/core/system.html:119
 #: netbox/templates/dcim/cable_trace.html:113
 #: netbox/templates/extras/object_configcontext.html:43
 msgid "None found"
@@ -13283,6 +13288,56 @@ msgstr ""
 #: netbox/templates/core/datafile/attrs/size.html:1
 #: netbox/templates/extras/panels/imageattachment_file.html:20
 msgid "bytes"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:10
+msgid "Tables"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:26
+#: netbox/templates/core/htmx/system_db_schema.html:95
+msgid "Indexes"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:39
+msgid "plugin"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:40
+msgid "tables"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:41
+#: netbox/templates/core/htmx/system_db_schema.html:56
+msgid "indexes"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:54
+msgid "columns"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:69
+msgid "Column"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:71
+msgid "Nullable"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:82
+msgid "yes"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:84
+msgid "no"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:100
+msgid "Definition"
+msgstr ""
+
+#: netbox/templates/core/htmx/system_db_schema.html:125
+msgid "Schema information unavailable."
 msgstr ""
 
 #: netbox/templates/core/inc/config_data.html:7
@@ -13563,73 +13618,81 @@ msgstr ""
 msgid "Workers in %(queue_name)s"
 msgstr ""
 
-#: netbox/templates/core/system.html:11
+#: netbox/templates/core/system.html:12
 msgid "Export All"
 msgstr ""
 
-#: netbox/templates/core/system.html:24
+#: netbox/templates/core/system.html:25
 #: netbox/templates/extras/object_render_config.html:6
 msgid "Config"
 msgstr ""
 
-#: netbox/templates/core/system.html:46
+#: netbox/templates/core/system.html:40
+msgid "Database"
+msgstr ""
+
+#: netbox/templates/core/system.html:52
 msgid "System Status"
 msgstr ""
 
-#: netbox/templates/core/system.html:49
+#: netbox/templates/core/system.html:55
 msgid "System hostname"
 msgstr ""
 
-#: netbox/templates/core/system.html:53
+#: netbox/templates/core/system.html:59
 msgid "NetBox release"
 msgstr ""
 
-#: netbox/templates/core/system.html:66
+#: netbox/templates/core/system.html:72
 msgid "Django version"
 msgstr ""
 
-#: netbox/templates/core/system.html:70
+#: netbox/templates/core/system.html:76
 msgid "PostgreSQL version"
 msgstr ""
 
-#: netbox/templates/core/system.html:74
+#: netbox/templates/core/system.html:80
 msgid "Database name"
 msgstr ""
 
-#: netbox/templates/core/system.html:78
+#: netbox/templates/core/system.html:84
 msgid "Database size"
 msgstr ""
 
-#: netbox/templates/core/system.html:83
+#: netbox/templates/core/system.html:89
 msgid "Unavailable"
 msgstr ""
 
-#: netbox/templates/core/system.html:88
+#: netbox/templates/core/system.html:94
 msgid "RQ workers"
 msgstr ""
 
-#: netbox/templates/core/system.html:91
+#: netbox/templates/core/system.html:97
 msgid "default queue"
 msgstr ""
 
-#: netbox/templates/core/system.html:95
+#: netbox/templates/core/system.html:101
 msgid "System time"
 msgstr ""
 
-#: netbox/templates/core/system.html:101
+#: netbox/templates/core/system.html:107
 msgid "Django Apps"
 msgstr ""
 
-#: netbox/templates/core/system.html:126
+#: netbox/templates/core/system.html:132
 msgid "Current Configuration"
 msgstr ""
 
-#: netbox/templates/core/system.html:138
+#: netbox/templates/core/system.html:144
 msgid "Installed Plugins"
 msgstr ""
 
-#: netbox/templates/core/system.html:150
+#: netbox/templates/core/system.html:156
 msgid "No plugins are installed."
+msgstr ""
+
+#: netbox/templates/core/system.html:189
+msgid "Loading database schema…"
 msgstr ""
 
 #: netbox/templates/dcim/bulk_disconnect.html:9
