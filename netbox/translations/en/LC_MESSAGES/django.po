@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-21 05:41+0000\n"
+"POT-Creation-Date: 2026-04-22 05:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8044,6 +8044,16 @@ msgstr ""
 msgid "Unknown related object(s): {name}"
 msgstr ""
 
+#: netbox/extras/api/mixins.py:97 netbox/extras/views.py:1278
+#, python-brace-format
+msgid "Config template with ID {id} not found."
+msgstr ""
+
+#: netbox/extras/api/mixins.py:103
+#, python-brace-format
+msgid "No config template found for this {object_type}."
+msgstr ""
+
 #: netbox/extras/api/serializers_/customfields.py:75
 msgid "Changing the type of custom fields is not supported."
 msgstr ""
@@ -10163,32 +10173,32 @@ msgstr ""
 msgid "JSON Schema"
 msgstr ""
 
-#: netbox/extras/views.py:1278
+#: netbox/extras/views.py:1288
 #, python-brace-format
 msgid "An error occurred while rendering the template: {error}"
 msgstr ""
 
-#: netbox/extras/views.py:1462
+#: netbox/extras/views.py:1472
 msgid "Your dashboard has been reset."
 msgstr ""
 
-#: netbox/extras/views.py:1508
+#: netbox/extras/views.py:1518
 msgid "Added widget: "
 msgstr ""
 
-#: netbox/extras/views.py:1549
+#: netbox/extras/views.py:1559
 msgid "Updated widget: "
 msgstr ""
 
-#: netbox/extras/views.py:1585
+#: netbox/extras/views.py:1595
 msgid "Deleted widget: "
 msgstr ""
 
-#: netbox/extras/views.py:1587
+#: netbox/extras/views.py:1597
 msgid "Error deleting widget: "
 msgstr ""
 
-#: netbox/extras/views.py:1702
+#: netbox/extras/views.py:1712
 msgid "Unable to run script: RQ worker process not running."
 msgstr ""
 
@@ -14290,7 +14300,7 @@ msgid "Output"
 msgstr ""
 
 #: netbox/templates/extras/htmx/script_result.html:61
-#: netbox/templates/extras/object_render_config.html:59
+#: netbox/templates/extras/object_render_config.html:64
 msgid "Download"
 msgstr ""
 
@@ -14376,12 +14386,12 @@ msgstr ""
 msgid "Context Data"
 msgstr ""
 
-#: netbox/templates/extras/object_render_config.html:56
-msgid "Rendered Config"
+#: netbox/templates/extras/object_render_config.html:54
+msgid "Error rendering template"
 msgstr ""
 
-#: netbox/templates/extras/object_render_config.html:68
-msgid "Error rendering template"
+#: netbox/templates/extras/object_render_config.html:61
+msgid "Rendered Config"
 msgstr ""
 
 #: netbox/templates/extras/object_render_config.html:73
