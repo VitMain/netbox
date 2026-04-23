@@ -9,7 +9,7 @@ def validate_peppers(peppers):
     """
     Validate the given dictionary of cryptographic peppers for type & sufficient length.
     """
-    if type(peppers) is not dict:
+    if not isinstance(peppers, dict):
         raise ImproperlyConfigured("API_TOKEN_PEPPERS must be a dictionary.")
     for key, pepper in peppers.items():
         if type(key) is not int:

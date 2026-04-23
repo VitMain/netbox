@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
 from circuits.choices import CircuitStatusChoices, VirtualCircuitTerminationRoleChoices
 from circuits.models import (
@@ -10,9 +10,12 @@ from circuits.models import (
     VirtualCircuitTermination,
     VirtualCircuitType,
 )
+from core.models import ObjectType
 from dcim.choices import InterfaceTypeChoices
-from dcim.models import Interface
+from dcim.models import Interface, Site
 from netbox.ui import attrs
+from netbox.ui.panels import ObjectsTablePanel
+from users.models import ObjectPermission, User
 from utilities.testing import create_test_device
 from vpn.choices import (
     AuthenticationAlgorithmChoices,
@@ -390,3 +393,55 @@ class DateTimeAttrTest(TestCase):
         obj = SimpleNamespace(created='2024-01-01')
         context = attr.get_context(obj, 'created', '2024-01-01', {})
         self.assertEqual(context['spec'], 'minutes')
+
+
+class ObjectsTablePanelTest(TestCase):
+    """
+    Verify that ObjectsTablePanel.should_render() hides the panel when
+    the requesting user lacks view permission for the panel's model.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username='test_user', password='test_password')
+
+        # Grant view permission only for Site
+        obj_perm = ObjectPermission.objects.create(
+            name='View sites only',
+            actions=['view'],
+        )
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(Site))
+        obj_perm.users.add(cls.user)
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.panel = ObjectsTablePanel(model='dcim.site')
+        self.panel_no_perm = ObjectsTablePanel(model='dcim.location')
+
+    def _make_context(self, user=None):
+        if user is None:
+            return {}
+        request = self.factory.get('/')
+        request.user = user
+        return {'request': request}
+
+    def test_should_render_without_request(self):
+        """
+        Panel should render when no request is present in context.
+        """
+        context = self.panel.get_context({})
+        self.assertTrue(self.panel.should_render(context))
+
+    def test_should_render_with_permission(self):
+        """
+        Panel should render when the user has view permission for the panel's model.
+        """
+        context = self.panel.get_context(self._make_context(self.user))
+        self.assertTrue(self.panel.should_render(context))
+
+    def test_should_not_render_without_permission(self):
+        """
+        Panel should be hidden when the user lacks view permission for the panel's model.
+        """
+        context = self.panel_no_perm.get_context(self._make_context(self.user))
+        self.assertFalse(self.panel_no_perm.should_render(context))

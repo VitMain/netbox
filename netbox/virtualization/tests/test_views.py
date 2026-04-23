@@ -484,6 +484,46 @@ class VirtualMachineTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         self.remove_permissions('virtualization.view_virtualmachine')
         self.assertHttpStatus(self.client.get(url), 403)
 
+    def test_virtualmachine_renderconfig_with_config_template_id(self):
+        default_template = ConfigTemplate.objects.create(
+            name='Default Template',
+            template_code='Default config for {{ virtualmachine.name }}'
+        )
+        override_template = ConfigTemplate.objects.create(
+            name='Override Template',
+            template_code='Override config for {{ virtualmachine.name }}'
+        )
+        vm = VirtualMachine.objects.first()
+        vm.config_template = default_template
+        vm.save()
+
+        self.add_permissions(
+            'virtualization.view_virtualmachine', 'virtualization.render_config_virtualmachine',
+            'extras.view_configtemplate'
+        )
+        url = reverse('virtualization:virtualmachine_render-config', kwargs={'pk': vm.pk})
+
+        # Render with override config_template_id
+        response = self.client.get(url, {'config_template_id': override_template.pk})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Override config for', response.content)
+
+        # Render with nonexistent config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 999999})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Render with non-integer config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 'abc'})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Without view_configtemplate permission, override template should not be accessible
+        self.remove_permissions('extras.view_configtemplate')
+        response = self.client.get(url, {'config_template_id': override_template.pk})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
 
 class VMInterfaceTestCase(ViewTestCases.DeviceComponentViewTestCase):
     model = VMInterface

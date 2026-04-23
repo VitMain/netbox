@@ -1280,10 +1280,19 @@ class ObjectRenderConfigView(generic.ObjectView):
         context_data = instance.get_config_context()
         context_data.update(self.get_extra_context_data(request, instance))
 
+        # Check for an optional config_template_id override in the query params
+        config_template = None
+        error_message = ''
+        if config_template_id := request.GET.get('config_template_id'):
+            try:
+                config_template = ConfigTemplate.objects.restrict(request.user, 'view').get(pk=config_template_id)
+            except (ConfigTemplate.DoesNotExist, ValueError):
+                error_message = _("Config template with ID {id} not found.").format(id=config_template_id)
+        else:
+            config_template = instance.get_config_template()
+
         # Render the config template
         rendered_config = None
-        error_message = ''
-        config_template = instance.get_config_template()
         if config_template:
             try:
                 rendered_config = config_template.render(context=context_data)

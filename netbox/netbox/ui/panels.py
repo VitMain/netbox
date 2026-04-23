@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from netbox.ui import attrs
 from netbox.ui.actions import CopyContent
 from utilities.data import resolve_attr_path
+from utilities.permissions import get_permission_for_model
 from utilities.querydict import dict_to_querydict
 from utilities.string import title
 from utilities.templatetags.plugins import _get_registered_content
@@ -346,6 +347,16 @@ class ObjectsTablePanel(Panel):
             'viewname': get_viewname(model, 'list'),
             'url_params': dict_to_querydict(url_params),
         }
+
+    def should_render(self, context):
+        """
+        Hide the panel if the user does not have view permission for the panel's model.
+        """
+        request = context.get('request')
+        if request is None:
+            return True
+
+        return request.user.has_perm(get_permission_for_model(self.model, 'view'))
 
 
 class TemplatePanel(Panel):

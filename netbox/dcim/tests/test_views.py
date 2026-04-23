@@ -196,6 +196,28 @@ class SiteTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'description': 'New description',
         }
 
+    def test_get_object_with_only_site_view_permission_hides_unauthorized_embedded_panels(self):
+        site = self._get_queryset().first()
+
+        obj_perm = ObjectPermission(
+            name='Test permission',
+            actions=['view'],
+        )
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(self.model))
+
+        response = self.client.get(site.get_absolute_url())
+        self.assertHttpStatus(response, 200)
+
+        for panel, url in (
+            ('locations', reverse('dcim:location_list')),
+            ('devices', reverse('dcim:device_list')),
+            ('image attachments', reverse('extras:imageattachment_list')),
+        ):
+            with self.subTest(panel=panel):
+                self.assertNotContains(response, url)
+
 
 class LocationTestCase(ViewTestCases.OrganizationalObjectViewTestCase):
     model = Location
@@ -2413,6 +2435,43 @@ class DeviceTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         self.remove_permissions('dcim.view_device')
         self.assertHttpStatus(self.client.get(url), 403)
 
+    def test_device_renderconfig_with_config_template_id(self):
+        default_template = ConfigTemplate.objects.create(
+            name='Default Template',
+            template_code='Default config for {{ device.name }}'
+        )
+        override_template = ConfigTemplate.objects.create(
+            name='Override Template',
+            template_code='Override config for {{ device.name }}'
+        )
+        device = Device.objects.first()
+        device.config_template = default_template
+        device.save()
+
+        self.add_permissions('dcim.view_device', 'dcim.render_config_device', 'extras.view_configtemplate')
+        url = reverse('dcim:device_render-config', kwargs={'pk': device.pk})
+
+        # Render with override config_template_id
+        response = self.client.get(url, {'config_template_id': override_template.pk})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Override config for', response.content)
+
+        # Render with nonexistent config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 999999})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Render with non-integer config_template_id still returns 200 with error message
+        response = self.client.get(url, {'config_template_id': 'abc'})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
+        # Without view_configtemplate permission, override template should not be accessible
+        self.remove_permissions('extras.view_configtemplate')
+        response = self.client.get(url, {'config_template_id': override_template.pk})
+        self.assertHttpStatus(response, 200)
+        self.assertIn(b'Error rendering template', response.content)
+
     def test_device_role_display_colored(self):
         parent_role = DeviceRole.objects.create(name='Parent Role', slug='parent-role', color='111111')
         child_role = DeviceRole.objects.create(name='Child Role', slug='child-role', parent=parent_role, color='aa00bb')
@@ -2475,13 +2534,14 @@ class ModuleTestCase(
     @classmethod
     def setUpTestData(cls):
         manufacturer = Manufacturer.objects.create(name='Generic', slug='generic')
+        module_type_profile = ModuleTypeProfile.objects.create(name='Module Type Profile 1')
         devices = (
             create_test_device('Device 1'),
             create_test_device('Device 2'),
         )
 
         module_types = (
-            ModuleType(manufacturer=manufacturer, model='Module Type 1'),
+            ModuleType(manufacturer=manufacturer, model='Module Type 1', profile=module_type_profile),
             ModuleType(manufacturer=manufacturer, model='Module Type 2'),
             ModuleType(manufacturer=manufacturer, model='Module Type 3'),
             ModuleType(manufacturer=manufacturer, model='Module Type 4'),
@@ -2539,6 +2599,12 @@ class ModuleTestCase(
             f"{modules[1].pk},offline,Serial 3",
             f"{modules[2].pk},offline,Serial 1",
         )
+
+    @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
+    def test_module_detail_includes_module_type_profile(self):
+        response = self.client.get(self._get_queryset().first().get_absolute_url())
+
+        self.assertContains(response, 'Module Type Profile 1')
 
     @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
     def test_module_component_replication(self):

@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.test import override_settings, tag
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -1983,6 +1984,41 @@ class DeviceTest(APIViewTestCases.APIViewTestCase):
         self.assertEqual(response.data['oob_ip']['nat_inside']['address'], str(real_ip.address))
         self.assertEqual(response.data['oob_ip']['nat_outside'], [])
 
+    def test_render_config_with_config_template_id(self):
+        default_template = ConfigTemplate.objects.create(
+            name='Default Template',
+            template_code='Default config for {{ device.name }}'
+        )
+        override_template = ConfigTemplate.objects.create(
+            name='Override Template',
+            template_code='Override config for {{ device.name }}'
+        )
+
+        device = Device.objects.first()
+        device.config_template = default_template
+        device.save()
+
+        self.add_permissions('dcim.render_config_device', 'dcim.view_device', 'extras.view_configtemplate')
+        url = reverse('dcim-api:device-render-config', kwargs={'pk': device.pk})
+
+        # Render with override template
+        response = self.client.post(url, {'config_template_id': override_template.pk}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], f'Override config for {device.name}')
+
+        # Render with nonexistent config_template_id
+        response = self.client.post(url, {'config_template_id': 999999}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
+        # Render with non-integer config_template_id
+        response = self.client.post(url, {'config_template_id': 'abc'}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
+        # Without view_configtemplate permission, override template should not be accessible
+        self.remove_permissions('extras.view_configtemplate')
+        response = self.client.post(url, {'config_template_id': override_template.pk}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
 
 class ModuleTest(APIViewTestCases.APIViewTestCase):
     model = Module
@@ -1990,16 +2026,23 @@ class ModuleTest(APIViewTestCases.APIViewTestCase):
     bulk_update_data = {
         'serial': '1234ABCD',
     }
-    user_permissions = ('dcim.view_modulebay', 'dcim.view_moduletype', 'dcim.view_device')
+    user_permissions = (
+        'dcim.view_modulebay', 'dcim.view_moduletype', 'dcim.view_moduletypeprofile', 'dcim.view_device'
+    )
 
     @classmethod
     def setUpTestData(cls):
         manufacturer = Manufacturer.objects.create(name='Generic', slug='generic')
+        profiles = (
+            ModuleTypeProfile(name='Test CPU'),
+            ModuleTypeProfile(name='Test Hard disk'),
+        )
+        ModuleTypeProfile.objects.bulk_create(profiles)
         device = create_test_device('Test Device 1')
 
         module_types = (
-            ModuleType(manufacturer=manufacturer, model='Module Type 1'),
-            ModuleType(manufacturer=manufacturer, model='Module Type 2'),
+            ModuleType(manufacturer=manufacturer, model='Module Type 1', profile=profiles[0]),
+            ModuleType(manufacturer=manufacturer, model='Module Type 2', profile=profiles[1]),
             ModuleType(manufacturer=manufacturer, model='Module Type 3'),
         )
         ModuleType.objects.bulk_create(module_types)
@@ -2280,6 +2323,36 @@ class ModuleTest(APIViewTestCases.APIViewTestCase):
         }
         response = self.client.post(url, data, format='json', **self.header)
         self.assertHttpStatus(response, status.HTTP_400_BAD_REQUEST)
+
+    def test_list_objects_by_profile_id(self):
+        profiles = ModuleTypeProfile.objects.filter(name__startswith='Test').order_by('name')
+        self.add_permissions('dcim.view_module')
+        response = self.client.get(self._get_list_url(), {'profile_id': [profiles[0].pk]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        response = self.client.get(self._get_list_url(), {'profile_id': [profiles[1].pk]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        response = self.client.get(
+            self._get_list_url(),
+            {'profile_id': [settings.FILTERS_NULL_CHOICE_VALUE]},
+            **self.header,
+        )
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+    def test_list_objects_by_profile(self):
+        profiles = ModuleTypeProfile.objects.filter(name__startswith='Test').order_by('name')
+        self.add_permissions('dcim.view_module')
+        response = self.client.get(self._get_list_url(), {'profile': [profiles[0].name]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
+
+        response = self.client.get(self._get_list_url(), {'profile': [profiles[1].name]}, **self.header)
+        self.assertHttpStatus(response, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1)
 
 
 class ConsolePortTest(Mixins.ComponentTraceMixin, APIViewTestCases.APIViewTestCase):
