@@ -582,7 +582,12 @@ class CustomField(CloningMixin, ExportTemplatesMixin, OwnerMixin, ChangeLoggedMo
         # Object
         elif self.type == CustomFieldTypeChoices.TYPE_OBJECT:
             model = self.related_object_type.model_class()
-            field_class = CSVModelChoiceField if for_csv_import else DynamicModelChoiceField
+            if for_csv_import:
+                field_class = CSVModelChoiceField
+            elif for_filterset_form:
+                field_class = DynamicModelMultipleChoiceField
+            else:
+                field_class = DynamicModelChoiceField
             kwargs = {
                 'queryset': model.objects.all(),
                 'required': required,
