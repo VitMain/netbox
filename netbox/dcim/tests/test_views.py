@@ -1,9 +1,12 @@
+import csv
 import json
 from decimal import Decimal
+from io import StringIO
 from zoneinfo import ZoneInfo
 
 import yaml
 from django.contrib.contenttypes.models import ContentType
+from django.http import StreamingHttpResponse
 from django.test import override_settings, tag
 from django.urls import reverse
 from netaddr import EUI
@@ -1192,6 +1195,7 @@ console-ports:
                 self.assertHttpStatus(response, 200)
                 self.assertContains(response, "Record 1 console-ports[1]: Must be a dictionary.")
 
+    @override_settings(STREAMING_EXPORTS=True)
     def test_export_objects(self):
         url = reverse('dcim:devicetype_list')
         self.add_permissions('dcim.view_devicetype')
@@ -1204,10 +1208,15 @@ console-ports:
         self.assertEqual(data[0]['manufacturer'], 'Manufacturer 1')
         self.assertEqual(data[0]['model'], 'Device Type 1')
 
-        # Test table-based export
+        # Test table-based export (streams row-by-row)
         response = self.client.get(f'{url}?export=table')
         self.assertHttpStatus(response, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv; charset=utf-8')
+        self.assertIsInstance(response, StreamingHttpResponse)
+        content = b''.join(response.streaming_content).decode('utf-8')
+        rows = list(csv.reader(StringIO(content)))
+        self.assertGreater(len(rows), 1)
+        self.assertEqual(len(rows) - 1, DeviceType.objects.count())
 
 
 class ModuleTypeTestCase(ViewTestCases.PrimaryObjectViewTestCase):
@@ -1573,6 +1582,7 @@ module-bays:
         self.assertEqual(mb1.name, 'Module Bay 1')
         self.assertEqual(mb1.position, '1')
 
+    @override_settings(STREAMING_EXPORTS=True)
     def test_export_objects(self):
         url = reverse('dcim:moduletype_list')
         self.add_permissions('dcim.view_moduletype')
@@ -1585,10 +1595,15 @@ module-bays:
         self.assertEqual(data[0]['manufacturer'], 'Manufacturer 1')
         self.assertEqual(data[0]['model'], 'Module Type 1')
 
-        # Test table-based export
+        # Test table-based export (streams row-by-row)
         response = self.client.get(f'{url}?export=table')
         self.assertHttpStatus(response, 200)
         self.assertEqual(response.get('Content-Type'), 'text/csv; charset=utf-8')
+        self.assertIsInstance(response, StreamingHttpResponse)
+        content = b''.join(response.streaming_content).decode('utf-8')
+        rows = list(csv.reader(StringIO(content)))
+        self.assertGreater(len(rows), 1)
+        self.assertEqual(len(rows) - 1, ModuleType.objects.count())
 
 
 class ModuleTypeProfileTestCase(ViewTestCases.OrganizationalObjectViewTestCase):
