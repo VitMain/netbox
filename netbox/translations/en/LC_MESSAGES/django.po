@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-22 05:40+0000\n"
+"POT-Creation-Date: 2026-04-23 05:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -497,7 +497,7 @@ msgstr ""
 #: netbox/dcim/tables/power.py:74 netbox/dcim/tables/racks.py:127
 #: netbox/extras/forms/bulk_import.py:48 netbox/extras/tables/tables.py:511
 #: netbox/extras/tables/tables.py:580 netbox/extras/ui/panels.py:133
-#: netbox/extras/ui/panels.py:382 netbox/netbox/tables/tables.py:339
+#: netbox/extras/ui/panels.py:382 netbox/netbox/tables/tables.py:346
 #: netbox/templates/core/htmx/system_db_schema.html:70
 #: netbox/templates/dcim/panels/interface_connection.html:68
 #: netbox/templates/wireless/panels/wirelesslink_interface.html:16
@@ -718,7 +718,7 @@ msgstr ""
 #: netbox/ipam/forms/filtersets.py:423 netbox/ipam/forms/filtersets.py:511
 #: netbox/ipam/forms/filtersets.py:525 netbox/ipam/forms/filtersets.py:550
 #: netbox/ipam/forms/filtersets.py:622 netbox/ipam/forms/filtersets.py:641
-#: netbox/netbox/tables/tables.py:355
+#: netbox/netbox/tables/tables.py:362
 #: netbox/virtualization/forms/filtersets.py:54
 #: netbox/virtualization/forms/filtersets.py:118
 #: netbox/virtualization/forms/filtersets.py:219
@@ -1555,7 +1555,7 @@ msgstr ""
 #: netbox/ipam/tables/services.py:16 netbox/ipam/tables/services.py:38
 #: netbox/ipam/tables/vlans.py:33 netbox/ipam/tables/vlans.py:86
 #: netbox/ipam/tables/vlans.py:205 netbox/ipam/tables/vrfs.py:26
-#: netbox/ipam/tables/vrfs.py:65 netbox/netbox/tables/tables.py:325
+#: netbox/ipam/tables/vrfs.py:65 netbox/netbox/tables/tables.py:332
 #: netbox/netbox/ui/panels.py:213 netbox/netbox/ui/panels.py:222
 #: netbox/templates/core/htmx/system_db_schema.html:99
 #: netbox/templates/core/plugin.html:54 netbox/templates/core/rq_worker.html:43
@@ -2527,7 +2527,7 @@ msgstr ""
 #: netbox/extras/tables/tables.py:514 netbox/extras/tables/tables.py:585
 #: netbox/extras/tables/tables.py:754 netbox/extras/tables/tables.py:795
 #: netbox/extras/tables/tables.py:849 netbox/extras/ui/panels.py:383
-#: netbox/extras/ui/panels.py:511 netbox/netbox/tables/tables.py:343
+#: netbox/extras/ui/panels.py:511 netbox/netbox/tables/tables.py:350
 #: netbox/tenancy/tables/contacts.py:87 netbox/vpn/tables/l2vpn.py:64
 msgid "Object"
 msgstr ""
@@ -2567,7 +2567,7 @@ msgstr ""
 #: netbox/core/tables/jobs.py:12 netbox/core/tables/tasks.py:77
 #: netbox/dcim/tables/devicetypes.py:168 netbox/extras/tables/tables.py:260
 #: netbox/extras/tables/tables.py:575 netbox/extras/tables/tables.py:820
-#: netbox/netbox/tables/tables.py:233
+#: netbox/netbox/tables/tables.py:240
 #: netbox/templates/dcim/virtualchassis_edit.html:64
 #: netbox/utilities/forms/forms.py:119
 #: netbox/wireless/tables/wirelesslink.py:16
@@ -2971,7 +2971,7 @@ msgstr ""
 #: netbox/dcim/tables/devices.py:1225 netbox/ipam/forms/bulk_import.py:601
 #: netbox/ipam/forms/model_forms.py:758 netbox/ipam/tables/fhrp.py:56
 #: netbox/ipam/tables/ip.py:329 netbox/ipam/tables/services.py:42
-#: netbox/netbox/tables/tables.py:329 netbox/netbox/ui/panels.py:221
+#: netbox/netbox/tables/tables.py:336 netbox/netbox/ui/panels.py:221
 #: netbox/tenancy/forms/bulk_edit.py:33 netbox/tenancy/forms/bulk_edit.py:62
 #: netbox/tenancy/forms/bulk_import.py:31
 #: netbox/tenancy/forms/bulk_import.py:64
@@ -8696,8 +8696,8 @@ msgid "The classification of entry"
 msgstr ""
 
 #: netbox/extras/forms/bulk_import.py:305 netbox/extras/tables/tables.py:760
-#: netbox/netbox/tables/tables.py:295 netbox/netbox/tables/tables.py:310
-#: netbox/netbox/tables/tables.py:333 netbox/netbox/ui/panels.py:234
+#: netbox/netbox/tables/tables.py:302 netbox/netbox/tables/tables.py:317
+#: netbox/netbox/tables/tables.py:340 netbox/netbox/ui/panels.py:234
 #: netbox/templates/dcim/htmx/cable_edit.html:99
 #: netbox/templates/generic/bulk_edit.html:99
 #: netbox/templates/inc/panels/comments.html:5
@@ -9914,8 +9914,8 @@ msgstr ""
 #: netbox/extras/tables/tables.py:531 netbox/extras/tables/tables.py:561
 #: netbox/extras/tables/tables.py:652 netbox/extras/tables/tables.py:704
 #: netbox/netbox/forms/mixins.py:162 netbox/netbox/forms/mixins.py:187
-#: netbox/netbox/tables/tables.py:292 netbox/netbox/tables/tables.py:307
-#: netbox/netbox/tables/tables.py:322 netbox/templates/generic/object.html:61
+#: netbox/netbox/tables/tables.py:299 netbox/netbox/tables/tables.py:314
+#: netbox/netbox/tables/tables.py:329 netbox/templates/generic/object.html:61
 #: netbox/users/forms/model_forms.py:481
 msgid "Owner"
 msgstr ""
@@ -12074,8 +12074,8 @@ msgstr ""
 msgid "Owner group"
 msgstr ""
 
-#: netbox/netbox/forms/mixins.py:178 netbox/netbox/tables/tables.py:288
-#: netbox/netbox/tables/tables.py:303 netbox/netbox/tables/tables.py:318
+#: netbox/netbox/forms/mixins.py:178 netbox/netbox/tables/tables.py:295
+#: netbox/netbox/tables/tables.py:310 netbox/netbox/tables/tables.py:325
 #: netbox/users/forms/model_forms.py:469
 msgid "Owner Group"
 msgstr ""
@@ -12795,12 +12795,12 @@ msgstr ""
 msgid "No {model_name} found"
 msgstr ""
 
-#: netbox/netbox/tables/tables.py:348
+#: netbox/netbox/tables/tables.py:355
 #: netbox/templates/generic/bulk_import.html:148
 msgid "Field"
 msgstr ""
 
-#: netbox/netbox/tables/tables.py:351
+#: netbox/netbox/tables/tables.py:358
 #: netbox/templates/extras/panels/customfieldchoiceset_choices.html:8
 msgid "Value"
 msgstr ""
@@ -12829,75 +12829,75 @@ msgstr ""
 msgid "GPS coordinates"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:124
+#: netbox/netbox/views/generic/bulk_views.py:129
 #, python-brace-format
 msgid ""
 "There was an error rendering the selected export template ({template}): "
 "{error}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:389
+#: netbox/netbox/views/generic/bulk_views.py:394
 msgid "Must be a list."
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:399
+#: netbox/netbox/views/generic/bulk_views.py:404
 msgid "Must be a dictionary."
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:456
+#: netbox/netbox/views/generic/bulk_views.py:461
 #, python-brace-format
 msgid "Object with ID {id} does not exist"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:519
+#: netbox/netbox/views/generic/bulk_views.py:524
 #, python-brace-format
 msgid ""
 "Duplicate objects found: {model} with ID(s) {ids} appears multiple times"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:571
+#: netbox/netbox/views/generic/bulk_views.py:576
 #, python-brace-format
 msgid "Bulk import {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:587
+#: netbox/netbox/views/generic/bulk_views.py:592
 #, python-brace-format
 msgid "Imported {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:777
+#: netbox/netbox/views/generic/bulk_views.py:782
 #, python-brace-format
 msgid "Bulk edit {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:793
+#: netbox/netbox/views/generic/bulk_views.py:798
 #, python-brace-format
 msgid "Updated {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:826
-#: netbox/netbox/views/generic/bulk_views.py:1067
-#: netbox/netbox/views/generic/bulk_views.py:1115
+#: netbox/netbox/views/generic/bulk_views.py:831
+#: netbox/netbox/views/generic/bulk_views.py:1072
+#: netbox/netbox/views/generic/bulk_views.py:1120
 #, python-brace-format
 msgid "No {object_type} were selected."
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:926
+#: netbox/netbox/views/generic/bulk_views.py:931
 #, python-brace-format
 msgid "Renamed {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:996
+#: netbox/netbox/views/generic/bulk_views.py:1001
 #, python-brace-format
 msgid "Bulk delete {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:1023
+#: netbox/netbox/views/generic/bulk_views.py:1028
 #, python-brace-format
 msgid "Deleted {count} {object_type}"
 msgstr ""
 
-#: netbox/netbox/views/generic/bulk_views.py:1040
+#: netbox/netbox/views/generic/bulk_views.py:1045
 msgid "Deletion failed due to the presence of one or more dependent objects."
 msgstr ""
 
