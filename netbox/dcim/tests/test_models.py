@@ -1557,3 +1557,90 @@ class SiteSignalTestCase(TestCase):
 
         # Regression test for #21045: should not raise ValueError
         site.save()
+
+
+class PowerPortDrawTestCase(TestCase):
+    """
+    Tests for PowerPort.get_power_draw() power aggregation logic.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.site = Site.objects.create(name='Test Site', slug='test-site')
+        manufacturer = Manufacturer.objects.create(name='Generic', slug='generic')
+        device_type = DeviceType.objects.create(manufacturer=manufacturer, model='Test Device Type')
+        role = DeviceRole.objects.create(name='Test Role', slug='test-role')
+        cls.pdu = Device.objects.create(
+            device_type=device_type, role=role, site=cls.site, name='pdu'
+        )
+        cls.server = Device.objects.create(
+            device_type=device_type, role=role, site=cls.site, name='server'
+        )
+
+    def test_direct_draw_aggregation(self):
+        """
+        Sanity check: with one PowerOutlet chained directly to a downstream PSU PowerPort,
+        the upstream PowerPort should reflect the PSU's allocated/maximum draw.
+
+            [main] -- [outlet] --C-- [psu]
+        """
+        main = PowerPort.objects.create(device=self.pdu, name='main')
+        outlet = PowerOutlet.objects.create(device=self.pdu, name='outlet', power_port=main)
+        psu = PowerPort.objects.create(
+            device=self.server, name='psu', allocated_draw=200, maximum_draw=400
+        )
+        Cable(a_terminations=[outlet], b_terminations=[psu]).save()
+
+        draw = main.get_power_draw()
+        self.assertEqual(draw['allocated'], 200)
+        self.assertEqual(draw['maximum'], 400)
+
+    @tag('regression')
+    def test_recursive_draw_through_intermediate_powerport(self):
+        """
+        Regression test for #21949: A PDU modeled with internal fuses (intermediate PowerPorts in
+        auto mode) should still aggregate downstream PSU draw up to the main PowerPort.
+
+            [main] -- [feedback] --C-- [fuse] -- [outlet] --C-- [psu]
+
+        Both `main` and `fuse` are in auto mode (no allocated_draw/maximum_draw set). The draw
+        reported by `psu` must propagate through `fuse` and be reflected at `main`.
+        """
+        main = PowerPort.objects.create(device=self.pdu, name='main')
+        feedback = PowerOutlet.objects.create(device=self.pdu, name='feedback', power_port=main)
+        fuse = PowerPort.objects.create(device=self.pdu, name='fuse')
+        outlet = PowerOutlet.objects.create(device=self.pdu, name='outlet', power_port=fuse)
+        psu = PowerPort.objects.create(
+            device=self.server, name='psu', allocated_draw=150, maximum_draw=300
+        )
+        Cable(a_terminations=[feedback], b_terminations=[fuse]).save()
+        Cable(a_terminations=[outlet], b_terminations=[psu]).save()
+
+        fuse_draw = fuse.get_power_draw()
+        self.assertEqual(fuse_draw['allocated'], 150)
+        self.assertEqual(fuse_draw['maximum'], 300)
+
+        main_draw = main.get_power_draw()
+        self.assertEqual(main_draw['allocated'], 150)
+        self.assertEqual(main_draw['maximum'], 300)
+
+    def test_intermediate_manual_override_stops_recursion(self):
+        """
+        When an intermediate PowerPort has an explicit allocated_draw/maximum_draw, recursion should
+        stop there and the administratively defined values should be used.
+        """
+        main = PowerPort.objects.create(device=self.pdu, name='main')
+        feedback = PowerOutlet.objects.create(device=self.pdu, name='feedback', power_port=main)
+        fuse = PowerPort.objects.create(
+            device=self.pdu, name='fuse', allocated_draw=500, maximum_draw=1000
+        )
+        outlet = PowerOutlet.objects.create(device=self.pdu, name='outlet', power_port=fuse)
+        psu = PowerPort.objects.create(
+            device=self.server, name='psu', allocated_draw=150, maximum_draw=300
+        )
+        Cable(a_terminations=[feedback], b_terminations=[fuse]).save()
+        Cable(a_terminations=[outlet], b_terminations=[psu]).save()
+
+        main_draw = main.get_power_draw()
+        self.assertEqual(main_draw['allocated'], 500)
+        self.assertEqual(main_draw['maximum'], 1000)
