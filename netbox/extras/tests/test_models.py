@@ -11,9 +11,18 @@ from django.forms import ValidationError
 from django.test import TestCase, tag
 from PIL import Image
 
+from core.events import OBJECT_CREATED
 from core.models import AutoSyncRecord, DataSource, ObjectType
 from dcim.models import Device, DeviceRole, DeviceType, Location, Manufacturer, Platform, Region, Site, SiteGroup
-from extras.models import ConfigContext, ConfigContextProfile, ConfigTemplate, ImageAttachment, Tag, TaggedItem
+from extras.models import (
+    ConfigContext,
+    ConfigContextProfile,
+    ConfigTemplate,
+    EventRule,
+    ImageAttachment,
+    Tag,
+    TaggedItem,
+)
 from tenancy.models import Tenant, TenantGroup
 from utilities.exceptions import AbortRequest
 from virtualization.models import Cluster, ClusterGroup, ClusterType, VirtualMachine
@@ -889,3 +898,24 @@ class ConfigTemplateTest(TestCase):
                 object_id=config_template.pk
             )
             self.assertEqual(autosync_records.count(), 0, "AutoSyncRecord should be deleted after detaching")
+
+
+class EventRuleTest(TestCase):
+
+    def test_action_data_clean_accepts_dict(self):
+        """
+        clean() should accept a JSON object (or null) as action_data.
+        """
+        for value in ({'key': 'value'}, None):
+            rule = EventRule(name='test', event_types=[OBJECT_CREATED], action_data=value)
+            rule.clean()
+
+    def test_action_data_clean_rejects_non_dict(self):
+        """
+        clean() should reject action_data that is valid JSON but not an object (#21989).
+        """
+        for value in ('test', 42, [1, 2, 3], True):
+            rule = EventRule(name='test', event_types=[OBJECT_CREATED], action_data=value)
+            with self.assertRaises(ValidationError) as cm:
+                rule.clean()
+            self.assertIn('action_data', cm.exception.message_dict)
