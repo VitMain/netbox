@@ -528,29 +528,33 @@ class PowerPort(ModularComponentModel, CabledObjectModel, PathEndpoint, Tracking
         """
         from dcim.models import PowerFeed
 
-        # Track visited PowerPorts to prevent infinite recursion if a topology happens to form a cycle
-        if _seen is None:
-            _seen = set()
-        _seen.add(self.pk)
-
         # Calculate aggregate draw of all child power outlets if no numbers have been defined manually
         if self.allocated_draw is None and self.maximum_draw is None:
 
-            def _aggregate(powerports):
+            def _aggregate(powerports, seen):
                 # Recursively resolve the draw for each downstream PowerPort. Using the per-port value
                 # (rather than a SQL aggregate over allocated_draw/maximum_draw) allows the draw to
                 # propagate through intermediate auto-mode PowerPorts, e.g. PDU-internal fuse chains.
+                # `seen` tracks visited PowerPorts to prevent infinite recursion if the topology
+                # happens to form a cycle.
                 allocated_total = 0
                 maximum_total = 0
                 for powerport in powerports:
-                    if powerport.pk in _seen:
+                    if powerport.pk in seen:
                         continue
-                    draw = powerport.get_power_draw(_seen=_seen)
+                    seen.add(powerport.pk)
+                    draw = powerport.get_power_draw(_seen=seen)
                     allocated_total += draw['allocated']
                     maximum_total += draw['maximum']
                 return allocated_total, maximum_total
 
-            allocated, maximum = _aggregate(self.get_downstream_powerports())
+            # Seed each _aggregate() call with a fresh copy of the inherited visited set so the full
+            # and per-leg aggregations are independent. Otherwise, ports visited during the full
+            # aggregation would be skipped during the per-leg passes.
+            base_seen = set(_seen) if _seen else set()
+            base_seen.add(self.pk)
+
+            allocated, maximum = _aggregate(self.get_downstream_powerports(), set(base_seen))
             ret = {
                 'allocated': allocated,
                 'maximum': maximum,
@@ -562,7 +566,9 @@ class PowerPort(ModularComponentModel, CabledObjectModel, PathEndpoint, Tracking
             if len(self.link_peers) == 1 and isinstance(self.link_peers[0], PowerFeed) and \
                     self.link_peers[0].phase == PowerFeedPhaseChoices.PHASE_3PHASE:
                 for leg, leg_name in PowerOutletFeedLegChoices:
-                    leg_allocated, leg_maximum = _aggregate(self.get_downstream_powerports(leg=leg))
+                    leg_allocated, leg_maximum = _aggregate(
+                        self.get_downstream_powerports(leg=leg), set(base_seen)
+                    )
                     ret['legs'].append({
                         'name': leg_name,
                         'allocated': leg_allocated,

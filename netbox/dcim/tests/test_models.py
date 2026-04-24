@@ -1644,3 +1644,97 @@ class PowerPortDrawTestCase(TestCase):
         main_draw = main.get_power_draw()
         self.assertEqual(main_draw['allocated'], 500)
         self.assertEqual(main_draw['maximum'], 1000)
+
+    def _connect_three_phase_feed(self, powerport):
+        """
+        Helper: attach `powerport` via cable to a newly-created three-phase PowerFeed.
+        """
+        power_panel = PowerPanel.objects.create(site=self.site, name='Panel')
+        power_feed = PowerFeed.objects.create(
+            power_panel=power_panel,
+            name='Feed',
+            phase=PowerFeedPhaseChoices.PHASE_3PHASE,
+        )
+        Cable(a_terminations=[powerport], b_terminations=[power_feed]).save()
+
+    @tag('regression')
+    def test_three_phase_per_leg_aggregation(self):
+        """
+        Regression test: per-leg totals for a main PowerPort connected to a three-phase PowerFeed
+        must be populated even when the full aggregation runs first. Previously, a shared visited
+        set caused downstream ports to be skipped during the per-leg passes, zeroing the legs.
+
+            [main] --C-- [3-phase PowerFeed]
+              ├── [outlet_A] (leg A) --C-- [portA] (allocated=100, maximum=200)
+              ├── [outlet_B] (leg B) --C-- [portB] (allocated=200, maximum=400)
+              └── [outlet_C] (leg C) --C-- [portC] (allocated=300, maximum=600)
+        """
+        main = PowerPort.objects.create(device=self.pdu, name='main')
+        self._connect_three_phase_feed(main)
+
+        leg_specs = [
+            (PowerOutletFeedLegChoices.FEED_LEG_A, 100, 200),
+            (PowerOutletFeedLegChoices.FEED_LEG_B, 200, 400),
+            (PowerOutletFeedLegChoices.FEED_LEG_C, 300, 600),
+        ]
+        for leg, allocated, maximum in leg_specs:
+            outlet = PowerOutlet.objects.create(
+                device=self.pdu, name=f'outlet_{leg}', power_port=main, feed_leg=leg
+            )
+            port = PowerPort.objects.create(
+                device=self.server, name=f'psu_{leg}',
+                allocated_draw=allocated, maximum_draw=maximum,
+            )
+            Cable(a_terminations=[outlet], b_terminations=[port]).save()
+
+        # Re-fetch to clear cached_property values populated before cable creation
+        main = PowerPort.objects.get(pk=main.pk)
+        draw = main.get_power_draw()
+        self.assertEqual(draw['allocated'], 600)
+        self.assertEqual(draw['maximum'], 1200)
+        legs_by_name = {leg['name']: leg for leg in draw['legs']}
+        self.assertEqual(legs_by_name['A']['allocated'], 100)
+        self.assertEqual(legs_by_name['A']['maximum'], 200)
+        self.assertEqual(legs_by_name['B']['allocated'], 200)
+        self.assertEqual(legs_by_name['B']['maximum'], 400)
+        self.assertEqual(legs_by_name['C']['allocated'], 300)
+        self.assertEqual(legs_by_name['C']['maximum'], 600)
+
+    @tag('regression')
+    def test_three_phase_per_leg_recursive_aggregation(self):
+        """
+        Regression test for #21949 on three-phase feeds: per-leg totals must aggregate through
+        intermediate auto-mode PowerPorts (the PDU-internal "fuse" pattern).
+
+            [main] --C-- [3-phase PowerFeed]
+              └── [feedback_A] (leg A) --C-- [fuse_A] (auto)
+                                            └── [outlet_A] (leg A) --C-- [psu_A] (allocated=100)
+        """
+        main = PowerPort.objects.create(device=self.pdu, name='main')
+        self._connect_three_phase_feed(main)
+
+        feedback = PowerOutlet.objects.create(
+            device=self.pdu, name='feedback_A', power_port=main,
+            feed_leg=PowerOutletFeedLegChoices.FEED_LEG_A,
+        )
+        fuse = PowerPort.objects.create(device=self.pdu, name='fuse_A')
+        outlet = PowerOutlet.objects.create(
+            device=self.pdu, name='outlet_A', power_port=fuse,
+            feed_leg=PowerOutletFeedLegChoices.FEED_LEG_A,
+        )
+        psu = PowerPort.objects.create(
+            device=self.server, name='psu_A', allocated_draw=100, maximum_draw=200
+        )
+        Cable(a_terminations=[feedback], b_terminations=[fuse]).save()
+        Cable(a_terminations=[outlet], b_terminations=[psu]).save()
+
+        # Re-fetch to clear cached_property values populated before cable creation
+        main = PowerPort.objects.get(pk=main.pk)
+        draw = main.get_power_draw()
+        self.assertEqual(draw['allocated'], 100)
+        self.assertEqual(draw['maximum'], 200)
+        legs_by_name = {leg['name']: leg for leg in draw['legs']}
+        self.assertEqual(legs_by_name['A']['allocated'], 100)
+        self.assertEqual(legs_by_name['A']['maximum'], 200)
+        self.assertEqual(legs_by_name['B']['allocated'], 0)
+        self.assertEqual(legs_by_name['C']['allocated'], 0)
