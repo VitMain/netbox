@@ -563,3 +563,30 @@ class EventRuleTest(APITestCase):
         job = self.queue.get_jobs()[0]
         self.assertEqual(job.kwargs['event_type'], OBJECT_DELETED)
         self.queue.empty()
+
+    def test_non_dict_action_data_does_not_crash_flush(self):
+        """
+        Pre-existing non-dict action_data must not cause flush_events() to
+        raise.
+        """
+        site_type = ObjectType.objects.get_for_model(Site)
+        webhook = Webhook.objects.get(name='Webhook 1')
+        webhook_type = ObjectType.objects.get_for_model(Webhook)
+
+        bad_rule = EventRule.objects.create(
+            name='Bad action_data rule',
+            event_types=[OBJECT_CREATED],
+            action_type=EventRuleActionChoices.WEBHOOK,
+            action_object_type=webhook_type,
+            action_object_id=webhook.pk,
+            action_data={},
+        )
+        bad_rule.object_types.set([site_type])
+
+        # Simulate a legacy row that predates model validation.
+        EventRule.objects.filter(pk=bad_rule.pk).update(action_data='not a dict')
+
+        url = reverse('dcim-api:site-list')
+        self.add_permissions('dcim.add_site')
+        response = self.client.post(url, {'name': 'Site X', 'slug': 'site-x'}, format='json', **self.header)
+        self.assertHttpStatus(response, status.HTTP_201_CREATED)
