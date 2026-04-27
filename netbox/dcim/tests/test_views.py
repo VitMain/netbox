@@ -4027,6 +4027,33 @@ class VirtualDeviceContextTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'status': VirtualDeviceContextStatusChoices.STATUS_OFFLINE,
         }
 
+    def test_bulk_edit_device_context_preserves_device(self):
+        """
+        Regression test: Bulk editing VDCs from the Device's VDCs tab (URL contains
+        ?device=<id>) must not clear the device field on those VDCs.
+        """
+        self.add_permissions('dcim.view_virtualdevicecontext', 'dcim.change_virtualdevicecontext')
+
+        device = VirtualDeviceContext.objects.filter(device__isnull=False).first().device
+        vdcs = list(VirtualDeviceContext.objects.filter(device=device)[:3])
+        pk_list = [vdc.pk for vdc in vdcs]
+
+        data = {
+            'pk': pk_list,
+            '_apply': True,
+            # Only change status — device is intentionally omitted
+            'status': VirtualDeviceContextStatusChoices.STATUS_PLANNED,
+        }
+
+        # Simulate navigation from Device -> VDCs tab by passing ?device=<id> as GET param
+        url = reverse('dcim:virtualdevicecontext_bulk_edit') + f'?device={device.pk}'
+        response = self.client.post(url, data)
+        self.assertHttpStatus(response, 302)
+
+        for vdc in VirtualDeviceContext.objects.filter(pk__in=pk_list):
+            self.assertEqual(vdc.device, device, msg=f"Device was unexpectedly cleared on VDC '{vdc.name}'")
+            self.assertEqual(vdc.status, VirtualDeviceContextStatusChoices.STATUS_PLANNED)
+
 
 class MACAddressTestCase(ViewTestCases.PrimaryObjectViewTestCase):
     model = MACAddress

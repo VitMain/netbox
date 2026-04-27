@@ -1757,8 +1757,8 @@ class VirtualDeviceContextBulkEditForm(PrimaryModelBulkEditForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Remove parent device passed as context to avoid conflicts with the actual device field
-        # on this form (see bug #21990)
+        # The ?device=<id> GET param is navigation context (filter), not an intent to change the
+        # device field — drop it from initial so Django's changed_data doesn't treat it as an edit.
         self.initial.pop('device', None)
 
 
