@@ -164,6 +164,10 @@ class VirtualMachineBulkEditForm(PrimaryModelBulkEditForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        # Remove parent device passed as context to avoid conflicts with the actual device field
+        # on this form (see bug #21990)
+        self.initial.pop('device', None)
+
         # Set unit labels based on configured RAM_BASE_UNIT / DISK_BASE_UNIT (MB vs MiB)
         self.fields['memory'].label = _('Memory ({unit})').format(unit=get_capacity_unit_label(settings.RAM_BASE_UNIT))
         self.fields['disk'].label = _('Disk ({unit})').format(unit=get_capacity_unit_label(settings.DISK_BASE_UNIT))

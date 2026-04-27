@@ -1754,6 +1754,13 @@ class VirtualDeviceContextBulkEditForm(PrimaryModelBulkEditForm):
     )
     nullable_fields = ('device', 'tenant', )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Remove parent device passed as context to avoid conflicts with the actual device field
+        # on this form (see bug #21990)
+        self.initial.pop('device', None)
+
 
 #
 # Addressing
