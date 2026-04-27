@@ -1,23 +1,25 @@
 @use 'sass:map';
 
 // Interface row coloring
+// Use --tblr-table-bg-state so type highlights take precedence over striping
+// (which sets --tblr-table-bg-type via the box-shadow cascade).
 tr[data-cable-status=connected] {
-  background-color: rgba(map.get($theme-colors, "green"), 0.15);
+  --tblr-table-bg-state: #{rgba(map.get($theme-colors, "green"), 0.15)};
 }
 tr[data-cable-status=planned] {
-  background-color: rgba(map.get($theme-colors, "blue"), 0.15);
+  --tblr-table-bg-state: #{rgba(map.get($theme-colors, "blue"), 0.15)};
 }
 tr[data-cable-status=decommissioning] {
-  background-color: rgba(map.get($theme-colors, "yellow"), 0.15);
+  --tblr-table-bg-state: #{rgba(map.get($theme-colors, "yellow"), 0.15)};
 }
 tr[data-mark-connected=true] {
-  background-color: rgba(map.get($theme-colors, "success"), 0.15);
+  --tblr-table-bg-state: #{rgba(map.get($theme-colors, "success"), 0.15)};
 }
 tr[data-virtual=true] {
-  background-color: rgba(map.get($theme-colors, "primary"), 0.15);
+  --tblr-table-bg-state: #{rgba(map.get($theme-colors, "primary"), 0.15)};
 }
 tr[data-enabled=disabled] {
-  background-color: rgba($gray-400, 0.15);
+  --tblr-table-bg-state: #{rgba($gray-400, 0.15)};
 }
 
 // Only show the correct button depending on the cable status
