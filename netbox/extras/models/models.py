@@ -143,6 +143,10 @@ class EventRule(CustomFieldsMixin, ExportTemplatesMixin, OwnerMixin, TagsMixin, 
             except ValueError as e:
                 raise ValidationError({'conditions': e})
 
+        # action_data must be a JSON object (or null)
+        if self.action_data is not None and not isinstance(self.action_data, dict):
+            raise ValidationError({'action_data': _('Action data must be a JSON object or null.')})
+
     def eval_conditions(self, data):
         """
         Test whether the given data meets the conditions of the event rule (if any). Return True

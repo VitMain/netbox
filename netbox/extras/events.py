@@ -181,9 +181,26 @@ def process_event_rules(event_rules, object_type, event):
         if not event_rule.eval_conditions(event['data']):
             continue
 
+        # Guard against action_data that is valid JSON but not a dict
+        # (e.g. a bare string or number). Existing rows with bad data are
+        # tolerated at runtime; validation on EventRule.clean() prevents
+        # new ones.
+        if event_rule.action_data is None:
+            action_data = {}
+        elif isinstance(event_rule.action_data, dict):
+            action_data = event_rule.action_data
+        else:
+            logger.warning(
+                _('Ignoring invalid action_data on event rule "{rule}" (got {data_type})').format(
+                    rule=event_rule,
+                    data_type=type(event_rule.action_data).__name__,
+                )
+            )
+            action_data = {}
+
         # Merge rule-specific action_data with the event payload.
         # Copy to avoid mutating the rule's stored action_data dict.
-        event_data = {**(event_rule.action_data or {}), **event['data']}
+        event_data = {**action_data, **event['data']}
 
         # Webhooks
         if event_rule.action_type == EventRuleActionChoices.WEBHOOK:

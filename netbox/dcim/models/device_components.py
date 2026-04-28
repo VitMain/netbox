@@ -5,7 +5,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -255,13 +254,37 @@ class CabledObjectModel(models.Model):
 
     @cached_property
     def link_peers(self):
-        if self.cable:
-            return [
-                peer.termination
-                for peer in self.cable.terminations.all()
-                if peer.cable_end != self.cable_end
-            ]
-        return []
+        if not self.cable:
+            return []
+
+        if self.cable.profile:
+            return self._get_profile_link_peers()
+
+        return [peer.termination for peer in self.cable.terminations.all() if peer.cable_end != self.cable_end]
+
+    def _get_profile_link_peers(self):
+        if self.cable_end is None or self.cable_connector is None or not self.cable_positions:
+            return []
+
+        profile = self.cable.profile_class()
+        peer_terminations = {
+            (peer.connector, position): peer.termination
+            for peer in self.cable.terminations.all()
+            if peer.cable_end == self.opposite_cable_end and peer.connector is not None
+            for position in peer.positions or []
+        }
+        link_peers = []
+
+        for position in self.cable_positions:
+            mapped_position = profile.get_mapped_position(self.cable_end, self.cable_connector, position)
+            if mapped_position is None:
+                continue
+
+            peer = peer_terminations.get(mapped_position)
+            if peer is not None and peer not in link_peers:
+                link_peers.append(peer)
+
+        return link_peers
 
     @property
     def _occupied(self):
@@ -523,7 +546,7 @@ class PowerPort(ModularComponentModel, CabledObjectModel, PathEndpoint, Tracking
 
         return PowerPort.objects.filter(q)
 
-    def get_power_draw(self):
+    def get_power_draw(self, _seen=None):
         """
         Return the allocated and maximum power draw (in VA) and child PowerOutlet count for this PowerPort.
         """
@@ -531,13 +554,34 @@ class PowerPort(ModularComponentModel, CabledObjectModel, PathEndpoint, Tracking
 
         # Calculate aggregate draw of all child power outlets if no numbers have been defined manually
         if self.allocated_draw is None and self.maximum_draw is None:
-            utilization = self.get_downstream_powerports().aggregate(
-                maximum_draw_total=Sum('maximum_draw'),
-                allocated_draw_total=Sum('allocated_draw'),
-            )
+
+            def _aggregate(powerports, seen):
+                # Recursively resolve the draw for each downstream PowerPort. Using the per-port value
+                # (rather than a SQL aggregate over allocated_draw/maximum_draw) allows the draw to
+                # propagate through intermediate auto-mode PowerPorts, e.g. PDU-internal fuse chains.
+                # `seen` tracks visited PowerPorts to prevent infinite recursion if the topology
+                # happens to form a cycle.
+                allocated_total = 0
+                maximum_total = 0
+                for powerport in powerports:
+                    if powerport.pk in seen:
+                        continue
+                    seen.add(powerport.pk)
+                    draw = powerport.get_power_draw(_seen=seen)
+                    allocated_total += draw['allocated']
+                    maximum_total += draw['maximum']
+                return allocated_total, maximum_total
+
+            # Seed each _aggregate() call with a fresh copy of the inherited visited set so the full
+            # and per-leg aggregations are independent. Otherwise, ports visited during the full
+            # aggregation would be skipped during the per-leg passes.
+            base_seen = set(_seen) if _seen else set()
+            base_seen.add(self.pk)
+
+            allocated, maximum = _aggregate(self.get_downstream_powerports(), set(base_seen))
             ret = {
-                'allocated': utilization['allocated_draw_total'] or 0,
-                'maximum': utilization['maximum_draw_total'] or 0,
+                'allocated': allocated,
+                'maximum': maximum,
                 'outlet_count': self.poweroutlets.count(),
                 'legs': [],
             }
@@ -546,14 +590,13 @@ class PowerPort(ModularComponentModel, CabledObjectModel, PathEndpoint, Tracking
             if len(self.link_peers) == 1 and isinstance(self.link_peers[0], PowerFeed) and \
                     self.link_peers[0].phase == PowerFeedPhaseChoices.PHASE_3PHASE:
                 for leg, leg_name in PowerOutletFeedLegChoices:
-                    utilization = self.get_downstream_powerports(leg=leg).aggregate(
-                        maximum_draw_total=Sum('maximum_draw'),
-                        allocated_draw_total=Sum('allocated_draw'),
+                    leg_allocated, leg_maximum = _aggregate(
+                        self.get_downstream_powerports(leg=leg), set(base_seen)
                     )
                     ret['legs'].append({
                         'name': leg_name,
-                        'allocated': utilization['allocated_draw_total'] or 0,
-                        'maximum': utilization['maximum_draw_total'] or 0,
+                        'allocated': leg_allocated,
+                        'maximum': leg_maximum,
                         'outlet_count': self.poweroutlets.filter(feed_leg=leg).count(),
                     })
 
