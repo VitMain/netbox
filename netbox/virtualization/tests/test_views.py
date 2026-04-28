@@ -335,6 +335,33 @@ class VirtualMachineTestCase(ViewTestCases.PrimaryObjectViewTestCase):
         url = reverse('virtualization:virtualmachine_interfaces', kwargs={'pk': virtualmachine.pk})
         self.assertHttpStatus(self.client.get(url), 200)
 
+    def test_bulk_edit_device_context_preserves_device(self):
+        """
+        Regression test for #21990: Bulk editing VMs from the Device's VMs tab (URL contains
+        ?device=<id>) must not clear the device field on those VMs.
+        """
+        self.add_permissions('virtualization.view_virtualmachine', 'virtualization.change_virtualmachine')
+
+        device = VirtualMachine.objects.filter(device__isnull=False).first().device
+        vms = list(VirtualMachine.objects.filter(device=device)[:3])
+        pk_list = [vm.pk for vm in vms]
+
+        data = {
+            'pk': pk_list,
+            '_apply': True,
+            # Only change status — device is intentionally omitted
+            'status': VirtualMachineStatusChoices.STATUS_STAGED,
+        }
+
+        # Simulate navigation from Device -> Virtual Machines tab by passing ?device=<id> as GET param
+        url = reverse('virtualization:virtualmachine_bulk_edit') + f'?device={device.pk}'
+        response = self.client.post(url, data)
+        self.assertHttpStatus(response, 302)
+
+        for vm in VirtualMachine.objects.filter(pk__in=pk_list):
+            self.assertEqual(vm.device, device, msg=f"Device was unexpectedly cleared on VM '{vm.name}'")
+            self.assertEqual(vm.status, VirtualMachineStatusChoices.STATUS_STAGED)
+
     def test_virtualmachine_renderconfig(self):
         configtemplate = ConfigTemplate.objects.create(
             name='Test Config Template',

@@ -1754,6 +1754,13 @@ class VirtualDeviceContextBulkEditForm(PrimaryModelBulkEditForm):
     )
     nullable_fields = ('device', 'tenant', )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # The ?device=<id> GET param is navigation context (filter), not an intent to change the
+        # device field — drop it from initial so Django's changed_data doesn't treat it as an edit.
+        self.initial.pop('device', None)
+
 
 #
 # Addressing
