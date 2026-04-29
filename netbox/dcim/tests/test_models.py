@@ -638,6 +638,42 @@ class DeviceTestCase(TestCase):
         device2.full_clean()
         device2.save()
 
+    def test_empty_asset_tag_coerced_to_null_on_clean(self):
+        """
+        An empty string assigned to a unique nullable CharField (e.g. asset_tag) must be coerced
+        to None on save so that multiple objects can be saved without violating the unique
+        constraint. Test that this is done on clean().
+        """
+        common_kwargs = {
+            'site': Site.objects.first(),
+            'device_type': DeviceType.objects.first(),
+            'role': DeviceRole.objects.first(),
+        }
+        device1 = Device(name='Device 1', asset_tag='', **common_kwargs)
+        device1.clean()
+        self.assertIsNone(device1.asset_tag)
+
+    def test_empty_asset_tag_coerced_to_null_on_save(self):
+        """
+        An empty string assigned to a unique nullable CharField (e.g. asset_tag) must be coerced
+        to None on save so that multiple objects can be saved without violating the unique
+        constraint. Test that this is done on save().
+        """
+        common_kwargs = {
+            'site': Site.objects.first(),
+            'device_type': DeviceType.objects.first(),
+            'role': DeviceRole.objects.first(),
+        }
+        device1 = Device(name='Device 1', asset_tag='', **common_kwargs)
+        device1.save()
+        device2 = Device(name='Device 2', asset_tag='', **common_kwargs)
+        device2.save()
+
+        device1.refresh_from_db()
+        device2.refresh_from_db()
+        self.assertIsNone(device1.asset_tag)
+        self.assertIsNone(device2.asset_tag)
+
     def test_device_label(self):
         device1 = Device(
             site=Site.objects.first(),
