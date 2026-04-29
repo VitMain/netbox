@@ -92,14 +92,18 @@ class LinkAction(PanelAction):
         """
         url = reverse(self.view_name, kwargs=self.view_kwargs)
         if self.url_params:
-            # If the param value is callable, call it with the context and save the result.
-            url_params = {
-                k: v(context) if callable(v) else v for k, v in self.url_params.items()
-            }
+            url_params = {}
+            for key, value in self.url_params.items():
+                # If the param value is callable, call it with the context and save the result.
+                value = value(context) if callable(value) else value
+                # Omit parameters whose value resolved to None
+                if value is not None:
+                    url_params[key] = value
             # Set the return URL if not already set and an object is available.
             if 'return_url' not in url_params and 'object' in context:
                 url_params['return_url'] = context['object'].get_absolute_url()
-            url = f'{url}?{urlencode(url_params)}'
+            if url_params:
+                url = f'{url}?{urlencode(url_params)}'
         return url
 
     def get_context(self, context):
