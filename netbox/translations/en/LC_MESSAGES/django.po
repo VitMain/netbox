@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 05:58+0000\n"
+"POT-Creation-Date: 2026-04-30 05:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1390,9 +1390,9 @@ msgstr ""
 #: netbox/extras/models/models.py:425 netbox/extras/models/models.py:496
 #: netbox/extras/models/models.py:575 netbox/extras/models/models.py:701
 #: netbox/extras/models/notifications.py:131 netbox/extras/models/tags.py:34
-#: netbox/ipam/models/vlans.py:384 netbox/netbox/models/__init__.py:129
-#: netbox/netbox/models/__init__.py:168 netbox/netbox/models/__init__.py:218
-#: netbox/netbox/models/__init__.py:249 netbox/users/models/permissions.py:24
+#: netbox/ipam/models/vlans.py:384 netbox/netbox/models/__init__.py:149
+#: netbox/netbox/models/__init__.py:188 netbox/netbox/models/__init__.py:238
+#: netbox/netbox/models/__init__.py:269 netbox/users/models/permissions.py:24
 #: netbox/users/models/tokens.py:46 netbox/users/models/users.py:41
 #: netbox/virtualization/models/virtualmachines.py:290
 msgid "description"
@@ -1430,8 +1430,8 @@ msgstr ""
 #: netbox/ipam/models/services.py:51 netbox/ipam/models/services.py:80
 #: netbox/ipam/models/vlans.py:38 netbox/ipam/models/vlans.py:217
 #: netbox/ipam/models/vlans.py:363 netbox/ipam/models/vrfs.py:20
-#: netbox/ipam/models/vrfs.py:75 netbox/netbox/models/__init__.py:160
-#: netbox/netbox/models/__init__.py:208 netbox/tenancy/models/contacts.py:85
+#: netbox/ipam/models/vrfs.py:75 netbox/netbox/models/__init__.py:180
+#: netbox/netbox/models/__init__.py:228 netbox/tenancy/models/contacts.py:85
 #: netbox/tenancy/models/tenants.py:19 netbox/tenancy/models/tenants.py:45
 #: netbox/users/models/owners.py:19 netbox/users/models/owners.py:38
 #: netbox/users/models/permissions.py:20 netbox/users/models/users.py:36
@@ -1453,8 +1453,8 @@ msgstr ""
 #: netbox/circuits/models/providers.py:28 netbox/dcim/models/devices.py:88
 #: netbox/dcim/models/racks.py:146 netbox/dcim/models/sites.py:158
 #: netbox/extras/models/models.py:491 netbox/ipam/models/asns.py:24
-#: netbox/ipam/models/vlans.py:43 netbox/netbox/models/__init__.py:164
-#: netbox/netbox/models/__init__.py:213 netbox/tenancy/models/tenants.py:25
+#: netbox/ipam/models/vlans.py:43 netbox/netbox/models/__init__.py:184
+#: netbox/netbox/models/__init__.py:233 netbox/tenancy/models/tenants.py:25
 #: netbox/tenancy/models/tenants.py:50 netbox/vpn/models/l2vpn.py:26
 #: netbox/wireless/models.py:60
 msgid "slug"
@@ -6900,8 +6900,8 @@ msgstr ""
 
 #: netbox/dcim/models/devices.py:1261 netbox/extras/models/customfields.py:253
 #: netbox/extras/models/models.py:118 netbox/extras/models/models.py:817
-#: netbox/netbox/models/__init__.py:134 netbox/netbox/models/__init__.py:173
-#: netbox/netbox/models/__init__.py:223
+#: netbox/netbox/models/__init__.py:154 netbox/netbox/models/__init__.py:193
+#: netbox/netbox/models/__init__.py:243
 msgid "comments"
 msgstr ""
 
@@ -11629,11 +11629,11 @@ msgid ""
 "are allowed in DNS names"
 msgstr ""
 
-#: netbox/ipam/views.py:104 netbox/ipam/views.py:1660
+#: netbox/ipam/views.py:104 netbox/ipam/views.py:1663
 msgid "Device Interfaces"
 msgstr ""
 
-#: netbox/ipam/views.py:109 netbox/ipam/views.py:1678
+#: netbox/ipam/views.py:109 netbox/ipam/views.py:1681
 msgid "VM Interfaces"
 msgstr ""
 
@@ -11698,7 +11698,7 @@ msgstr ""
 msgid "Add IP Address"
 msgstr ""
 
-#: netbox/ipam/views.py:1643
+#: netbox/ipam/views.py:1646
 msgid "Add a Prefix"
 msgstr ""
 
@@ -12519,7 +12519,7 @@ msgstr ""
 msgid "Background Tasks"
 msgstr ""
 
-#: netbox/netbox/object_actions.py:88 netbox/netbox/ui/actions.py:129
+#: netbox/netbox/object_actions.py:88 netbox/netbox/ui/actions.py:133
 #: netbox/templates/circuits/inc/circuit_termination.html:10
 #: netbox/templates/circuits/panels/circuit_circuit_termination.html:10
 #: netbox/templates/dcim/manufacturer.html:8
@@ -12818,7 +12818,7 @@ msgstr ""
 msgid "Dummy Plugin"
 msgstr ""
 
-#: netbox/netbox/ui/actions.py:146
+#: netbox/netbox/ui/actions.py:150
 msgid "Copy"
 msgstr ""
 
