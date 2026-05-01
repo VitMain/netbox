@@ -220,6 +220,7 @@ class APIViewTestCases:
                 response = self.client.post(url, self.create_data[0], format='json', **self.header)
                 self.assertHttpStatus(response, status.HTTP_403_FORBIDDEN)
 
+        @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
         def test_create_object(self):
             """
             POST a single object with permission.
@@ -261,6 +262,7 @@ class APIViewTestCases:
                 self.assertObjectChange(objectchange, action=ObjectChangeActionChoices.ACTION_CREATE,
                     message=data['changelog_message'])
 
+        @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
         def test_bulk_create_objects(self):
             """
             POST a set of objects in a single request.
@@ -332,6 +334,7 @@ class APIViewTestCases:
                 response = self.client.patch(url, update_data, format='json', **self.header)
                 self.assertHttpStatus(response, status.HTTP_403_FORBIDDEN)
 
+        @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
         def test_update_object(self):
             """
             PATCH a single object identified by its numeric ID.
@@ -414,6 +417,7 @@ class APIViewTestCases:
                 )
             self.assertHttpStatus(response, status.HTTP_412_PRECONDITION_FAILED)
 
+        @override_settings(EXEMPT_VIEW_PERMISSIONS=['*'])
         def test_bulk_update_objects(self):
             """
             PATCH a set of objects in a single request.

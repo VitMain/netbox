@@ -43,13 +43,27 @@ class BaseModelSerializer(serializers.ModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-    def to_internal_value(self, data):
+    def get_related_object_queryset(self):
+        """
+        Return the queryset used to resolve a related object supplied via nested
+        serializer input.
+        """
+        queryset = self.Meta.model.objects.all()
+        request = self.context.get('request')
 
+        if request is not None and hasattr(queryset, 'restrict'):
+            queryset = queryset.restrict(getattr(request, 'user', None), 'view')
+
+        return queryset
+
+    def to_internal_value(self, data):
+        """
+        Override to_internal_value() to handle nested serializer input.
+        """
         # If initialized as a nested serializer, we should expect to receive the attrs or PK
         # identifying a related object.
         if self.nested:
-            queryset = self.Meta.model.objects.all()
-            return get_related_object_by_attrs(queryset, data)
+            return get_related_object_by_attrs(self.get_related_object_queryset(), data)
 
         return super().to_internal_value(data)
 
