@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from circuits.choices import (
@@ -195,13 +195,11 @@ class CircuitTerminationForm(NetBoxModelForm):
     termination_type = ContentTypeChoiceField(
         queryset=ContentType.objects.filter(model__in=CIRCUIT_TERMINATION_TERMINATION_TYPES),
         widget=HTMXSelect(),
-        required=False,
         label=_('Termination type')
     )
     termination = DynamicModelChoiceField(
         label=_('Termination'),
         queryset=Site.objects.none(),  # Initial queryset
-        required=False,
         disabled=True,
         selector=True
     )
@@ -253,9 +251,21 @@ class CircuitTerminationForm(NetBoxModelForm):
 
             if self.instance and termination_type_id != self.instance.termination_type_id:
                 self.initial['termination'] = None
+        else:
+            # Clear the initial termination value if termination_type is not set
+            self.initial['termination'] = None
 
     def clean(self):
         super().clean()
+
+        termination = self.cleaned_data.get('termination')
+        termination_type = self.cleaned_data.get('termination_type')
+        if termination_type and not termination:
+            raise ValidationError({
+                'termination': _('Please select a {termination_type}.').format(
+                    termination_type=_(bettertitle(termination_type.model_class()._meta.verbose_name))
+                )
+            })
 
         # Assign the selected termination (if any)
         self.instance.termination = self.cleaned_data.get('termination')
