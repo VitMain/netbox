@@ -214,6 +214,10 @@ class GenericObjectChoiceField(forms.MultiValueField):
 
     def clean(self, value):
         self._sync_widget_refs()
+        # Mirror MultiValueField.clean: a disabled field is cleaned from its initial, which here is the related
+        # instance set when RestrictedRelatedFieldsMixin locks a hidden value. Decompose it into the expected pair.
+        if self.disabled and not isinstance(value, list):
+            value = self.widget.decompress(value)
         value = value or []
         content_type_value = value[0] if len(value) > 0 else None
         object_value = value[1] if len(value) > 1 else None

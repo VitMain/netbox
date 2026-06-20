@@ -791,6 +791,17 @@ class GenericObjectChoiceFieldTestCase(TestCase):
         with self.assertRaises(NotImplementedError):
             field.compress([self.site_type, self.site])
 
+    def test_disabled_field_cleans_initial_instance(self):
+        """A disabled field cleans its initial instance and ignores submitted data."""
+        # Submitted data tries to blank the value; the disabled field must preserve the initial object instead.
+        form = self._make_form(
+            data={'obj_content_type': '', 'obj_object_id': ''},
+            initial={'obj': self.site},
+        )
+        form.fields['obj'].disabled = True
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['obj'], self.site)
+
 
 class GenericObjectFormMixinTestCase(TestCase):
     """Validate the DEBUG warning emitted when an HTMX target has no matching FieldSet."""

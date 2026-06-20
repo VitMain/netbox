@@ -206,6 +206,10 @@ class CircuitTerminationForm(GenericObjectFormMixin, NetBoxModelForm):
         FieldSet('port_speed', 'upstream_speed', 'xconnect_id', 'pp_info', name=_('Termination Details')),
     )
 
+    restricted_related_selectors = {
+        'termination': {'path': 'termination'},
+    }
+
     class Meta:
         model = CircuitTermination
         fields = [
@@ -254,6 +258,10 @@ class CircuitGroupAssignmentForm(GenericObjectFormMixin, NetBoxModelForm):
             name=_('Group Assignment'), html_id='circuit-group-assignment',
         ),
     )
+
+    restricted_related_selectors = {
+        'member': {'path': 'member'},
+    }
 
     class Meta:
         model = CircuitGroupAssignment

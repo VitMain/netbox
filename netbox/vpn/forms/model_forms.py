@@ -256,6 +256,13 @@ class TunnelTerminationForm(NetBoxModelForm):
         ),
     )
 
+    # type is not locked: clean() writes instance.termination from the locked selector and never branches on it.
+    restricted_related_selectors = {
+        'termination': {'path': 'termination'},
+        # parent is an auxiliary selector for the device or VM owning the termination.
+        'parent': {'path': 'termination.parent_object'},
+    }
+
     class Meta:
         model = TunnelTermination
         fields = [
@@ -457,6 +464,13 @@ class L2VPNTerminationForm(NetBoxModelForm):
             'tags',
         ),
     )
+
+    restricted_related_selectors = {
+        # The selectors are stored as the assigned_object GenericForeignKey; the model picks the matching one.
+        'interface': {'path': 'assigned_object', 'model': Interface},
+        'vminterface': {'path': 'assigned_object', 'model': VMInterface},
+        'vlan': {'path': 'assigned_object', 'model': VLAN},
+    }
 
     class Meta:
         model = L2VPNTermination

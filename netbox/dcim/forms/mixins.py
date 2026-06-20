@@ -31,6 +31,11 @@ class ScopedForm(GenericObjectFormMixin, forms.Form):
         hx_target_id='scope',
     )
 
+    # VLANGroupForm duplicates this with broader scope types and cannot inherit ScopedForm; keep the two in sync.
+    restricted_related_selectors = {
+        'scope': {'path': 'scope'},
+    }
+
 
 class ScopedBulkEditForm(GenericObjectFormMixin, forms.Form):
     scope = GenericObjectChoiceField(

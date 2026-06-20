@@ -11,6 +11,7 @@ from ipam.constants import *
 from ipam.formfields import IPNetworkFormField
 from ipam.models import *
 from netbox.forms import NetBoxModelForm, OrganizationalModelForm, PrimaryModelForm
+from netbox.forms.mixins import RestrictedRelatedFieldsMixin
 from tenancy.forms import TenancyForm
 from utilities.exceptions import PermissionsViolation
 from utilities.forms import GenericObjectFormMixin, add_blank_choice
@@ -354,6 +355,13 @@ class IPAddressForm(TenancyForm, PrimaryModelForm):
         FieldSet('nat_inside', name=_('NAT IP (Inside)')),
     )
 
+    restricted_related_selectors = {
+        # The selectors are stored as the assigned_object GenericForeignKey; the model picks the matching one.
+        'interface': {'path': 'assigned_object', 'model': Interface},
+        'vminterface': {'path': 'assigned_object', 'model': VMInterface},
+        'fhrpgroup': {'path': 'assigned_object', 'model': FHRPGroup},
+    }
+
     class Meta:
         model = IPAddress
         fields = [
@@ -585,7 +593,7 @@ class FHRPGroupForm(PrimaryModelForm):
                 })
 
 
-class FHRPGroupAssignmentForm(forms.ModelForm):
+class FHRPGroupAssignmentForm(RestrictedRelatedFieldsMixin, forms.ModelForm):
     group = DynamicModelChoiceField(
         label=_('Group'),
         queryset=FHRPGroup.objects.all()
@@ -636,6 +644,11 @@ class VLANGroupForm(GenericObjectFormMixin, TenancyForm, OrganizationalModelForm
         FieldSet('scope', name=_('Scope'), html_id='scope'),
         FieldSet('tenant_group', 'tenant', name=_('Tenancy')),
     )
+
+    # Mirror of dcim ScopedForm.restricted_related_selectors; keep in sync (VLANGroup uses VLANGROUP_SCOPE_TYPES).
+    restricted_related_selectors = {
+        'scope': {'path': 'scope'},
+    }
 
     class Meta:
         model = VLANGroup
@@ -790,6 +803,10 @@ class ServiceForm(GenericObjectFormMixin, PrimaryModelForm):
             html_id='service',
         ),
     )
+
+    restricted_related_selectors = {
+        'parent': {'path': 'parent'},
+    }
 
     class Meta:
         model = Service

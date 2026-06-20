@@ -14,7 +14,7 @@ from extras.constants import IMAGE_ATTACHMENT_IMAGE_FORMATS
 from extras.models import *
 from netbox.events import get_event_type_choices
 from netbox.forms import NetBoxModelForm, PrimaryModelForm
-from netbox.forms.mixins import ChangelogMessageMixin, OwnerMixin
+from netbox.forms.mixins import ChangelogMessageMixin, OwnerMixin, RestrictedRelatedFieldsMixin
 from tenancy.models import Tenant, TenantGroup
 from users.models import Group, User
 from utilities.forms import get_field_value
@@ -53,7 +53,7 @@ __all__ = (
 )
 
 
-class CustomFieldForm(ChangelogMessageMixin, OwnerMixin, forms.ModelForm):
+class CustomFieldForm(RestrictedRelatedFieldsMixin, ChangelogMessageMixin, OwnerMixin, forms.ModelForm):
     object_types = ContentTypeMultipleChoiceField(
         label=_('Object types'),
         queryset=ObjectType.objects.with_feature('custom_fields'),
@@ -493,7 +493,7 @@ class BookmarkForm(forms.ModelForm):
         fields = ('object_type', 'object_id')
 
 
-class NotificationGroupForm(ChangelogMessageMixin, forms.ModelForm):
+class NotificationGroupForm(RestrictedRelatedFieldsMixin, ChangelogMessageMixin, forms.ModelForm):
     groups = DynamicModelMultipleChoiceField(
         label=_('Groups'),
         required=False,
@@ -511,6 +511,7 @@ class NotificationGroupForm(ChangelogMessageMixin, forms.ModelForm):
 
     def clean(self):
         super().clean()
+        self._merge_restricted_preserved_members()
 
         # At least one User or Group must be assigned
         if not self.cleaned_data['groups'] and not self.cleaned_data['users']:
@@ -578,6 +579,11 @@ class EventRuleForm(OwnerMixin, NetBoxModelForm):
         FieldSet('event_types', 'conditions', name=_('Triggers')),
         FieldSet('action_type', 'action_choice', 'action_data', name=_('Action'), html_id='event-rule-action'),
     )
+
+    # action_object_type/action_object_id are recomputed in clean() from these two fields.
+    restricted_related_selectors = {
+        'action_choice': {'path': 'action_object', 'lock_fields': ('action_type',)},
+    }
 
     class Meta:
         model = EventRule
@@ -710,7 +716,9 @@ class ConfigContextProfileForm(SyncedDataMixin, PrimaryModelForm):
         )
 
 
-class ConfigContextForm(ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, forms.ModelForm):
+class ConfigContextForm(
+    RestrictedRelatedFieldsMixin, ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, forms.ModelForm
+):
     profile = DynamicModelChoiceField(
         label=_('Profile'),
         queryset=ConfigContextProfile.objects.all(),
@@ -820,6 +828,7 @@ class ConfigContextForm(ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, form
 
     def clean(self):
         super().clean()
+        self._merge_restricted_preserved_members()
 
         if not self.cleaned_data.get('data') and not self.cleaned_data.get('data_file'):
             raise forms.ValidationError(_("Must specify either local data or a data file"))
@@ -827,7 +836,9 @@ class ConfigContextForm(ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, form
         return self.cleaned_data
 
 
-class ConfigTemplateForm(ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, forms.ModelForm):
+class ConfigTemplateForm(
+    RestrictedRelatedFieldsMixin, ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, forms.ModelForm
+):
     tags = DynamicModelMultipleChoiceField(
         label=_('Tags'),
         queryset=Tag.objects.all(),
@@ -867,6 +878,7 @@ class ConfigTemplateForm(ChangelogMessageMixin, SyncedDataMixin, OwnerMixin, for
 
     def clean(self):
         super().clean()
+        self._merge_restricted_preserved_members()
 
         if not self.cleaned_data.get('template_code') and not self.cleaned_data.get('data_file'):
             raise forms.ValidationError(_("Must specify either local content or a data file"))
