@@ -1782,7 +1782,7 @@ class CoolingPortFilterForm(PathEndpointFilterForm, DeviceComponentFilterForm):
     model = CoolingPort
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
-        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', name=_('Attributes')),
+        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', name=_('Attributes')),
         FieldSet('region_id', 'site_group_id', 'site_id', 'location_id', 'rack_id', name=_('Location')),
         FieldSet(
             'tenant_id', 'device_type_id', 'device_role_id', 'device_id', 'device_status', 'virtual_chassis_id',
@@ -1801,9 +1801,13 @@ class CoolingPortFilterForm(PathEndpointFilterForm, DeviceComponentFilterForm):
         choices=CoolingConnectorTypeChoices,
         required=False
     )
-    diameter = forms.MultipleChoiceField(
+    diameter = forms.DecimalField(
         label=_('Diameter'),
-        choices=CoolingDiameterChoices,
+        required=False
+    )
+    diameter_unit = forms.ChoiceField(
+        label=_('Diameter unit'),
+        choices=add_blank_choice(DiameterUnitChoices),
         required=False
     )
     tag = TagFilterField(model)
@@ -1813,7 +1817,7 @@ class CoolingPortTemplateFilterForm(ModularDeviceComponentTemplateFilterForm):
     model = CoolingPortTemplate
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
-        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', name=_('Attributes')),
+        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', name=_('Attributes')),
         FieldSet('device_type_id', 'module_type_id', name=_('Device')),
     )
     type = forms.MultipleChoiceField(
@@ -1826,9 +1830,13 @@ class CoolingPortTemplateFilterForm(ModularDeviceComponentTemplateFilterForm):
         choices=CoolingConnectorTypeChoices,
         required=False
     )
-    diameter = forms.MultipleChoiceField(
+    diameter = forms.DecimalField(
         label=_('Diameter'),
-        choices=CoolingDiameterChoices,
+        required=False
+    )
+    diameter_unit = forms.ChoiceField(
+        label=_('Diameter unit'),
+        choices=add_blank_choice(DiameterUnitChoices),
         required=False
     )
 
@@ -1837,7 +1845,9 @@ class CoolingOutletFilterForm(PathEndpointFilterForm, DeviceComponentFilterForm)
     model = CoolingOutlet
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
-        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', 'color', name=_('Attributes')),
+        FieldSet(
+            'name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'color', name=_('Attributes')
+        ),
         FieldSet('region_id', 'site_group_id', 'site_id', 'location_id', 'rack_id', name=_('Location')),
         FieldSet(
             'tenant_id', 'device_type_id', 'device_role_id', 'device_id', 'device_status', 'virtual_chassis_id',
@@ -1856,9 +1866,13 @@ class CoolingOutletFilterForm(PathEndpointFilterForm, DeviceComponentFilterForm)
         choices=CoolingConnectorTypeChoices,
         required=False
     )
-    diameter = forms.MultipleChoiceField(
+    diameter = forms.DecimalField(
         label=_('Diameter'),
-        choices=CoolingDiameterChoices,
+        required=False
+    )
+    diameter_unit = forms.ChoiceField(
+        label=_('Diameter unit'),
+        choices=add_blank_choice(DiameterUnitChoices),
         required=False
     )
     color = ColorField(
@@ -1872,7 +1886,7 @@ class CoolingOutletTemplateFilterForm(ModularDeviceComponentTemplateFilterForm):
     model = CoolingOutletTemplate
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
-        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', name=_('Attributes')),
+        FieldSet('name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', name=_('Attributes')),
         FieldSet('device_type_id', 'module_type_id', name=_('Device')),
     )
     type = forms.MultipleChoiceField(
@@ -1885,9 +1899,13 @@ class CoolingOutletTemplateFilterForm(ModularDeviceComponentTemplateFilterForm):
         choices=CoolingConnectorTypeChoices,
         required=False
     )
-    diameter = forms.MultipleChoiceField(
+    diameter = forms.DecimalField(
         label=_('Diameter'),
-        choices=CoolingDiameterChoices,
+        required=False
+    )
+    diameter_unit = forms.ChoiceField(
+        label=_('Diameter unit'),
+        choices=add_blank_choice(DiameterUnitChoices),
         required=False
     )
 

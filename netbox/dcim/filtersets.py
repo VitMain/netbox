@@ -1015,8 +1015,8 @@ class CoolingPortTemplateFilterSet(ChangeLoggedModelFilterSet, ModularDeviceType
     class Meta:
         model = CoolingPortTemplate
         fields = (
-            'id', 'name', 'label', 'type', 'connector_type', 'diameter', 'maximum_flow', 'heat_capacity',
-            'description',
+            'id', 'name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'maximum_flow',
+            'heat_capacity', 'description',
         )
 
 
@@ -1030,7 +1030,7 @@ class CoolingOutletTemplateFilterSet(ChangeLoggedModelFilterSet, ModularDeviceTy
 
     class Meta:
         model = CoolingOutletTemplate
-        fields = ('id', 'name', 'label', 'type', 'connector_type', 'diameter', 'color', 'description')
+        fields = ('id', 'name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'color', 'description')
 
 
 @register_filterset
@@ -2078,17 +2078,12 @@ class CoolingPortFilterSet(ModularDeviceComponentFilterSet, CabledObjectFilterSe
         distinct=False,
         null_value=None
     )
-    diameter = django_filters.MultipleChoiceFilter(
-        choices=CoolingDiameterChoices,
-        distinct=False,
-        null_value=None
-    )
 
     class Meta:
         model = CoolingPort
         fields = (
-            'id', 'name', 'label', 'maximum_flow', 'heat_capacity', 'description', 'mark_connected', 'cable_end',
-            'cable_connector',
+            'id', 'name', 'label', 'diameter', 'diameter_unit', 'maximum_flow', 'heat_capacity', 'description',
+            'mark_connected', 'cable_end', 'cable_connector',
         )
 
 
@@ -2104,11 +2099,6 @@ class CoolingOutletFilterSet(ModularDeviceComponentFilterSet, CabledObjectFilter
         distinct=False,
         null_value=None
     )
-    diameter = django_filters.MultipleChoiceFilter(
-        choices=CoolingDiameterChoices,
-        distinct=False,
-        null_value=None
-    )
     cooling_port_id = django_filters.ModelMultipleChoiceFilter(
         queryset=CoolingPort.objects.all(),
         distinct=False,
@@ -2118,7 +2108,8 @@ class CoolingOutletFilterSet(ModularDeviceComponentFilterSet, CabledObjectFilter
     class Meta:
         model = CoolingOutlet
         fields = (
-            'id', 'name', 'label', 'description', 'color', 'mark_connected', 'cable_end', 'cable_connector',
+            'id', 'name', 'label', 'diameter', 'diameter_unit', 'description', 'color', 'mark_connected', 'cable_end',
+            'cable_connector',
         )
 
 

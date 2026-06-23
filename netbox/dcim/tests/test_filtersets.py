@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
@@ -8,7 +10,7 @@ from dcim.filtersets import *
 from dcim.models import *
 from ipam.choices import VLANQinQRoleChoices
 from ipam.models import ASN, RIR, VLAN, VRF, IPAddress, VLANTranslationPolicy
-from netbox.choices import ColorChoices, WeightUnitChoices
+from netbox.choices import ColorChoices, DiameterUnitChoices, WeightUnitChoices
 from tenancy.models import Tenant, TenantGroup
 from users.models import User
 from utilities.testing import ChangeLoggedFilterSetTests, create_test_device, create_test_virtualmachine
@@ -2048,7 +2050,8 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
                 name='Cooling Port 1',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-                diameter=CoolingDiameterChoices.DN25,
+                diameter=Decimal('25'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=100,
                 heat_capacity=50,
                 description='foobar1'
@@ -2058,7 +2061,8 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
                 name='Cooling Port 2',
                 type=CoolingFeedTypeChoices.TYPE_RETURN,
                 connector_type=CoolingConnectorTypeChoices.TYPE_QDC,
-                diameter=CoolingDiameterChoices.DN32,
+                diameter=Decimal('32'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=200,
                 heat_capacity=100,
                 description='foobar2'
@@ -2068,7 +2072,8 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
                 name='Cooling Port 3',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQDB,
-                diameter=CoolingDiameterChoices.DN40,
+                diameter=Decimal('40'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=300,
                 heat_capacity=150,
                 description='foobar3'
@@ -2088,7 +2093,7 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_diameter(self):
-        params = {'diameter': CoolingDiameterChoices.DN25}
+        params = {'diameter': [Decimal('25')]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_maximum_flow(self):
@@ -2122,7 +2127,8 @@ class CoolingOutletTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTe
                 name='Cooling Outlet 1',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-                diameter=CoolingDiameterChoices.DN25,
+                diameter=Decimal('25'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 color=ColorChoices.COLOR_RED,
                 description='foobar1'
             ),
@@ -2131,7 +2137,8 @@ class CoolingOutletTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTe
                 name='Cooling Outlet 2',
                 type=CoolingFeedTypeChoices.TYPE_RETURN,
                 connector_type=CoolingConnectorTypeChoices.TYPE_QDC,
-                diameter=CoolingDiameterChoices.DN32,
+                diameter=Decimal('32'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 color=ColorChoices.COLOR_GREEN,
                 description='foobar2'
             ),
@@ -2140,7 +2147,8 @@ class CoolingOutletTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTe
                 name='Cooling Outlet 3',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQDB,
-                diameter=CoolingDiameterChoices.DN40,
+                diameter=Decimal('40'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 color=ColorChoices.COLOR_BLUE,
                 description='foobar3'
             ),
@@ -2159,7 +2167,7 @@ class CoolingOutletTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTe
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_diameter(self):
-        params = {'diameter': CoolingDiameterChoices.DN25}
+        params = {'diameter': [Decimal('25')]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
 
     def test_color(self):
@@ -4792,7 +4800,8 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
                 label='A',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-                diameter=CoolingDiameterChoices.DN25,
+                diameter=Decimal('25'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=100,
                 heat_capacity=50,
                 description='First',
@@ -4807,7 +4816,8 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
                 label='B',
                 type=CoolingFeedTypeChoices.TYPE_RETURN,
                 connector_type=CoolingConnectorTypeChoices.TYPE_QDC,
-                diameter=CoolingDiameterChoices.DN32,
+                diameter=Decimal('32'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=200,
                 heat_capacity=100,
                 description='Second',
@@ -4822,7 +4832,8 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
                 label='C',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQDB,
-                diameter=CoolingDiameterChoices.DN40,
+                diameter=Decimal('40'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=300,
                 heat_capacity=150,
                 description='Third',
@@ -4859,7 +4870,7 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_diameter(self):
-        params = {'diameter': [CoolingDiameterChoices.DN25, CoolingDiameterChoices.DN32]}
+        params = {'diameter': [Decimal('25'), Decimal('32')]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_maximum_flow(self):
@@ -5078,7 +5089,8 @@ class CoolingOutletTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLogge
                 label='A',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-                diameter=CoolingDiameterChoices.DN25,
+                diameter=Decimal('25'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 description='First',
                 color='ff0000',
                 _site=devices[0].site,
@@ -5092,7 +5104,8 @@ class CoolingOutletTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLogge
                 label='B',
                 type=CoolingFeedTypeChoices.TYPE_RETURN,
                 connector_type=CoolingConnectorTypeChoices.TYPE_QDC,
-                diameter=CoolingDiameterChoices.DN32,
+                diameter=Decimal('32'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 description='Second',
                 color='00ff00',
                 _site=devices[1].site,
@@ -5106,7 +5119,8 @@ class CoolingOutletTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLogge
                 label='C',
                 type=CoolingFeedTypeChoices.TYPE_SUPPLY,
                 connector_type=CoolingConnectorTypeChoices.TYPE_UQDB,
-                diameter=CoolingDiameterChoices.DN40,
+                diameter=Decimal('40'),
+                diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 description='Third',
                 color='0000ff',
                 _site=devices[2].site,
@@ -5146,7 +5160,7 @@ class CoolingOutletTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLogge
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_diameter(self):
-        params = {'diameter': [CoolingDiameterChoices.DN25, CoolingDiameterChoices.DN32]}
+        params = {'diameter': [Decimal('25'), Decimal('32')]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_region(self):

@@ -1346,9 +1346,13 @@ class CoolingPortTemplateBulkEditForm(ComponentTemplateBulkEditForm):
         choices=add_blank_choice(CoolingConnectorTypeChoices),
         required=False
     )
-    diameter = forms.ChoiceField(
+    diameter = forms.DecimalField(
         label=_('Diameter'),
-        choices=add_blank_choice(CoolingDiameterChoices),
+        required=False
+    )
+    diameter_unit = forms.ChoiceField(
+        label=_('Diameter unit'),
+        choices=add_blank_choice(DiameterUnitChoices),
         required=False
     )
     maximum_flow = forms.DecimalField(
@@ -1366,8 +1370,16 @@ class CoolingPortTemplateBulkEditForm(ComponentTemplateBulkEditForm):
         required=False
     )
 
+    fieldsets = (
+        FieldSet(
+            'label', 'type', 'connector_type',
+            InlineFields('diameter', 'diameter_unit', label=_('Diameter')),
+            'maximum_flow', 'heat_capacity', 'description',
+        ),
+    )
     nullable_fields = (
-        'label', 'type', 'connector_type', 'diameter', 'maximum_flow', 'heat_capacity', 'description',
+        'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'maximum_flow', 'heat_capacity',
+        'description',
     )
 
 
@@ -1398,9 +1410,13 @@ class CoolingOutletTemplateBulkEditForm(ComponentTemplateBulkEditForm):
         choices=add_blank_choice(CoolingConnectorTypeChoices),
         required=False
     )
-    diameter = forms.ChoiceField(
+    diameter = forms.DecimalField(
         label=_('Diameter'),
-        choices=add_blank_choice(CoolingDiameterChoices),
+        required=False
+    )
+    diameter_unit = forms.ChoiceField(
+        label=_('Diameter unit'),
+        choices=add_blank_choice(DiameterUnitChoices),
         required=False
     )
     color = ColorField(
@@ -1417,8 +1433,15 @@ class CoolingOutletTemplateBulkEditForm(ComponentTemplateBulkEditForm):
         required=False
     )
 
+    fieldsets = (
+        FieldSet(
+            'label', 'type', 'connector_type',
+            InlineFields('diameter', 'diameter_unit', label=_('Diameter')),
+            'color', 'cooling_port', 'description',
+        ),
+    )
     nullable_fields = (
-        'label', 'type', 'connector_type', 'diameter', 'cooling_port', 'description',
+        'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'cooling_port', 'description',
     )
 
     def __init__(self, *args, **kwargs):
@@ -1734,8 +1757,8 @@ class PowerOutletBulkEditForm(
 class CoolingPortBulkEditForm(
     ComponentBulkEditForm,
     form_from_model(CoolingPort, [
-        'label', 'type', 'connector_type', 'diameter', 'maximum_flow', 'heat_capacity', 'mark_connected',
-        'description'
+        'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'maximum_flow', 'heat_capacity',
+        'mark_connected', 'description'
     ])
 ):
     mark_connected = forms.NullBooleanField(
@@ -1746,11 +1769,16 @@ class CoolingPortBulkEditForm(
 
     model = CoolingPort
     fieldsets = (
-        FieldSet('module', 'type', 'connector_type', 'diameter', 'label', 'description', 'mark_connected'),
+        FieldSet(
+            'module', 'type', 'connector_type',
+            InlineFields('diameter', 'diameter_unit', label=_('Diameter')),
+            'label', 'description', 'mark_connected',
+        ),
         FieldSet('maximum_flow', 'heat_capacity', name=_('Characteristics')),
     )
     nullable_fields = (
-        'module', 'label', 'type', 'connector_type', 'diameter', 'maximum_flow', 'heat_capacity', 'description',
+        'module', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'maximum_flow', 'heat_capacity',
+        'description',
     )
 
 
@@ -1758,7 +1786,10 @@ class CoolingOutletBulkEditForm(
     ComponentBulkEditForm,
     form_from_model(
         CoolingOutlet,
-        ['label', 'type', 'connector_type', 'diameter', 'color', 'cooling_port', 'mark_connected', 'description']
+        [
+            'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'color', 'cooling_port', 'mark_connected',
+            'description'
+        ]
     )
 ):
     mark_connected = forms.NullBooleanField(
@@ -1770,12 +1801,13 @@ class CoolingOutletBulkEditForm(
     model = CoolingOutlet
     fieldsets = (
         FieldSet(
-            'module', 'type', 'connector_type', 'diameter', 'label', 'description', 'mark_connected', 'color',
-            'cooling_port'
+            'module', 'type', 'connector_type',
+            InlineFields('diameter', 'diameter_unit', label=_('Diameter')),
+            'label', 'description', 'mark_connected', 'color', 'cooling_port',
         ),
     )
     nullable_fields = (
-        'module', 'label', 'type', 'connector_type', 'diameter', 'cooling_port', 'description',
+        'module', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'cooling_port', 'description',
     )
 
     def __init__(self, *args, **kwargs):

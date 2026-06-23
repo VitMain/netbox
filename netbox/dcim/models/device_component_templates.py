@@ -12,6 +12,7 @@ from dcim.models.mixins import InterfaceValidationMixin
 from dcim.utils import get_module_bay_positions, resolve_module_placeholder
 from netbox.models import ChangeLoggedModel
 from netbox.models.ltree import LtreeManager, LtreeModel
+from netbox.models.mixins import DiameterMixin
 from utilities.fields import ColorField, NaturalOrderingField
 from utilities.ordering import naturalize_interface
 from utilities.tracking import TrackingModelMixin
@@ -436,7 +437,7 @@ class PowerOutletTemplate(ModularComponentTemplateModel):
         }
 
 
-class CoolingPortTemplate(ModularComponentTemplateModel):
+class CoolingPortTemplate(DiameterMixin, ModularComponentTemplateModel):
     """
     A template for a CoolingPort to be created for a new Device.
     """
@@ -454,13 +455,7 @@ class CoolingPortTemplate(ModularComponentTemplateModel):
         blank=True,
         null=True
     )
-    diameter = models.CharField(
-        verbose_name=_('diameter'),
-        max_length=50,
-        choices=CoolingDiameterChoices,
-        blank=True,
-        null=True
-    )
+    # diameter, diameter_unit, _abs_diameter provided by DiameterMixin
     maximum_flow = models.DecimalField(
         verbose_name=_('maximum flow'),
         max_digits=8,
@@ -493,6 +488,7 @@ class CoolingPortTemplate(ModularComponentTemplateModel):
             type=self.type,
             connector_type=self.connector_type,
             diameter=self.diameter,
+            diameter_unit=self.diameter_unit,
             maximum_flow=self.maximum_flow,
             heat_capacity=self.heat_capacity,
             **kwargs
@@ -504,7 +500,8 @@ class CoolingPortTemplate(ModularComponentTemplateModel):
             'name': self.name,
             'type': self.type,
             'connector_type': self.connector_type,
-            'diameter': self.diameter,
+            'diameter': float(self.diameter) if self.diameter is not None else None,
+            'diameter_unit': self.diameter_unit,
             'maximum_flow': float(self.maximum_flow) if self.maximum_flow is not None else None,
             'heat_capacity': float(self.heat_capacity) if self.heat_capacity is not None else None,
             'label': self.label,
@@ -512,7 +509,7 @@ class CoolingPortTemplate(ModularComponentTemplateModel):
         }
 
 
-class CoolingOutletTemplate(ModularComponentTemplateModel):
+class CoolingOutletTemplate(DiameterMixin, ModularComponentTemplateModel):
     """
     A template for a CoolingOutlet to be created for a new Device.
     """
@@ -530,13 +527,7 @@ class CoolingOutletTemplate(ModularComponentTemplateModel):
         blank=True,
         null=True
     )
-    diameter = models.CharField(
-        verbose_name=_('diameter'),
-        max_length=50,
-        choices=CoolingDiameterChoices,
-        blank=True,
-        null=True
-    )
+    # diameter, diameter_unit, _abs_diameter provided by DiameterMixin
     color = ColorField(
         verbose_name=_('color'),
         blank=True
@@ -585,6 +576,7 @@ class CoolingOutletTemplate(ModularComponentTemplateModel):
             type=self.type,
             connector_type=self.connector_type,
             diameter=self.diameter,
+            diameter_unit=self.diameter_unit,
             color=self.color,
             cooling_port=cooling_port,
             **kwargs
@@ -596,7 +588,8 @@ class CoolingOutletTemplate(ModularComponentTemplateModel):
             'name': self.name,
             'type': self.type,
             'connector_type': self.connector_type,
-            'diameter': self.diameter,
+            'diameter': float(self.diameter) if self.diameter is not None else None,
+            'diameter_unit': self.diameter_unit,
             'color': self.color,
             'cooling_port': self.cooling_port.name if self.cooling_port else None,
             'label': self.label,

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save
 from django.test import TestCase, tag
@@ -9,7 +11,7 @@ from dcim.models import *
 from extras.events import serialize_for_event
 from extras.models import CustomField
 from ipam.models import Prefix
-from netbox.choices import WeightUnitChoices
+from netbox.choices import DiameterUnitChoices, WeightUnitChoices
 from tenancy.models import Tenant
 from utilities.data import drange
 from virtualization.models import Cluster, ClusterType
@@ -2859,7 +2861,8 @@ class CoolingComponentTestCase(TestCase):
             name='Cooling Port 1',
             type=CoolingFeedTypeChoices.TYPE_SUPPLY,
             connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-            diameter=CoolingDiameterChoices.DN25,
+            diameter=Decimal('25'),
+            diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
             maximum_flow=100,
             heat_capacity=50
         )
@@ -2868,7 +2871,8 @@ class CoolingComponentTestCase(TestCase):
             name='Cooling Outlet 1',
             type=CoolingFeedTypeChoices.TYPE_SUPPLY,
             connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-            diameter=CoolingDiameterChoices.DN25
+            diameter=Decimal('25'),
+            diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER
         )
 
         device = Device.objects.create(
@@ -2883,7 +2887,8 @@ class CoolingComponentTestCase(TestCase):
             name='Cooling Port 1',
             type=CoolingFeedTypeChoices.TYPE_SUPPLY,
             connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-            diameter=CoolingDiameterChoices.DN25,
+            diameter=Decimal('25'),
+            diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
             maximum_flow=100,
             heat_capacity=50
         )
@@ -2894,7 +2899,8 @@ class CoolingComponentTestCase(TestCase):
             name='Cooling Outlet 1',
             type=CoolingFeedTypeChoices.TYPE_SUPPLY,
             connector_type=CoolingConnectorTypeChoices.TYPE_UQD,
-            diameter=CoolingDiameterChoices.DN25
+            diameter=Decimal('25'),
+            diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER
         )
 
     def test_cooling_outlet_clean_different_device(self):
