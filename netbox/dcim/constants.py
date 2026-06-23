@@ -88,6 +88,8 @@ MODULAR_COMPONENT_TEMPLATE_MODELS = Q(
     model__in=(
         'consoleporttemplate',
         'consoleserverporttemplate',
+        'coolingoutlettemplate',
+        'coolingporttemplate',
         'frontporttemplate',
         'interfacetemplate',
         'poweroutlettemplate',
@@ -100,6 +102,8 @@ MODULAR_COMPONENT_MODELS = Q(
     model__in=(
         'consoleport',
         'consoleserverport',
+        'coolingoutlet',
+        'coolingport',
         'frontport',
         'interface',
         'poweroutlet',
@@ -122,6 +126,9 @@ CABLE_TERMINATION_MODELS = Q(
     Q(app_label='dcim', model__in=(
         'consoleport',
         'consoleserverport',
+        'coolingfeed',
+        'coolingoutlet',
+        'coolingport',
         'frontport',
         'interface',
         'powerfeed',
@@ -135,6 +142,9 @@ COMPATIBLE_TERMINATION_TYPES = {
     'circuittermination': ['interface', 'frontport', 'rearport', 'circuittermination'],
     'consoleport': ['consoleserverport', 'frontport', 'rearport'],
     'consoleserverport': ['consoleport', 'frontport', 'rearport'],
+    'coolingfeed': ['coolingport'],
+    'coolingoutlet': ['coolingport'],
+    'coolingport': ['coolingoutlet', 'coolingfeed'],
     'interface': ['interface', 'circuittermination', 'frontport', 'rearport'],
     'frontport': ['consoleport', 'consoleserverport', 'interface', 'frontport', 'rearport', 'circuittermination'],
     'powerfeed': ['powerport'],

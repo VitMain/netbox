@@ -31,6 +31,7 @@ class DeviceTypeSerializer(PrimaryModelSerializer):
     )
     subdevice_role = ChoiceField(choices=SubdeviceRoleChoices, allow_blank=True, required=False, allow_null=True)
     airflow = ChoiceField(choices=DeviceAirflowChoices, allow_blank=True, required=False, allow_null=True)
+    cooling_method = ChoiceField(choices=CoolingMethodChoices, allow_blank=True, required=False, allow_null=True)
     weight_unit = ChoiceField(choices=WeightUnitChoices, allow_blank=True, required=False, allow_null=True)
     front_image = serializers.ImageField(required=False, allow_null=True)
     rear_image = serializers.ImageField(required=False, allow_null=True)
@@ -40,6 +41,8 @@ class DeviceTypeSerializer(PrimaryModelSerializer):
     console_server_port_template_count = serializers.IntegerField(read_only=True)
     power_port_template_count = serializers.IntegerField(read_only=True)
     power_outlet_template_count = serializers.IntegerField(read_only=True)
+    cooling_port_template_count = serializers.IntegerField(read_only=True)
+    cooling_outlet_template_count = serializers.IntegerField(read_only=True)
     interface_template_count = serializers.IntegerField(read_only=True)
     front_port_template_count = serializers.IntegerField(read_only=True)
     rear_port_template_count = serializers.IntegerField(read_only=True)
@@ -52,12 +55,13 @@ class DeviceTypeSerializer(PrimaryModelSerializer):
         model = DeviceType
         fields = [
             'id', 'url', 'display_url', 'display', 'manufacturer', 'default_platform', 'model', 'slug', 'part_number',
-            'u_height', 'exclude_from_utilization', 'is_full_depth', 'subdevice_role', 'airflow', 'weight',
-            'weight_unit', 'front_image', 'rear_image', 'description', 'owner', 'comments', 'tags', 'custom_fields',
-            'created', 'last_updated', 'device_count', 'console_port_template_count',
+            'u_height', 'exclude_from_utilization', 'is_full_depth', 'subdevice_role', 'airflow', 'cooling_method',
+            'weight', 'weight_unit', 'front_image', 'rear_image', 'description', 'owner', 'comments', 'tags',
+            'custom_fields', 'created', 'last_updated', 'device_count', 'console_port_template_count',
             'console_server_port_template_count', 'power_port_template_count', 'power_outlet_template_count',
-            'interface_template_count', 'front_port_template_count', 'rear_port_template_count',
-            'device_bay_template_count', 'module_bay_template_count', 'inventory_item_template_count',
+            'cooling_port_template_count', 'cooling_outlet_template_count', 'interface_template_count',
+            'front_port_template_count', 'rear_port_template_count', 'device_bay_template_count',
+            'module_bay_template_count', 'inventory_item_template_count',
         ]
         brief_fields = ('id', 'url', 'display', 'manufacturer', 'model', 'slug', 'description', 'device_count')
 
