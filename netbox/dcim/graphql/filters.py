@@ -964,12 +964,6 @@ class CoolingFeedFilter(CabledObjectModelFilterMixin, TenancyFilterMixin, Primar
     pressure: Annotated['FloatLookup', strawberry.lazy('netbox.graphql.filter_lookups')] | None = (
         strawberry_django.filter_field()
     )
-    supply_temperature: Annotated['FloatLookup', strawberry.lazy('netbox.graphql.filter_lookups')] | None = (
-        strawberry_django.filter_field()
-    )
-    return_temperature: Annotated['FloatLookup', strawberry.lazy('netbox.graphql.filter_lookups')] | None = (
-        strawberry_django.filter_field()
-    )
 
 
 @strawberry_django.filter_type(models.CoolingOutlet, lookups=True)
