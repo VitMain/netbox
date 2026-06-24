@@ -495,15 +495,16 @@ class ModuleTypeForm(PrimaryModelForm):
     def fieldsets(self):
         return [
             FieldSet('manufacturer', 'model', 'part_number', 'description', 'tags', name=_('Module Type')),
-            FieldSet('airflow', 'weight', 'weight_unit', name=_('Hardware')),
+            FieldSet('weight', 'weight_unit', name=_('Hardware')),
+            FieldSet('cooling_method', 'airflow', name=_('Cooling')),
             FieldSet('profile', *self.attr_fields, name=_('Profile & Attributes'), html_id='profile-attributes')
         ]
 
     class Meta:
         model = ModuleType
         fields = [
-            'profile', 'manufacturer', 'model', 'part_number', 'description', 'airflow', 'weight', 'weight_unit',
-            'owner', 'comments', 'tags',
+            'profile', 'manufacturer', 'model', 'part_number', 'description', 'cooling_method', 'airflow', 'weight',
+            'weight_unit', 'owner', 'comments', 'tags',
         ]
 
     def __init__(self, *args, **kwargs):

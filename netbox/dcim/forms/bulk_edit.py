@@ -633,6 +633,11 @@ class ModuleTypeBulkEditForm(PrimaryModelBulkEditForm):
         choices=add_blank_choice(ModuleAirflowChoices),
         required=False
     )
+    cooling_method = forms.ChoiceField(
+        label=_('Cooling method'),
+        choices=add_blank_choice(CoolingMethodChoices),
+        required=False
+    )
     weight = forms.DecimalField(
         label=_('Weight'),
         min_value=0,
@@ -649,12 +654,14 @@ class ModuleTypeBulkEditForm(PrimaryModelBulkEditForm):
     fieldsets = (
         FieldSet('profile', 'manufacturer', 'part_number', 'description', name=_('Module Type')),
         FieldSet(
-            'airflow',
             InlineFields('weight', 'max_weight', 'weight_unit', label=_('Weight')),
             name=_('Chassis')
         ),
+        FieldSet('cooling_method', 'airflow', name=_('Cooling')),
     )
-    nullable_fields = ('part_number', 'weight', 'weight_unit', 'profile', 'description', 'comments')
+    nullable_fields = (
+        'part_number', 'weight', 'weight_unit', 'profile', 'description', 'comments', 'cooling_method',
+    )
 
 
 class DeviceRoleBulkEditForm(NestedGroupModelBulkEditForm):

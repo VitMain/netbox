@@ -190,6 +190,7 @@ class ModuleTypePanel(panels.ObjectAttributesPanel):
     model = attrs.TextAttr('model', label=_('Model name'))
     part_number = attrs.TextAttr('part_number')
     description = attrs.TextAttr('description')
+    cooling_method = attrs.ChoiceAttr('cooling_method')
     airflow = attrs.ChoiceAttr('airflow')
     weight = attrs.WeightAttr('weight')
 

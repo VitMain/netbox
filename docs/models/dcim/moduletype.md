@@ -75,6 +75,10 @@ The numeric weight of the module, including a unit designation (e.g. 3 kilograms
 
 The direction in which air circulates through the device chassis for cooling.
 
+### Cooling Method
+
+The cooling method employed by modules of this type (air, liquid, hybrid, or immersion). This is useful for liquid-cooled modules such as direct-to-chip accelerator (OAM) modules or liquid-cooled line cards.
+
 ### Profile
 
 The assigned [profile](./moduletypeprofile.md) for the type of module. Profiles can be used to classify module types by function (e.g. power supply, hard disk, etc.), and they support the addition of user-configurable attributes on module types. The assignment of a module type to a profile is optional.

@@ -98,6 +98,7 @@ class ModuleTypeSerializer(PrimaryModelSerializer):
         required=False,
         allow_null=True
     )
+    cooling_method = ChoiceField(choices=CoolingMethodChoices, allow_blank=True, required=False, allow_null=True)
     attributes = AttributesField(
         source='attribute_data',
         required=False,
@@ -119,7 +120,8 @@ class ModuleTypeSerializer(PrimaryModelSerializer):
         model = ModuleType
         fields = [
             'id', 'url', 'display_url', 'display', 'profile', 'manufacturer', 'model', 'part_number', 'airflow',
-            'weight', 'weight_unit', 'description', 'attributes', 'owner', 'comments', 'tags', 'custom_fields',
+            'cooling_method', 'weight', 'weight_unit', 'description', 'attributes', 'owner', 'comments', 'tags',
+            'custom_fields',
             'created', 'last_updated', 'module_count', 'console_port_template_count',
             'console_server_port_template_count', 'power_port_template_count', 'power_outlet_template_count',
             'interface_template_count', 'front_port_template_count', 'rear_port_template_count',

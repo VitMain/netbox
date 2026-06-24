@@ -731,9 +731,9 @@ class ModuleTypeFilterForm(PrimaryModelFilterSetForm):
     fieldsets = (
         FieldSet('q', 'filter_id', 'tag'),
         FieldSet(
-            'profile_id', 'manufacturer_id', 'part_number', 'module_count',
-            'airflow', name=_('Hardware')
+            'profile_id', 'manufacturer_id', 'part_number', 'module_count', name=_('Hardware')
         ),
+        FieldSet('cooling_method', 'airflow', name=_('Cooling')),
         FieldSet(
             'console_ports', 'console_server_ports', 'power_ports', 'power_outlets', 'interfaces',
             'pass_through_ports', 'module_bays', name=_('Components')
@@ -815,6 +815,11 @@ class ModuleTypeFilterForm(PrimaryModelFilterSetForm):
     airflow = forms.MultipleChoiceField(
         label=_('Airflow'),
         choices=add_blank_choice(ModuleAirflowChoices),
+        required=False
+    )
+    cooling_method = forms.MultipleChoiceField(
+        label=_('Cooling method'),
+        choices=add_blank_choice(CoolingMethodChoices),
         required=False
     )
     weight = forms.DecimalField(
