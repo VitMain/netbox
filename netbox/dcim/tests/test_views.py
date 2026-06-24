@@ -18,7 +18,14 @@ from dcim.constants import *
 from dcim.models import *
 from extras.models import ConfigTemplate
 from ipam.models import ASN, RIR, VLAN, VRF
-from netbox.choices import CSVDelimiterChoices, DiameterUnitChoices, ImportFormatChoices, WeightUnitChoices
+from netbox.choices import (
+    CSVDelimiterChoices,
+    DiameterUnitChoices,
+    FlowRateUnitChoices,
+    ImportFormatChoices,
+    PressureUnitChoices,
+    WeightUnitChoices,
+)
 from tenancy.models import Tenant
 from users.models import ObjectPermission, User
 from utilities.testing import ViewTestCases, create_tags, create_test_device, post_data
@@ -4598,7 +4605,9 @@ class CoolingFeedTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'fluid_type': FluidTypeChoices.FLUID_WATER,
             'cooling_capacity': 100,
             'flow_rate': 50,
+            'flow_rate_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'pressure': 200,
+            'pressure_unit': PressureUnitChoices.UNIT_KILOPASCAL,
             'comments': 'New comments',
             'tags': [t.pk for t in tags],
         }
@@ -4625,7 +4634,9 @@ class CoolingFeedTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'fluid_type': FluidTypeChoices.FLUID_WATER,
             'cooling_capacity': 100,
             'flow_rate': 50,
+            'flow_rate_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'pressure': 200,
+            'pressure_unit': PressureUnitChoices.UNIT_KILOPASCAL,
             'comments': 'New comments',
         }
 

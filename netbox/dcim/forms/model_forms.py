@@ -1020,7 +1020,9 @@ class CoolingFeedForm(TenancyForm, PrimaryModelForm):
             name=_('Cooling Feed')
         ),
         FieldSet(
-            'cooling_capacity', 'flow_rate', 'pressure',
+            'cooling_capacity',
+            InlineFields('flow_rate', 'flow_rate_unit', label=_('Flow rate')),
+            InlineFields('pressure', 'pressure_unit', label=_('Pressure')),
             name=_('Characteristics')
         ),
         FieldSet('tenant_group', 'tenant', name=_('Tenancy')),
@@ -1030,7 +1032,8 @@ class CoolingFeedForm(TenancyForm, PrimaryModelForm):
         model = CoolingFeed
         fields = [
             'cooling_source', 'rack', 'name', 'status', 'type', 'mark_connected', 'fluid_type', 'cooling_capacity',
-            'flow_rate', 'pressure', 'tenant_group', 'tenant', 'description', 'owner', 'comments', 'tags',
+            'flow_rate', 'flow_rate_unit', 'pressure', 'pressure_unit', 'tenant_group', 'tenant', 'description',
+            'owner', 'comments', 'tags',
         ]
 
 
