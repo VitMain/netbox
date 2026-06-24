@@ -2936,6 +2936,7 @@ class CoolingComponentTestCase(TestCase):
             site=self.site,
             location=location,
             name='Cooling Source 1',
+            type=CoolingSourceTypeChoices.TYPE_CHILLER,
             status=CoolingSourceStatusChoices.STATUS_ACTIVE,
         )
         with self.assertRaises(ValidationError):
@@ -2948,6 +2949,7 @@ class CoolingComponentTestCase(TestCase):
         cooling_source = CoolingSource(
             site=self.site,
             name='Cooling Source 2',
+            type=CoolingSourceTypeChoices.TYPE_CHILLER,
             status=CoolingSourceStatusChoices.STATUS_ACTIVE,
             supply_temperature=Decimal('18'),
         )
@@ -2969,6 +2971,7 @@ class CoolingComponentTestCase(TestCase):
         cooling_source = CoolingSource.objects.create(
             site=self.site,
             name='Cooling Source 3',
+            type=CoolingSourceTypeChoices.TYPE_CHILLER,
             status=CoolingSourceStatusChoices.STATUS_ACTIVE,
         )
         rack = Rack.objects.create(name='Rack 1', site=site2, status=RackStatusChoices.STATUS_ACTIVE)

@@ -1945,7 +1945,6 @@ class CoolingSourceImportForm(PrimaryModelImportForm):
     type = CSVChoiceField(
         label=_('Type'),
         choices=CoolingSourceTypeChoices,
-        required=False,
         help_text=_('Cooling source type')
     )
     status = CSVChoiceField(
