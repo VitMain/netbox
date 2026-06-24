@@ -8418,6 +8418,9 @@ class CoolingFeedTestCase(TestCase, ChangeLoggedFilterSetTests):
                 flow_rate_unit=FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
                 pressure=100,
                 pressure_unit=PressureUnitChoices.UNIT_KILOPASCAL,
+                supply_temperature=18,
+                return_temperature=30,
+                temperature_unit=TemperatureUnitChoices.UNIT_CELSIUS,
                 description='foobar1'
             ),
             CoolingFeed(
@@ -8433,6 +8436,9 @@ class CoolingFeedTestCase(TestCase, ChangeLoggedFilterSetTests):
                 flow_rate_unit=FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
                 pressure=200,
                 pressure_unit=PressureUnitChoices.UNIT_KILOPASCAL,
+                supply_temperature=20,
+                return_temperature=32,
+                temperature_unit=TemperatureUnitChoices.UNIT_CELSIUS,
                 description='foobar2'
             ),
             CoolingFeed(
@@ -8448,6 +8454,9 @@ class CoolingFeedTestCase(TestCase, ChangeLoggedFilterSetTests):
                 flow_rate_unit=FlowRateUnitChoices.UNIT_GALLONS_PER_MINUTE,
                 pressure=300,
                 pressure_unit=PressureUnitChoices.UNIT_PSI,
+                supply_temperature=22,
+                return_temperature=34,
+                temperature_unit=TemperatureUnitChoices.UNIT_FAHRENHEIT,
                 description='foobar3'
             ),
         )
@@ -8505,6 +8514,18 @@ class CoolingFeedTestCase(TestCase, ChangeLoggedFilterSetTests):
 
     def test_pressure_unit(self):
         params = {'pressure_unit': [PressureUnitChoices.UNIT_KILOPASCAL]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_supply_temperature(self):
+        params = {'supply_temperature': [18, 20]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_return_temperature(self):
+        params = {'return_temperature': [30, 32]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_temperature_unit(self):
+        params = {'temperature_unit': [TemperatureUnitChoices.UNIT_CELSIUS]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_description(self):

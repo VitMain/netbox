@@ -24,6 +24,7 @@ from netbox.choices import (
     FlowRateUnitChoices,
     ImportFormatChoices,
     PressureUnitChoices,
+    TemperatureUnitChoices,
     WeightUnitChoices,
 )
 from tenancy.models import Tenant
@@ -4608,6 +4609,9 @@ class CoolingFeedTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'flow_rate_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'pressure': 200,
             'pressure_unit': PressureUnitChoices.UNIT_KILOPASCAL,
+            'supply_temperature': 18,
+            'return_temperature': 30,
+            'temperature_unit': TemperatureUnitChoices.UNIT_CELSIUS,
             'comments': 'New comments',
             'tags': [t.pk for t in tags],
         }
@@ -4637,6 +4641,9 @@ class CoolingFeedTestCase(ViewTestCases.PrimaryObjectViewTestCase):
             'flow_rate_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'pressure': 200,
             'pressure_unit': PressureUnitChoices.UNIT_KILOPASCAL,
+            'supply_temperature': 18,
+            'return_temperature': 30,
+            'temperature_unit': TemperatureUnitChoices.UNIT_CELSIUS,
             'comments': 'New comments',
         }
 
