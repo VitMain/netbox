@@ -794,7 +794,7 @@ class PowerPortTemplateType(ModularComponentTemplateType):
 
 @strawberry_django.type(
     models.CoolingFeed,
-    exclude=['_path'],
+    exclude=['_path', '_abs_flow_rate', '_abs_pressure', '_abs_supply_temperature', '_abs_return_temperature'],
     filters=CoolingFeedFilter,
     pagination=True
 )
@@ -806,7 +806,7 @@ class CoolingFeedType(CabledObjectMixin, PathEndpointMixin, PrimaryObjectType):
 
 @strawberry_django.type(
     models.CoolingOutlet,
-    exclude=['_path'],
+    exclude=['_path', '_abs_diameter'],
     filters=CoolingOutletFilter,
     pagination=True
 )
@@ -817,7 +817,7 @@ class CoolingOutletType(ModularComponentType, CabledObjectMixin, PathEndpointMix
 
 @strawberry_django.type(
     models.CoolingOutletTemplate,
-    fields='__all__',
+    exclude=['_abs_diameter'],
     filters=CoolingOutletTemplateFilter,
     pagination=True
 )
@@ -828,7 +828,7 @@ class CoolingOutletTemplateType(ModularComponentTemplateType):
 
 @strawberry_django.type(
     models.CoolingPort,
-    exclude=['_path'],
+    exclude=['_path', '_abs_diameter'],
     filters=CoolingPortFilter,
     pagination=True
 )
@@ -839,7 +839,7 @@ class CoolingPortType(ModularComponentType, CabledObjectMixin, PathEndpointMixin
 
 @strawberry_django.type(
     models.CoolingPortTemplate,
-    fields='__all__',
+    exclude=['_abs_diameter'],
     filters=CoolingPortTemplateFilter,
     pagination=True
 )
@@ -849,7 +849,7 @@ class CoolingPortTemplateType(ModularComponentTemplateType):
 
 @strawberry_django.type(
     models.CoolingSource,
-    fields='__all__',
+    exclude=['_abs_supply_temperature', '_abs_return_temperature'],
     filters=CoolingSourceFilter,
     pagination=True
 )
