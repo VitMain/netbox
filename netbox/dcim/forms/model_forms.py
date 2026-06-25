@@ -1260,7 +1260,8 @@ class CoolingPortTemplateForm(ModularComponentTemplateForm):
             ),
             'name', 'label', 'type', 'connector_type',
             InlineFields('diameter', 'diameter_unit', label=_('Diameter')),
-            'maximum_flow', 'heat_capacity', 'description',
+            InlineFields('maximum_flow', 'maximum_flow_unit', label=_('Maximum flow')),
+            'heat_capacity', 'description',
         ),
     )
 
@@ -1268,7 +1269,7 @@ class CoolingPortTemplateForm(ModularComponentTemplateForm):
         model = CoolingPortTemplate
         fields = [
             'device_type', 'module_type', 'name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit',
-            'maximum_flow', 'heat_capacity', 'description',
+            'maximum_flow', 'maximum_flow_unit', 'heat_capacity', 'description',
         ]
 
 
@@ -1670,7 +1671,8 @@ class CoolingPortForm(ModularDeviceComponentForm):
         FieldSet(
             'device', 'module', 'name', 'label', 'type', 'connector_type',
             InlineFields('diameter', 'diameter_unit', label=_('Diameter')),
-            'maximum_flow', 'heat_capacity', 'mark_connected', 'description', 'tags',
+            InlineFields('maximum_flow', 'maximum_flow_unit', label=_('Maximum flow')),
+            'heat_capacity', 'mark_connected', 'description', 'tags',
         ),
     )
 
@@ -1678,7 +1680,7 @@ class CoolingPortForm(ModularDeviceComponentForm):
         model = CoolingPort
         fields = [
             'device', 'module', 'name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'maximum_flow',
-            'heat_capacity', 'mark_connected', 'description', 'owner', 'tags',
+            'maximum_flow_unit', 'heat_capacity', 'mark_connected', 'description', 'owner', 'tags',
         ]
 
 
