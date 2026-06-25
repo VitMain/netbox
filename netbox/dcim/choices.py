@@ -2093,7 +2093,7 @@ class PowerOutletStatusChoices(ChoiceSet):
 #
 
 class CoolingMethodChoices(ChoiceSet):
-    key = 'CoolingMethod'
+    key = 'Device.cooling_method'
 
     METHOD_AIR = 'air'
     METHOD_LIQUID = 'liquid'
