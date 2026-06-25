@@ -2066,6 +2066,7 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
                 diameter=Decimal('25'),
                 diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=100,
+                maximum_flow_unit=FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
                 heat_capacity=50,
                 description='foobar1'
             ),
@@ -2077,6 +2078,7 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
                 diameter=Decimal('32'),
                 diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=200,
+                maximum_flow_unit=FlowRateUnitChoices.UNIT_CUBIC_METERS_PER_HOUR,
                 heat_capacity=100,
                 description='foobar2'
             ),
@@ -2088,6 +2090,7 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
                 diameter=Decimal('40'),
                 diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=300,
+                maximum_flow_unit=FlowRateUnitChoices.UNIT_GALLONS_PER_MINUTE,
                 heat_capacity=150,
                 description='foobar3'
             ),
@@ -2111,6 +2114,12 @@ class CoolingPortTemplateTestCase(TestCase, DeviceComponentTemplateFilterSetTest
 
     def test_maximum_flow(self):
         params = {'maximum_flow': [100, 200]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_maximum_flow_unit(self):
+        params = {'maximum_flow_unit': [
+            FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE, FlowRateUnitChoices.UNIT_CUBIC_METERS_PER_HOUR
+        ]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_heat_capacity(self):
@@ -4816,6 +4825,7 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
                 diameter=Decimal('25'),
                 diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=100,
+                maximum_flow_unit=FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
                 heat_capacity=50,
                 description='First',
                 _site=devices[0].site,
@@ -4832,6 +4842,7 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
                 diameter=Decimal('32'),
                 diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=200,
+                maximum_flow_unit=FlowRateUnitChoices.UNIT_CUBIC_METERS_PER_HOUR,
                 heat_capacity=100,
                 description='Second',
                 _site=devices[1].site,
@@ -4848,6 +4859,7 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
                 diameter=Decimal('40'),
                 diameter_unit=DiameterUnitChoices.UNIT_MILLIMETER,
                 maximum_flow=300,
+                maximum_flow_unit=FlowRateUnitChoices.UNIT_GALLONS_PER_MINUTE,
                 heat_capacity=150,
                 description='Third',
                 _site=devices[2].site,
@@ -4888,6 +4900,12 @@ class CoolingPortTestCase(TestCase, DeviceComponentFilterSetTests, ChangeLoggedF
 
     def test_maximum_flow(self):
         params = {'maximum_flow': [100, 200]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_maximum_flow_unit(self):
+        params = {'maximum_flow_unit': [
+            FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE, FlowRateUnitChoices.UNIT_CUBIC_METERS_PER_HOUR
+        ]}
         self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
 
     def test_heat_capacity(self):

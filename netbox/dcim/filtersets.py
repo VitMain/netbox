@@ -1015,12 +1015,17 @@ class PowerOutletTemplateFilterSet(ChangeLoggedModelFilterSet, ModularDeviceType
 
 @register_filterset
 class CoolingPortTemplateFilterSet(ChangeLoggedModelFilterSet, ModularDeviceTypeComponentFilterSet):
+    maximum_flow_unit = django_filters.MultipleChoiceFilter(
+        choices=FlowRateUnitChoices,
+        distinct=False,
+        null_value=None
+    )
 
     class Meta:
         model = CoolingPortTemplate
         fields = (
             'id', 'name', 'label', 'type', 'connector_type', 'diameter', 'diameter_unit', 'maximum_flow',
-            'heat_capacity', 'description',
+            'maximum_flow_unit', 'heat_capacity', 'description',
         )
 
 
@@ -2084,12 +2089,17 @@ class CoolingPortFilterSet(ModularDeviceComponentFilterSet, CabledObjectFilterSe
         distinct=False,
         null_value=None
     )
+    maximum_flow_unit = django_filters.MultipleChoiceFilter(
+        choices=FlowRateUnitChoices,
+        distinct=False,
+        null_value=None
+    )
 
     class Meta:
         model = CoolingPort
         fields = (
-            'id', 'name', 'label', 'diameter', 'diameter_unit', 'maximum_flow', 'heat_capacity', 'description',
-            'mark_connected', 'cable_end', 'cable_connector',
+            'id', 'name', 'label', 'diameter', 'diameter_unit', 'maximum_flow', 'maximum_flow_unit', 'heat_capacity',
+            'description', 'mark_connected', 'cable_end', 'cable_connector',
         )
 
 

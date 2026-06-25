@@ -4263,6 +4263,7 @@ class CoolingPortTemplateTestCase(ViewTestCases.DeviceComponentTemplateViewTestC
             'diameter': Decimal('25'),
             'diameter_unit': DiameterUnitChoices.UNIT_MILLIMETER,
             'maximum_flow': 100,
+            'maximum_flow_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'heat_capacity': 50,
         }
 
@@ -4274,6 +4275,7 @@ class CoolingPortTemplateTestCase(ViewTestCases.DeviceComponentTemplateViewTestC
             'diameter': Decimal('25'),
             'diameter_unit': DiameterUnitChoices.UNIT_MILLIMETER,
             'maximum_flow': 100,
+            'maximum_flow_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'heat_capacity': 50,
         }
 
@@ -4283,6 +4285,7 @@ class CoolingPortTemplateTestCase(ViewTestCases.DeviceComponentTemplateViewTestC
             'diameter': Decimal('25'),
             'diameter_unit': DiameterUnitChoices.UNIT_MILLIMETER,
             'maximum_flow': 100,
+            'maximum_flow_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'heat_capacity': 50,
         }
 
@@ -4360,6 +4363,7 @@ class CoolingPortTestCase(ViewTestCases.DeviceComponentViewTestCase):
             'diameter': Decimal('25'),
             'diameter_unit': DiameterUnitChoices.UNIT_MILLIMETER,
             'maximum_flow': 100,
+            'maximum_flow_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'heat_capacity': 50,
             'description': 'A cooling port',
             'tags': [t.pk for t in tags],
@@ -4373,6 +4377,7 @@ class CoolingPortTestCase(ViewTestCases.DeviceComponentViewTestCase):
             'diameter': Decimal('25'),
             'diameter_unit': DiameterUnitChoices.UNIT_MILLIMETER,
             'maximum_flow': 100,
+            'maximum_flow_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'heat_capacity': 50,
             'description': 'A cooling port',
             'tags': [t.pk for t in tags],
@@ -4384,6 +4389,7 @@ class CoolingPortTestCase(ViewTestCases.DeviceComponentViewTestCase):
             'diameter': Decimal('25'),
             'diameter_unit': DiameterUnitChoices.UNIT_MILLIMETER,
             'maximum_flow': 100,
+            'maximum_flow_unit': FlowRateUnitChoices.UNIT_LITERS_PER_MINUTE,
             'heat_capacity': 50,
             'description': 'New description',
         }
