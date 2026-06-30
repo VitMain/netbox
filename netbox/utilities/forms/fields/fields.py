@@ -10,6 +10,7 @@ from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 from netaddr import EUI, AddrFormatError
 
+from utilities.choices import Choice
 from utilities.forms import widgets
 from utilities.validators import EnhancedURLValidator
 
@@ -117,7 +118,7 @@ class TagFilterField(forms.MultipleChoiceField):
             ).order_by('name')
             return [
                 (settings.FILTERS_NULL_CHOICE_VALUE, settings.FILTERS_NULL_CHOICE_LABEL),  # "None" option
-                *[(str(tag.slug), f'{tag.name} ({tag.count})') for tag in tags]
+                *[Choice(str(tag.slug), f'{tag.name} ({tag.count})') for tag in tags]
             ]
 
         # Choices are fetched each time the form is initialized
