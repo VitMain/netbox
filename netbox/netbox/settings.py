@@ -167,6 +167,16 @@ LOGIN_FORM_HIDDEN = param('LOGIN_FORM_HIDDEN', False, types=bool)
 LOGOUT_REDIRECT_URL = param('LOGOUT_REDIRECT_URL', 'home', types=str)
 MEDIA_ROOT = param('MEDIA_ROOT', os.path.join(NETBOX_ROOT, 'media'), types=str).rstrip('/')
 METRICS_ENABLED = param('METRICS_ENABLED', False, types=bool)
+PERMISSIONS_POLICY = param('PERMISSIONS_POLICY', {
+    'camera': [],
+    'microphone': [],
+    'geolocation': [],
+    'payment': [],
+    'usb': [],
+    'hid': [],
+    'serial': [],
+    'bluetooth': [],
+}, types=dict)
 PLUGINS = param('PLUGINS', [], types=(list, tuple))
 PLUGINS_CONFIG = param('PLUGINS_CONFIG', {}, types=dict)
 PLUGINS_CATALOG_CONFIG = param('PLUGINS_CATALOG_CONFIG', {}, types=dict)
@@ -532,6 +542,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.csp.ContentSecurityPolicyMiddleware',
+    'netbox.middleware.PermissionsPolicyMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
     'netbox.middleware.RemoteUserMiddleware',
     'netbox.middleware.LoginRequiredMiddleware',

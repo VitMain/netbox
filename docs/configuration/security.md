@@ -200,6 +200,44 @@ The view name or URL to which a user is redirected after logging out.
 
 ---
 
+## PERMISSIONS_POLICY
+
+Default:
+
+```python
+PERMISSIONS_POLICY = {
+    'camera': [],
+    'microphone': [],
+    'geolocation': [],
+    'payment': [],
+    'usb': [],
+    'hid': [],
+    'serial': [],
+    'bluetooth': [],
+}
+```
+
+Defines the `Permissions-Policy` header sent with every response, which tells the browser which features NetBox pages may use. Each key is a browser feature and each value is the list of origins allowed to use it. An empty list denies the feature everywhere. The default denies camera, microphone, location, payment, USB, HID, serial and Bluetooth access, none of which NetBox uses. Features not listed keep the browser default.
+
+Your dictionary replaces the default entirely, so copy the default and edit it. For example, a plugin that scans barcodes with the camera needs `camera` re-allowed for NetBox's own origin:
+
+```python
+PERMISSIONS_POLICY = {
+    'camera': ['self'],
+    'microphone': [],
+    'geolocation': [],
+    'payment': [],
+    'usb': [],
+    'hid': [],
+    'serial': [],
+    'bluetooth': [],
+}
+```
+
+Use `'self'` for NetBox's own origin and `'*'` for any origin. Any other entry is an origin such as `'https://scan.example.com'`. USB barcode scanners that act as a keyboard are not affected by this header. Set `PERMISSIONS_POLICY = {}` to send no header.
+
+---
+
 ## SECURE_CSP
 
 Default: `{}`
