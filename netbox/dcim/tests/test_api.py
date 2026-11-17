@@ -1851,6 +1851,80 @@ class ModuleTypeTestCase(APIViewTestCases.APIViewTestCase):
             },
         ]
 
+    def test_create_object_with_images(self):
+        """
+        Create a ModuleType with front/rear images via a multipart request.
+        """
+        self.add_permissions('dcim.add_moduletype')
+        # A nested field is read from "<field>.id" in a multipart request
+        data = {
+            'manufacturer.id': Manufacturer.objects.first().pk,
+            'model': 'Module Type 7',
+            'front_image': create_test_image('front.png'),
+            'rear_image': create_test_image('rear.png'),
+        }
+
+        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            response = self.client.post(self._get_list_url(), data, format='multipart', **self.header)
+            self.assertHttpStatus(response, status.HTTP_201_CREATED)
+            module_type = ModuleType.objects.get(pk=response.data['id'])
+            for image in (module_type.front_image, module_type.rear_image):
+                self.assertTrue(os.path.exists(image.path))
+                self.assertTrue(image.name.startswith('moduletype-images/'))
+
+    def test_update_object_image(self):
+        """
+        Replace a ModuleType's front image via a multipart request, which should delete the original file.
+        """
+        self.add_permissions('dcim.change_moduletype')
+
+        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            module_type = ModuleType.objects.first()
+            module_type.front_image = create_test_image('front.png')
+            module_type.rear_image = create_test_image('rear.png')
+            module_type.save()
+            front_image_path = module_type.front_image.path
+            rear_image_path = module_type.rear_image.path
+
+            data = {
+                'front_image': create_test_image('front2.png'),
+            }
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.patch(
+                    self._get_detail_url(module_type), data, format='multipart', **self.header
+                )
+            self.assertHttpStatus(response, status.HTTP_200_OK)
+            module_type.refresh_from_db()
+            self.assertFalse(os.path.exists(front_image_path))
+            self.assertTrue(os.path.exists(module_type.front_image.path))
+            self.assertNotEqual(module_type.front_image.path, front_image_path)
+            self.assertTrue(os.path.exists(rear_image_path))
+
+    def test_clear_object_image(self):
+        """
+        Clear a ModuleType's rear image via a JSON request, which should delete its file.
+        """
+        self.add_permissions('dcim.change_moduletype')
+
+        with tempfile.TemporaryDirectory() as media_root, override_settings(MEDIA_ROOT=media_root):
+            module_type = ModuleType.objects.first()
+            module_type.front_image = create_test_image('front.png')
+            module_type.rear_image = create_test_image('rear.png')
+            module_type.save()
+            front_image_path = module_type.front_image.path
+            rear_image_path = module_type.rear_image.path
+
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.patch(
+                    self._get_detail_url(module_type), {'rear_image': None}, format='json', **self.header
+                )
+            self.assertHttpStatus(response, status.HTTP_200_OK)
+            self.assertIsNone(response.data['rear_image'])
+            module_type.refresh_from_db()
+            self.assertFalse(module_type.rear_image)
+            self.assertFalse(os.path.exists(rear_image_path))
+            self.assertTrue(os.path.exists(front_image_path))
+
 
 class ModuleTypeProfileTestCase(APIViewTestCases.APIViewTestCase):
     model = ModuleTypeProfile
